@@ -44,9 +44,8 @@ function getGitHubAPIUrl(folder) {
 }
 
 // Get direct download URL for GitHub file
-// Use github.com/raw path which handles Git LFS properly
 function getDownloadUrl(file) {
-  return `https://github.com/${GITHUB_REPO}/raw/${GITHUB_BRANCH}/${MATERIALS_PATH}/${file.folder}/${file.name}`;
+  return `https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/${MATERIALS_PATH}/${file.folder}/${file.name}`;
 }
 
 // Filter button functionality
@@ -168,7 +167,6 @@ function displayMaterials(grouped) {
     grouped[subject].forEach((file) => {
       const name = file.name.replace(/_/g, " ");
       const fileExt = name.split('.').pop().toUpperCase();
-      // Use github.com/raw URL which handles Git LFS properly
       const downloadUrl = getDownloadUrl(file);
 
       const card = document.createElement("div");
