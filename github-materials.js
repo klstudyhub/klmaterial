@@ -44,8 +44,9 @@ function getGitHubAPIUrl(folder) {
 }
 
 // Get direct download URL for GitHub file
+// Use github.com/raw path which handles Git LFS properly
 function getDownloadUrl(file) {
-  return `https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/${MATERIALS_PATH}/${file.folder}/${file.name}`;
+  return `https://github.com/${GITHUB_REPO}/raw/${GITHUB_BRANCH}/${MATERIALS_PATH}/${file.folder}/${file.name}`;
 }
 
 // Filter button functionality
