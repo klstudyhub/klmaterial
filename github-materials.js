@@ -167,7 +167,8 @@ function displayMaterials(grouped) {
     grouped[subject].forEach((file) => {
       const name = file.name.replace(/_/g, " ");
       const fileExt = name.split('.').pop().toUpperCase();
-      const downloadUrl = getDownloadUrl(file);
+      // Use the download_url from GitHub API which works with LFS files
+      const downloadUrl = file.downloadUrl;
 
       const card = document.createElement("div");
       card.className = "material-card";
