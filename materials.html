@@ -32,7 +32,7 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
 
-  <link rel="stylesheet" href="style.css?v=2.2" />
+  <link rel="stylesheet" href="style.css?v=4.0" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
 
   <!-- Google tag (gtag.js) -->
@@ -49,7 +49,6 @@
 <body>
   <header>
     <nav>
-      <h2>📘 Study Hub</h2>
       <div class="nav-track">
         <a href="index.html">Home</a>
         <a href="materials.html" class="active">Materials</a>
@@ -61,29 +60,68 @@
   </header>
 
   <main class="materials-container">
-    <h1>📚 CSE Study Materials</h1>
-
-    <!-- Category Filter Buttons -->
-    <div class="filter-buttons">
-      <button class="filter-btn active" data-category="all">All Subjects</button>
-      <button class="filter-btn" data-category="BEEC">BEEC</button>
-      <button class="filter-btn" data-category="DM">Discrete Math</button>
-      <button class="filter-btn" data-category="PSC">PSC</button>
-      <button class="filter-btn" data-category="DSD">DSD</button>
+    <div class="materials-hero">
+      <div class="hero-content">
+        <h1 class="materials-title">📚 CSE Study Materials</h1>
+        <p class="materials-subtitle">Access comprehensive study resources for your engineering journey</p>
+        <div class="stats-badges">
+          <span class="stat-badge">📖 100+ Materials</span>
+          <span class="stat-badge">🎯 4 Subjects</span>
+          <span class="stat-badge">🚀 Free Access</span>
+        </div>
+      </div>
     </div>
 
-    <!-- Search Bar -->
-    <div class="search-container">
-      <input type="text" id="search-bar" class="search-input" placeholder="🔍 Search materials by name or subject..."
-        autocomplete="off" />
-      <button id="clear-search" class="clear-btn" style="display: none;">✕</button>
+    <!-- Advanced Search Bar -->
+    <div class="advanced-search-container">
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search-bar" class="advanced-search-input" 
+          placeholder="Search by material name, subject, or topic..." 
+          autocomplete="off" />
+        <button id="clear-search" class="clear-search-btn" style="display: none;">
+          <span>✕</span>
+        </button>
+      </div>
     </div>
 
-    <div id="materials-list">
+    <!-- Category Filter Pills -->
+    <div class="filter-pills-container">
+      <h3 class="filter-label">Filter by Subject:</h3>
+      <div class="filter-pills">
+        <button class="filter-pill active" data-category="all">
+          <span class="pill-icon">📚</span>
+          <span>All Subjects</span>
+        </button>
+        <button class="filter-pill" data-category="BEEC">
+          <span class="pill-icon">⚡</span>
+          <span>BEEC</span>
+        </button>
+        <button class="filter-pill" data-category="DM">
+          <span class="pill-icon">🔢</span>
+          <span>Discrete Math</span>
+        </button>
+        <button class="filter-pill" data-category="PSC">
+          <span class="pill-icon">💻</span>
+          <span>PSC</span>
+        </button>
+        <button class="filter-pill" data-category="DSD">
+          <span class="pill-icon">🔌</span>
+          <span>DSD</span>
+        </button>
+      </div>
+    </div>
+
+    <div id="materials-list" class="materials-grid">
       <!-- Loading Animation -->
-      <div class="loader-container">
-        <div class="loader"></div>
-        <p class="loader-text">Loading materials...</p>
+      <div class="advanced-loader-container">
+        <div class="advanced-loader">
+          <div class="loader-ring"></div>
+          <div class="loader-ring"></div>
+          <div class="loader-ring"></div>
+          <span class="loader-emoji">📚</span>
+        </div>
+        <p class="loader-text">Loading amazing materials...</p>
       </div>
     </div>
   </main>
@@ -94,6 +132,7 @@
 
   <!-- Scripts -->
   <script type="module" src="script.js"></script>
+  <script src="advanced-features.js"></script>
   <script src="chatbot.js"></script>
   <script src="ui.js"></script>
 

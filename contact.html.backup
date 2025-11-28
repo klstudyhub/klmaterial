@@ -31,7 +31,7 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
 
-  <link rel="stylesheet" href="style.css?v=4.0" />
+  <link rel="stylesheet" href="style.css?v=2.2" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
 
@@ -68,17 +68,16 @@
     }
 
     .contact-icon {
-      width: 60px;
-      height: 60px;
+      width: 40px;
+      height: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 15px;
-      font-size: 1.8rem;
+      border-radius: 50%;
+      font-size: 1.3rem;
       flex-shrink: 0;
       transition: transform 0.3s ease;
       color: white;
-      margin-bottom: 15px;
     }
   </style>
 </head>
@@ -96,75 +95,61 @@
     </nav>
   </header>
 
-  <main class="page-content contact-page">
-    <div class="contact-hero">
-      <h1 class="contact-title">Let's Connect 🤝</h1>
-      <p class="contact-subtitle">Have questions, suggestions, or just want to say hi? I'm always here to help!</p>
-    </div>
+  <main class="page-content">
+    <h1>📩 Contact Me</h1>
 
-    <div class="contact-grid">
-      <a href="mailto:praveenreddy8942@gmail.com" class="contact-card-link">
-        <div class="contact-card-modern">
+    <div class="contact-card">
+      <p>Feel free to reach out through any of the platforms below!
+        Whether it’s for materials, discussions, or feedback — I’d love to connect with you. 🚀</p>
+
+      <ul class="contact-info">
+        <li>
           <div class="contact-icon email-icon">
             <i class="fas fa-envelope"></i>
           </div>
-          <h3>Email</h3>
-          <p>praveenreddy8942@gmail.com</p>
-          <span class="contact-action">Send Message →</span>
-        </div>
-      </a>
+          <strong>Email:</strong>
+          <a href="mailto:praveenreddy8942@gmail.com">praveenreddy8942@gmail.com</a>
+        </li>
 
-      <a href="https://github.com/praveenreddy8942-debug" target="_blank" class="contact-card-link">
-        <div class="contact-card-modern">
+        <li>
           <div class="contact-icon github-icon">
             <i class="fab fa-github"></i>
           </div>
-          <h3>GitHub</h3>
-          <p>@praveenreddy8942-debug</p>
-          <span class="contact-action">View Profile →</span>
-        </div>
-      </a>
+          <strong>GitHub:</strong>
+          <a href="https://github.com/praveenreddy8942-debug" target="_blank">github.com/praveenreddy8942</a>
+        </li>
 
-      <a href="https://www.linkedin.com/in/praveen-reddy-37b0a6365?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app" 
-         target="_blank" class="contact-card-link">
-        <div class="contact-card-modern">
+        <li>
           <div class="contact-icon linkedin-icon">
             <i class="fab fa-linkedin-in"></i>
           </div>
-          <h3>LinkedIn</h3>
-          <p>Connect professionally</p>
-          <span class="contact-action">Connect →</span>
-        </div>
-      </a>
+          <strong>LinkedIn:</strong>
+          <a href="https://www.linkedin.com/in/praveen-reddy-37b0a6365?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app"
+            target="_blank">
+            linkedin.com/in/praveenreddy
+          </a>
+        </li>
 
-      <a href="https://facebook.com/share/1FbC72ZtwF/?mibextid=wwXIfr" target="_blank" class="contact-card-link">
-        <div class="contact-card-modern">
+        <li>
           <div class="contact-icon facebook-icon">
             <i class="fab fa-facebook-f"></i>
           </div>
-          <h3>Facebook</h3>
-          <p>Follow for updates</p>
-          <span class="contact-action">Follow →</span>
-        </div>
-      </a>
+          <strong>Facebook:</strong>
+          <a href="https://facebook.com/share/1FbC72ZtwF/?mibextid=wwXIfr" target="_blank">
+            facebook.com/share/1FbC72ZtwF
+          </a>
+        </li>
 
-      <a href="https://chat.whatsapp.com/LWNBaMmNNuSH08ztjFg39B?mode=wwt" target="_blank" class="contact-card-link">
-        <div class="contact-card-modern whatsapp-highlight">
+        <li>
           <div class="contact-icon whatsapp-icon">
             <i class="fab fa-whatsapp"></i>
           </div>
-          <h3>WhatsApp Group</h3>
-          <p>Join our study community</p>
-          <span class="contact-action">Join Now →</span>
-        </div>
-      </a>
-    </div>
-
-    <div class="contact-footer-section">
-      <div class="response-time">
-        <span class="response-icon">⚡</span>
-        <p><strong>Response Time:</strong> Usually within 24 hours</p>
-      </div>
+          <strong>WhatsApp Group:</strong>
+          <a href="https://chat.whatsapp.com/LWNBaMmNNuSH08ztjFg39B?mode=wwt" target="_blank">
+            Join Our Study Group
+          </a>
+        </li>
+      </ul>
     </div>
   </main>
 
@@ -175,7 +160,6 @@
   <!-- Back to Top Button -->
   <button id="backToTop" title="Back to top">↑</button>
 
-  <script src="advanced-features.js"></script>
   <script src="ui.js"></script>
 </body>
 

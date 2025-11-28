@@ -21,7 +21,8 @@ const storage = getStorage(app);
 const materialsList = document.getElementById("materials-list");
 const searchBar = document.getElementById("search-bar");
 const clearBtn = document.getElementById("clear-search");
-const filterButtons = document.querySelectorAll(".filter-btn");
+const filterButtons = document.querySelectorAll(".filter-pill");
+const filterContainer = document.querySelector('.filter-pills-container');
 const storageRef = ref(storage);
 
 // Subject mapping (file name keywords → subject titles)
@@ -64,19 +65,26 @@ if (filterButtons.length > 0) {
 }
 
 // Search functionality
+// Debounced search input
+let searchDebounceId = null;
 if (searchBar) {
   searchBar.addEventListener("input", (e) => {
-    const query = e.target.value.toLowerCase().trim();
+    const queryRaw = e.target.value;
+    const query = queryRaw.toLowerCase().trim();
     if (clearBtn) clearBtn.style.display = query ? "block" : "none";
 
-    // Reset category filter when searching
-    if (query && filterButtons.length > 0) {
-      filterButtons.forEach(b => b.classList.remove("active"));
-      filterButtons[0].classList.add("active");
-      activeCategory = "all";
+    if (searchDebounceId) {
+      clearTimeout(searchDebounceId);
     }
-
-    filterMaterials(query);
+    searchDebounceId = setTimeout(() => {
+      // Reset category filter when searching
+      if (query && filterButtons.length > 0) {
+        filterButtons.forEach(b => b.classList.remove("active"));
+        filterButtons[0].classList.add("active");
+        activeCategory = "all";
+      }
+      filterMaterials(query);
+    }, 200);
   });
 }
 
@@ -128,23 +136,92 @@ function filterMaterials(query) {
 function displayMaterials(grouped) {
   if (!materialsList) return;
   materialsList.innerHTML = "";
+
   for (const subject in grouped) {
-    const section = document.createElement("section");
-    section.className = "material-box";
-    section.innerHTML = `<h2>${subject}</h2>`;
+    // Subject Card wrapper
+    const subjectCard = document.createElement("div");
+    subjectCard.className = "subject-card";
+
+    // Header
+    const header = document.createElement("div");
+    header.className = "subject-header";
+    const subjectIcon = getSubjectIcon(subject);
+    header.innerHTML = `
+      <div class="subject-title-wrap">
+        <span class="subject-icon">${subjectIcon}</span>
+        <h2 class="subject-title">${subject}</h2>
+      </div>
+      <div class="subject-meta">
+        <span class="files-count">${grouped[subject].length} files</span>
+      </div>
+    `;
+
+    // Body (materials grid)
+    const body = document.createElement("div");
+    body.className = "subject-body";
+    const grid = document.createElement("div");
+    grid.className = "materials-cards-grid";
+
     grouped[subject].forEach((itemRef) => {
       getDownloadURL(itemRef).then((url) => {
         const name = itemRef.name.replace(/_/g, " ");
-        const link = document.createElement("a");
-        link.href = url;
-        link.textContent = "📄 " + name;
-        link.target = "_blank";
-        link.className = "download-btn";
-        section.appendChild(link);
+        const fileExt = name.split('.').pop().toUpperCase();
+
+        const card = document.createElement("div");
+        card.className = "material-card";
+        card.innerHTML = `
+          <div class="card-header">
+            <span class="file-icon">${getFileIcon(fileExt)}</span>
+            <span class="file-type-badge">${fileExt}</span>
+          </div>
+          <div class="card-body">
+            <h3 class="material-name">${name}</h3>
+          </div>
+          <div class="card-footer">
+            <a href="${url}" target="_blank" class="download-link">
+              <span class="download-icon">⬇</span>
+              <span>Download</span>
+            </a>
+            <a href="${url}" target="_blank" class="view-link">
+              <span>👁 View</span>
+            </a>
+          </div>
+        `;
+        grid.appendChild(card);
       });
     });
-    materialsList.appendChild(section);
+    body.appendChild(grid);
+
+    // Assemble card
+    subjectCard.appendChild(header);
+    subjectCard.appendChild(body);
+
+    materialsList.appendChild(subjectCard);
   }
+}
+
+// Helper function to get subject icon
+function getSubjectIcon(subject) {
+  if (subject.includes('BEEC')) return '⚡';
+  if (subject.includes('DM') || subject.includes('Discrete')) return '🔢';
+  if (subject.includes('PSC') || subject.includes('Problem')) return '💻';
+  if (subject.includes('DSD') || subject.includes('Digital')) return '🔌';
+  return '📚';
+}
+
+// Helper function to get file icon
+function getFileIcon(ext) {
+  const icons = {
+    'PDF': '📄',
+    'DOC': '📝',
+    'DOCX': '📝',
+    'PPT': '📊',
+    'PPTX': '📊',
+    'ZIP': '📦',
+    'RAR': '📦',
+    'TXT': '📃'
+  };
+  return icons[ext] || '📄';
 }
 
 // Fetch and display files

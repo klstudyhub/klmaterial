@@ -32,7 +32,7 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
 
-  <link rel="stylesheet" href="style.css?v=2.2">
+  <link rel="stylesheet" href="style.css?v=4.0" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
 
   <!-- Google tag (gtag.js) -->
@@ -60,138 +60,135 @@
   </header>
 
   <main>
-    <section>
-      <p><em>“Records and assignments will be forgotten. Skills stay. Focus on them.”</em></p>
-      <!-- 📘 Learning & Skill Development Links Section -->
+    <section class="roadmap-container">
+      <div class="roadmap-header">
+        <h1>🎯 4-Year B.Tech Roadmap</h1>
+        <p class="roadmap-quote">"Records and assignments will be forgotten. Skills stay. Focus on them."</p>
+      </div>
+
+      <!--📘 Learning & Skill Development Links Section -->
       <section class="learning-section">
         <h2>📘 Learning & Skill Development Links</h2>
 
-        <div class="resource">
-          <h3>🗺️ 1. Roadmap.sh</h3>
-          <p>
-            🔗 <a href="https://roadmap.sh" target="_blank">Visit Roadmap.sh</a><br>
-            💡 <strong>Purpose:</strong> Explore developer roadmaps for different career paths (Frontend, Backend,
-            DevOps, etc.)<br>
-            Understand what skills, tools, and technologies to learn step-by-step.<br>
-            ✅ <strong>Best For:</strong> Beginners to advanced learners who want structured guidance.
-          </p>
-        </div>
+        <div class="resources-grid">
+          <div class="resource-card">
+            <div class="resource-icon">🗺️</div>
+            <h3>Roadmap.sh</h3>
+            <p>
+              <strong>Purpose:</strong> Explore developer roadmaps for different career paths (Frontend, Backend,
+              DevOps, etc.). Understand what skills, tools, and technologies to learn step-by-step.
+            </p>
+            <p><strong>Best For:</strong> Beginners to advanced learners who want structured guidance.</p>
+            <a href="https://roadmap.sh" target="_blank" class="resource-link">Visit Roadmap.sh →</a>
+          </div>
 
-        <div class="resource">
-          <h3>🎓 2. Udemy</h3>
-          <p>
-            🔗 <a href="https://www.udemy.com/" target="_blank">Visit Udemy</a><br>
-            💡 <strong>Purpose:</strong> Take affordable online courses on programming, design, productivity, and
-            more.<br>
-            Learn from industry experts at your own pace.<br>
-            ✅ <strong>Best For:</strong> Deep learning of specific skills with practical projects.
-          </p>
+          <div class="resource-card">
+            <div class="resource-icon">🎓</div>
+            <h3>Udemy</h3>
+            <p>
+              <strong>Purpose:</strong> Take affordable online courses on programming, design, productivity, and
+              more. Learn from industry experts at your own pace.
+            </p>
+            <p><strong>Best For:</strong> Deep learning of specific skills with practical projects.</p>
+            <a href="https://www.udemy.com/" target="_blank" class="resource-link">Visit Udemy →</a>
+          </div>
         </div>
       </section>
 
-      <!-- 💅 Styles -->
-      <style>
-        .learning-section {
-          max-width: 800px;
-          margin: 60px auto;
-          padding: 25px 30px;
-          border-radius: 16px;
-          background: rgba(255, 255, 255, 0.05);
-          box-shadow: 0 0 25px rgba(0, 212, 255, 0.2);
-          color: #e0f7ff;
-          text-align: left;
-          line-height: 1.6;
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
+      <!-- Year Cards -->
+      <div class="years-grid">
+        <!-- 1st Year Card -->
+        <div class="year-card">
+          <div class="year-badge">Year 1</div>
+          <div class="year-icon">🧱</div>
+          <h2>Build Your Base</h2>
+          <div class="year-goal">
+            <strong>Goal:</strong> Learn 1 programming language + basics
+          </div>
+          <ul class="year-tasks">
+            <li>Learn Python / C / Java (pick one)</li>
+            <li>Understand basics: loops, conditions, arrays</li>
+            <li>Start solving problems (HackerRank, LeetCode Easy) from DSA Strivers A to Z</li>
+            <li>Build 1–2 small projects (like BMI Calculator, Calculator App)</li>
+            <li>Explore GitHub & push your code</li>
+          </ul>
+          <div class="year-focus">
+            <span class="focus-label">Focus:</span> Learn. Practice. Repeat.
+          </div>
+        </div>
 
-        .learning-section:hover {
-          transform: scale(1.01);
-          box-shadow: 0 0 35px rgba(0, 212, 255, 0.4);
-        }
+        <!-- 2nd Year Card -->
+        <div class="year-card">
+          <div class="year-badge">Year 2</div>
+          <div class="year-icon">🚀</div>
+          <h2>Build Projects + Start Coding Seriously</h2>
+          <div class="year-goal">
+            <strong>Goal:</strong> Get hands-on + prepare for internships
+          </div>
+          <ul class="year-tasks">
+            <li>Pick a dev path: Web / App / ML / DSA</li>
+            <li>Build 2–3 real projects (host on GitHub or portfolio)</li>
+            <li>Start LeetCode, solve DSA questions regularly</li>
+            <li>Create LinkedIn, share your projects</li>
+            <li>Join college fests, hackathons, coding groups</li>
+          </ul>
+          <div class="year-focus">
+            <span class="focus-label">Focus:</span> Build. Share. Connect.
+          </div>
+        </div>
 
-        .learning-section h2 {
-          text-align: center;
-          color: #00bfff;
-          margin-bottom: 25px;
-          font-size: 1.8rem;
-          text-shadow: 0 0 10px rgba(0, 212, 255, 0.6);
-        }
+        <!-- 3rd Year Card -->
+        <div class="year-card">
+          <div class="year-badge">Year 3</div>
+          <div class="year-icon">🎯</div>
+          <h2>Crack Internship</h2>
+          <div class="year-goal">
+            <strong>Goal:</strong> Get an internship that proves your skills + keep building real-time projects
+          </div>
+          <ul class="year-tasks">
+            <li>Apply for internships (from June onwards)</li>
+            <li>Prepare resume + LinkedIn + GitHub</li>
+            <li>Focus on intermediate DSA + dev skills</li>
+            <li>Give mock interviews (PrepInsta / InterviewBit)</li>
+            <li>Apply on LinkedIn, Internshala, AngelList</li>
+          </ul>
+          <div class="year-focus">
+            <span class="focus-label">Focus:</span> Apply. Interview. Intern.
+          </div>
+        </div>
 
-        .learning-section h3 {
-          color: #80e0ff;
-          margin-top: 20px;
-        }
+        <!-- 4th Year Card -->
+        <div class="year-card">
+          <div class="year-badge">Year 4</div>
+          <div class="year-icon">💼</div>
+          <h2>Get Placed</h2>
+          <div class="year-goal">
+            <strong>Goal:</strong> Land a job with confidence
+          </div>
+          <ul class="year-tasks">
+            <li>Revise DSA + all your projects</li>
+            <li>Practice past interview questions</li>
+            <li>Apply for jobs (on-campus + off-campus)</li>
+            <li>Use your internship experience in interviews</li>
+            <li>Keep building and learning till you get the offer</li>
+          </ul>
+          <div class="year-focus">
+            <span class="focus-label">Focus:</span> Revise. Apply. Win.
+          </div>
+        </div>
+      </div>
 
-        .learning-section a {
-          color: #00d4ff;
-          text-decoration: underline;
-          transition: color 0.3s ease;
-        }
-
-        .learning-section a:hover {
-          color: #ffffff;
-        }
-
-        .resource {
-          background: rgba(255, 255, 255, 0.03);
-          border-left: 4px solid #00bfff;
-          padding: 15px 20px;
-          border-radius: 8px;
-          margin-bottom: 20px;
-        }
-      </style>
-
-      <h2>🧱 1st Year – Build Your Base</h2>
-      <ul>
-        <li><strong>Goal:</strong> Learn 1 programming language + basics</li>
-        <li>Learn Python / C / Java (pick one)</li>
-        <li>Understand basics: loops, conditions, arrays</li>
-        <li>Start solving problems (HackerRank, LeetCode Easy) from DSA Strivers A to Z</li>
-        <li>Build 1–2 small projects (like BMI Calculator, Calculator App)</li>
-        <li>Explore GitHub & push your code</li>
-      </ul>
-      <p>✅ <strong>Focus:</strong> Learn. Practice. Repeat.</p>
-
-      <h2>🚀 2nd Year – Build Projects + Start Coding Seriously</h2>
-      <ul>
-        <li><strong>Goal:</strong> Get hands-on + prepare for internships</li>
-        <li>Pick a dev path: Web / App / ML / DSA</li>
-        <li>Build 2–3 real projects (host on GitHub or portfolio)</li>
-        <li>Start LeetCode, solve DSA questions regularly</li>
-        <li>Create LinkedIn, share your projects</li>
-        <li>Join college fests, hackathons, coding groups</li>
-      </ul>
-      <p>✅ <strong>Focus:</strong> Build. Share. Connect.</p>
-
-      <h2>🎯 3rd Year – Crack Internship</h2>
-      <ul>
-        <li><strong>Goal:</strong> Get an internship that proves your skills + keep building real-time projects</li>
-        <li>Apply for internships (from June onwards)</li>
-        <li>Prepare resume + LinkedIn + GitHub</li>
-        <li>Focus on intermediate DSA + dev skills</li>
-        <li>Give mock interviews (PrepInsta / InterviewBit)</li>
-        <li>Apply on LinkedIn, Internshala, AngelList</li>
-      </ul>
-      <p>✅ <strong>Focus:</strong> Apply. Interview. Intern.</p>
-
-      <h2>💼 4th Year – Get Placed</h2>
-      <ul>
-        <li><strong>Goal:</strong> Land a job with confidence</li>
-        <li>Revise DSA + all your projects</li>
-        <li>Practice past interview questions</li>
-        <li>Apply for jobs (on-campus + off-campus)</li>
-        <li>Use your internship experience in interviews</li>
-        <li>Keep building and learning till you get the offer</li>
-      </ul>
-      <p>✅ <strong>Focus:</strong> Revise. Apply. Win.</p>
-
-      <h3>🔁 Repeat Every Year:</h3>
-      <ul>
-        <li>🎯 Remember your goal at the start of every semester</li>
-        <li>💻 Keep learning and building</li>
-        <li>🔗 Stay active on LinkedIn</li>
-        <li>🧠 Don’t just study. Practice what matters.</li>
-      </ul>
+      <!-- Repeat Every Year Card -->
+      <div class="repeat-card">
+        <div class="repeat-icon">🔁</div>
+        <h3>Repeat Every Year</h3>
+        <ul class="repeat-list">
+          <li>🎯 Remember your goal at the start of every semester</li>
+          <li>💻 Keep learning and building</li>
+          <li>🔗 Stay active on LinkedIn</li>
+          <li>🧠 Don't just study. Practice what matters.</li>
+        </ul>
+      </div>
     </section>
   </main>
 
@@ -202,6 +199,7 @@
   <!-- Back to Top Button -->
   <button id="backToTop" title="Back to top">↑</button>
 
+  <script src="advanced-features.js"></script>
   <script src="ui.js"></script>
 </body>
 
