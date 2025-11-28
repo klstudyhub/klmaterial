@@ -242,18 +242,14 @@ async function loadMaterials() {
 
         const files = await response.json();
         
-        // Filter only files (not directories) and exclude README.md
-        const materialFiles = files.filter(file => 
-          file.type === 'file' && 
-          file.name.toLowerCase() !== 'readme.md'
-        );
+        // Filter only files (not directories)
+        const materialFiles = files.filter(file => file.type === 'file');
         
         if (materialFiles.length > 0) {
           grouped[config.name] = materialFiles.map(file => ({
             name: file.name,
             folder: config.folder,
-            size: file.size,
-            downloadUrl: file.download_url
+            size: file.size
           }));
         }
       } catch (error) {
