@@ -162,65 +162,52 @@ function displayMaterials(grouped) {
     const grid = document.createElement("div");
     grid.className = "materials-cards-grid";
 
+    // Create cards for all files immediately (don't wait for URLs)
     grouped[subject].forEach((itemRef) => {
-      // Try to get download URL with error handling
+      const name = itemRef.name.replace(/_/g, " ");
+      const fileExt = name.split('.').pop().toUpperCase();
+      const encodedName = encodeURIComponent(itemRef.name);
+      
+      // Create direct download URL
+      const directUrl = `https://firebasestorage.googleapis.com/v0/b/klmaterials.firebasestorage.app/o/${encodedName}?alt=media`;
+      
+      const card = document.createElement("div");
+      card.className = "material-card";
+      card.setAttribute('data-file', itemRef.name);
+      
+      card.innerHTML = `
+        <div class="card-header">
+          <span class="file-icon">${getFileIcon(fileExt)}</span>
+          <span class="file-type-badge">${fileExt}</span>
+        </div>
+        <div class="card-body">
+          <h3 class="material-name">${name}</h3>
+        </div>
+        <div class="card-footer">
+          <a href="${directUrl}" target="_blank" class="download-link">
+            <span class="download-icon">⬇</span>
+            <span>Download</span>
+          </a>
+          <a href="${directUrl}" target="_blank" class="view-link">
+            <span>👁 View</span>
+          </a>
+        </div>
+      `;
+      
+      grid.appendChild(card);
+      
+      // Try to get proper download URL in background (optional enhancement)
       getDownloadURL(itemRef)
         .then((url) => {
-          const name = itemRef.name.replace(/_/g, " ");
-          const fileExt = name.split('.').pop().toUpperCase();
-
-          const card = document.createElement("div");
-          card.className = "material-card";
-          card.innerHTML = `
-            <div class="card-header">
-              <span class="file-icon">${getFileIcon(fileExt)}</span>
-              <span class="file-type-badge">${fileExt}</span>
-            </div>
-            <div class="card-body">
-              <h3 class="material-name">${name}</h3>
-            </div>
-            <div class="card-footer">
-              <a href="${url}" target="_blank" class="download-link">
-                <span class="download-icon">⬇</span>
-                <span>Download</span>
-              </a>
-              <a href="${url}" target="_blank" class="view-link">
-                <span>👁 View</span>
-              </a>
-            </div>
-          `;
-          grid.appendChild(card);
+          // Update card with proper URL if successful
+          const downloadLink = card.querySelector('.download-link');
+          const viewLink = card.querySelector('.view-link');
+          if (downloadLink) downloadLink.href = url;
+          if (viewLink) viewLink.href = url;
         })
         .catch((error) => {
-          console.error(`Error getting URL for ${itemRef.name}:`, error);
-          
-          // Create fallback card showing file exists but can't be accessed
-          const name = itemRef.name.replace(/_/g, " ");
-          const fileExt = name.split('.').pop().toUpperCase();
-          const encodedName = encodeURIComponent(itemRef.name);
-          
-          // Create direct download URL (fallback)
-          const directUrl = `https://firebasestorage.googleapis.com/v0/b/klmaterials.firebasestorage.app/o/${encodedName}?alt=media`;
-          
-          const card = document.createElement("div");
-          card.className = "material-card";
-          card.innerHTML = `
-            <div class="card-header">
-              <span class="file-icon">${getFileIcon(fileExt)}</span>
-              <span class="file-type-badge">${fileExt}</span>
-            </div>
-            <div class="card-body">
-              <h3 class="material-name">${name}</h3>
-              <p style="color: #ff6b6b; font-size: 0.8em; margin-top: 5px;">⚠️ Access restricted</p>
-            </div>
-            <div class="card-footer">
-              <a href="${directUrl}" target="_blank" class="download-link">
-                <span class="download-icon">⬇</span>
-                <span>Try Download</span>
-              </a>
-            </div>
-          `;
-          grid.appendChild(card);
+          console.warn(`Using direct URL for ${itemRef.name} due to:`, error.code);
+          // Card already has direct URL, so nothing to do
         });
     });
     body.appendChild(grid);
