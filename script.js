@@ -239,10 +239,66 @@ if (materialsList) {
       });
 
       allMaterials = grouped; // Store for search
-      displayMaterials(grouped);
+      
+      // Check if any materials were found
+      if (Object.keys(grouped).length === 0) {
+        materialsList.innerHTML = `
+          <div class="no-results">
+            <h3>📭 No Materials Found</h3>
+            <p>No files are currently in Firebase Storage.</p>
+            <p style="margin-top: 15px; font-size: 0.9rem; color: var(--text-secondary);">
+              Please upload files to your Firebase Storage bucket: <strong>klmaterials.firebasestorage.app</strong>
+            </p>
+          </div>
+        `;
+      } else {
+        displayMaterials(grouped);
+      }
     })
     .catch((error) => {
-      console.error(error);
-      materialsList.innerHTML = `<p class="no-results">⚠️ Error loading materials. Check Firebase config or rules.</p>`;
+      console.error("Firebase Error:", error);
+      console.error("Error Code:", error.code);
+      console.error("Error Message:", error.message);
+      
+      let errorMessage = "⚠️ Error loading materials.";
+      let errorDetails = "";
+      
+      if (error.code === 'storage/unauthorized') {
+        errorDetails = `
+          <p><strong>Firebase Storage Rules Issue:</strong></p>
+          <p>Your Firebase Storage security rules are blocking access.</p>
+          <ol style="text-align: left; max-width: 600px; margin: 20px auto;">
+            <li>Go to <a href="https://console.firebase.google.com/project/klmaterials/storage" target="_blank" style="color: var(--accent-primary);">Firebase Console → Storage</a></li>
+            <li>Click on "Rules" tab</li>
+            <li>Replace with:<br>
+              <code style="display: block; background: rgba(0,0,0,0.3); padding: 10px; margin: 10px 0; border-radius: 5px; text-align: left;">
+rules_version = '2';<br>
+service firebase.storage {<br>
+&nbsp;&nbsp;match /b/{bucket}/o {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;match /{allPaths=**} {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;allow read: if true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;allow write: if request.auth != null;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;}<br>
+}
+              </code>
+            </li>
+            <li>Click "Publish"</li>
+          </ol>
+        `;
+      } else if (error.code === 'storage/object-not-found') {
+        errorDetails = "<p>The storage bucket exists but no files were found. Please upload some materials.</p>";
+      } else if (error.code === 'storage/bucket-not-found') {
+        errorDetails = "<p>Firebase Storage bucket not found. Please check your Firebase configuration.</p>";
+      } else {
+        errorDetails = `<p>Error: ${error.message}</p><p>Code: ${error.code}</p>`;
+      }
+      
+      materialsList.innerHTML = `
+        <div class="no-results" style="max-width: 800px; margin: 0 auto;">
+          <h3>${errorMessage}</h3>
+          ${errorDetails}
+        </div>
+      `;
     });
 }
