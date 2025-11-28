@@ -236,6 +236,20 @@ async function loadMaterials() {
         const response = await fetch(getGitHubAPIUrl(config.folder));
         
         if (!response.ok) {
+          // Check for rate limiting
+          if (response.status === 403) {
+            const errorData = await response.json();
+            if (errorData.message && errorData.message.includes('rate limit')) {
+              materialsList.innerHTML = `
+                <div class="no-results">
+                  <h3>⏱️ GitHub API Rate Limit Reached</h3>
+                  <p>Please wait 10-15 minutes and refresh the page.</p>
+                  <p style="font-size: 0.9rem; opacity: 0.8;">The GitHub API has a limit on requests. Your materials are safe and will load after the limit resets.</p>
+                </div>
+              `;
+              return;
+            }
+          }
           console.warn(`Folder ${config.folder} not found or empty`);
           continue;
         }
