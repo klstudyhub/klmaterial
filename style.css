@@ -396,12 +396,23 @@ footer {
 @media (max-width: 768px) {
   /* Ensure floating desktop header becomes full-width bar on mobile */
   header {
-    transform: none;
+    position: sticky;
+    top: 0;
     left: 0;
     right: 0;
     width: 100%;
     max-width: none;
     border-radius: 16px;
+    z-index: 1000; /* Below theme toggle (10001) */
+    background: linear-gradient(135deg, rgba(0, 119, 255, 0.25), rgba(0, 212, 255, 0.25));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  /* prevent header movement on tap */
+  header:hover { 
+    transform: none !important; 
+    background: linear-gradient(135deg, rgba(0, 119, 255, 0.25), rgba(0, 212, 255, 0.25));
   }
 
   nav {
@@ -419,18 +430,6 @@ footer {
     scrollbar-width: none; /* Firefox */
   }
   nav ul::-webkit-scrollbar { display: none; } /* WebKit */
-  /* Mobile header/nav fixes to prevent overlap */
-  header {
-    position: sticky;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000; /* keep header above content */
-    backdrop-filter: blur(8px);
-  }
-
-  /* prevent header movement on tap */
-  header:hover { transform: none; }
 
   body { padding-top: 0; }
 
@@ -2893,7 +2892,7 @@ html[data-theme="light"] .no-results {
   height: 50px;
   border-radius: 50%;
   cursor: pointer;
-  z-index: 10000;
+  z-index: 10001; /* Above sticky header (z-index: 1000) */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3074,10 +3073,11 @@ html[data-theme="light"] .no-results {
 /* 9. Enhanced Mobile Responsiveness for Advanced Features */
 @media (max-width: 768px) {
   .theme-toggle {
-    top: 10px;
-    right: 10px;
-    width: 45px;
-    height: 45px;
+    top: 8px;
+    right: 8px;
+    width: 44px;
+    height: 44px;
+    z-index: 10001; /* Stay above sticky header */
   }
 
   .custom-cursor,
@@ -4808,12 +4808,13 @@ main.materials-container {
     font-size: 0.9rem;
   }
 
-  /* Mobile theme toggle */
+  /* Mobile theme toggle - positioned to avoid header overlap */
   .theme-toggle {
-    top: 10px;
-    right: 10px;
-    width: 45px;
-    height: 45px;
+    top: 6px;
+    right: 6px;
+    width: 42px;
+    height: 42px;
+    z-index: 10001; /* Above sticky header */
   }
 
   .theme-toggle svg {
@@ -4821,8 +4822,9 @@ main.materials-container {
     height: 20px;
   }
 
-  /* Ensure theme toggle doesn't interfere */
-  .theme-toggle:hover {
+  /* Ensure theme toggle doesn't interfere on tap */
+  .theme-toggle:hover,
+  .theme-toggle:active {
     transform: scale(1.05);
   }
 
