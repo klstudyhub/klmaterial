@@ -404,15 +404,12 @@ footer {
     width: 100%;
   }
 
-  /* Make each nav link behave like a responsive pill and avoid overlaps */
+  /* Reverted mobile nav link styling (auto width inline pills) */
   nav a {
-    flex: 1 1 100%;               /* single column, full width links */
-    max-width: none;              /* allow full width */
-    min-width: 0;                 /* remove forced min width */
-    padding: 8px 10px;            /* slightly smaller for compact feel */
-    font-size: 0.85rem;           /* reduced font size */
+    display: inline-flex;
+    padding: 8px 12px;
+    font-size: 0.95rem;
     line-height: 1.2;
-    white-space: nowrap;          /* keep labels on one line inside pill */
   }
 
   /* If there are too many links, allow horizontal scroll without visual scrollbar */
