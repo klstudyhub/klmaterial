@@ -335,6 +335,31 @@ footer {
 
 /* Responsive */
 @media (max-width: 768px) {
+  /* Ensure floating desktop header becomes full-width bar on mobile */
+  header {
+    transform: none;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: none;
+    border-radius: 16px;
+  }
+
+  nav {
+    gap: 6px;
+    padding: 4px 8px;
+  }
+
+  /* Make nav list wrap/scroll safely */
+  nav ul {
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+  }
+  nav ul::-webkit-scrollbar { display: none; } /* WebKit */
   /* Mobile header/nav fixes to prevent overlap */
   header {
     position: fixed;
