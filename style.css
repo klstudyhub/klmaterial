@@ -3859,6 +3859,9 @@ main.materials-container {
   overflow: hidden;
   transition: all 0.4s ease;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 200px;
 }
 
 .material-card::before {
@@ -3908,6 +3911,7 @@ main.materials-container {
 
 .card-body {
   padding: 20px;
+  flex: 1 1 auto;
 }
 
 .material-name {
@@ -3923,6 +3927,7 @@ main.materials-container {
   display: flex;
   gap: 10px;
   border-top: 1px solid rgba(0, 212, 255, 0.2);
+  margin-top: auto;
 }
 
 /* When only download button exists (no view button) */
@@ -4135,12 +4140,14 @@ main.materials-container {
     flex-direction: column;
     gap: 10px;
     padding: 15px;
+    margin-top: auto;
   }
 
   .download-link {
     width: 100%;
     padding: 14px 20px;
     font-size: 1rem;
+    display: block;
   }
 
   .view-link {
