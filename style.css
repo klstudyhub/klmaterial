@@ -394,23 +394,32 @@ footer {
 
 /* Responsive */
 @media (max-width: 768px) {
-  /* Mobile-first full, non-overlapping navbar layout */
+  /* Mobile horizontal nav: single row, scrollable if overflow */
   .nav-track {
     display: flex;
-    flex-wrap: wrap;              /* allow links to wrap to next line */
-    gap: 8px;                     /* breathing space between links */
-    justify-content: center;      /* center the wrapped rows */
-    align-items: stretch;
+    flex-wrap: nowrap;            /* keep in one line */
+    gap: 12px;                    /* spacing between pills */
+    justify-content: flex-start;
+    align-items: center;
     width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;        /* Firefox */
   }
+  .nav-track::-webkit-scrollbar { display: none; }
 
-  /* Reverted mobile nav link styling (auto width inline pills) */
+  /* Horizontal pill links */
   nav a {
+    flex: 0 0 auto;               /* prevent stretching */
     display: inline-flex;
-    padding: 8px 12px;
-    font-size: 0.95rem;
+    padding: 10px 18px;
+    font-size: 0.9rem;
     line-height: 1.2;
+    white-space: nowrap;
+    border-radius: 24px;
   }
+  /* Slightly reduce header padding for compact bar */
+  header { padding: 6px 14px; }
 
   /* If there are too many links, allow horizontal scroll without visual scrollbar */
   nav {
