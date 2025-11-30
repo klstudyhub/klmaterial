@@ -235,9 +235,66 @@ body::after {
   border: 3px solid var(--accent-primary);
   box-shadow: 0 0 25px rgba(0, 212, 255, 0.6);
   margin-bottom: 20px;
-  animation: floatGlow 4s ease-in-out infinite;
+  position: relative;
+  animation: floatGlowRotate 6s ease-in-out infinite;
+  transition: transform 0.3s ease;
 }
 
+.profile-pic::before {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, 
+    rgba(0, 212, 255, 0.4), 
+    rgba(0, 153, 255, 0.4), 
+    rgba(0, 255, 255, 0.4),
+    rgba(0, 119, 255, 0.4)
+  );
+  background-size: 300% 300%;
+  animation: gradientRotate 4s ease infinite;
+  z-index: -1;
+  filter: blur(8px);
+}
+
+.profile-pic:hover {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 0 40px rgba(0, 212, 255, 1), 
+              0 0 80px rgba(0, 255, 255, 0.6);
+}
+
+@keyframes floatGlowRotate {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
+  }
+  25% {
+    transform: translateY(-8px) rotate(2deg);
+    box-shadow: 0 0 30px rgba(0, 212, 255, 0.8);
+  }
+  50% {
+    transform: translateY(-12px) rotate(0deg);
+    box-shadow: 0 0 35px rgba(0, 255, 255, 0.9);
+  }
+  75% {
+    transform: translateY(-8px) rotate(-2deg);
+    box-shadow: 0 0 30px rgba(0, 212, 255, 0.8);
+  }
+}
+
+@keyframes gradientRotate {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Preserve old floatGlow for compatibility */
 @keyframes floatGlow {
 
   0%,
@@ -4476,7 +4533,15 @@ main.materials-container {
     width: 120px;
     height: 120px;
     margin-bottom: 15px;
-    animation-duration: 10s !important; /* Very slow, gentle float animation */
+    animation: floatGlowRotate 10s ease-in-out infinite !important; /* Slower on mobile */
+  }
+
+  .profile-pic::before {
+    animation-duration: 6s; /* Slower gradient rotation on mobile */
+  }
+
+  .profile-pic:active {
+    transform: scale(1.05) rotate(3deg); /* Touch feedback instead of hover */
   }
 
   /* Slower typing animation on mobile */
