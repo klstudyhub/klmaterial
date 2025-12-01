@@ -5030,10 +5030,12 @@ main.materials-container {
     z-index: 1999; /* Below header */
     overflow-y: auto; /* Scrollable if content overflows */
     box-shadow: 10px 0 50px rgba(0, 0, 0, 0.7);
+    visibility: visible; /* Always visible, just moved off-screen */
   }
 
   body.nav-active .nav-track {
     left: 0;
+    visibility: visible !important;
   }
 
   /* Dark Overlay Backdrop */
@@ -5050,15 +5052,20 @@ main.materials-container {
     animation: fadeIn 0.3s ease;
   }
 
-  /* Ensure aria-hidden controls visibility and that links are always readable */
+  /* Ensure aria-hidden controls pointer events but NOT visibility */
   #mobile-nav[aria-hidden="true"] {
-    visibility: hidden;
     pointer-events: none;
   }
 
   #mobile-nav[aria-hidden="false"] {
-    visibility: visible;
     pointer-events: auto;
+  }
+
+  /* When menu is active, force everything visible */
+  body.nav-active #mobile-nav,
+  body.nav-active .nav-track {
+    visibility: visible !important;
+    opacity: 1 !important;
   }
 
   /* Defensive: force nav link text to be visible (override gradient/text-clip elsewhere)
@@ -5070,6 +5077,8 @@ main.materials-container {
     background-clip: border-box !important;
     -webkit-background-clip: border-box !important;
     text-shadow: none !important;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
 
   /* Navigation Links: Large Touch Targets (only inside drawer) */
