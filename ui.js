@@ -198,41 +198,69 @@ document.addEventListener('DOMContentLoaded', () => {
         // run initially
         updateAriaCurrent();
 
-        // Keyboard controls: Escape to close, trap focus inside the menu
-        document.addEventListener('keydown', (e) => {
-            if (!body.classList.contains('nav-active')) return;
-            if (e.key === 'Escape') {
-                e.preventDefault();
-                closeMenu();
-                return;
+        // Keyboard controls: Escape to close. We'll add a robust focus trap on open.
+        let _previouslyFocused = null;
+        let _trapListener = null;
+
+        function activateFocusTrap() {
+            _previouslyFocused = document.activeElement;
+            const focusableSelector = 'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+            const container = nav || document.body;
+
+            function getFocusable() {
+                return Array.from(container.querySelectorAll(focusableSelector)).filter(el => el.offsetParent !== null);
             }
 
-            if (e.key === 'Tab') {
-                // compute focusable controls dynamically (hamburger + visible menu items)
-                const visibleItems = nav ? Array.from(nav.querySelectorAll('a[role="menuitem"]')) : [];
-                const focusable = [hamburger].concat(visibleItems);
-                const current = document.activeElement;
-                const idx = focusable.indexOf(current);
-                if (e.shiftKey) {
-                    // shift+tab
-                    if (idx === 0 || idx === -1) {
-                        e.preventDefault();
-                        focusable[focusable.length - 1].focus();
+            _trapListener = function (e) {
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    closeMenu();
+                    return;
+                }
+
+                if (e.key === 'Tab') {
+                    const focusable = getFocusable();
+                    if (focusable.length === 0) return;
+                    const first = focusable[0];
+                    const last = focusable[focusable.length - 1];
+                    if (e.shiftKey) {
+                        if (document.activeElement === first || document.activeElement === hamburger) {
+                            e.preventDefault();
+                            last.focus();
+                        }
                     } else {
-                        focusable[idx - 1].focus();
-                        e.preventDefault();
-                    }
-                } else {
-                    if (idx === focusable.length - 1) {
-                        e.preventDefault();
-                        focusable[0].focus();
-                    } else if (idx === -1) {
-                        // if focus not in list, focus first link
-                        e.preventDefault();
-                        focusable[1] ? focusable[1].focus() : focusable[0].focus();
+                        if (document.activeElement === last) {
+                            e.preventDefault();
+                            first.focus();
+                        }
                     }
                 }
+            };
+
+            document.addEventListener('keydown', _trapListener);
+        }
+
+        function deactivateFocusTrap() {
+            if (_trapListener) document.removeEventListener('keydown', _trapListener);
+            _trapListener = null;
+            if (_previouslyFocused && typeof _previouslyFocused.focus === 'function') {
+                _previouslyFocused.focus();
             }
-        });
+            _previouslyFocused = null;
+        }
+
+        // enhance open/close to activate/deactivate trap
+        const _origOpen = openMenu;
+        const _origClose = closeMenu;
+
+        openMenu = function () {
+            _origOpen();
+            activateFocusTrap();
+        };
+
+        closeMenu = function () {
+            _origClose();
+            deactivateFocusTrap();
+        };
     }
 });

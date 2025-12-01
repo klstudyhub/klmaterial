@@ -5082,14 +5082,14 @@ main.materials-container {
 
   /* small badge on the active item */
   nav a[aria-current="page"]::after {
-    content: "Current";
-    font-size: 0.7rem;
-    color: rgba(0,0,0,0.75);
+    content: "Now";
+    font-size: 0.65rem;
+    color: #00121a;
     background: #00d4ff;
-    padding: 3px 8px;
-    border-radius: 12px;
+    padding: 2px 6px;
+    border-radius: 10px;
     margin-left: auto;
-    margin-right: 20px;
+    margin-right: 16px;
     display: inline-block;
   }
 
