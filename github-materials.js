@@ -9,7 +9,7 @@ const MATERIALS_PATH = "materials";
 // Leave empty for public access (60 requests/hour limit)
 // To create a token: GitHub Settings → Developer settings → Personal access tokens → Generate new token (classic)
 // Only needs "public_repo" scope
-const GITHUB_TOKEN = ""; // Add your token here if you want higher rate limits
+const GITHUB_TOKEN = "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"; // Token active - 5000 requests/hour
 
 // Subject configuration
 const subjects = {
