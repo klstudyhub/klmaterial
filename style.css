@@ -260,7 +260,7 @@ body::after {
 .profile-pic:hover {
   transform: scale(1.1) rotate(5deg);
   box-shadow: 0 0 40px rgba(0, 212, 255, 1), 
-              0 0 80px rgba(0, 255, 255, 0.6);
+              0 0 80px rgba(0, 255, 255, 0.852);
 }
 
 @keyframes floatGlowRotate {
@@ -392,238 +392,40 @@ footer {
   border-top: 1px solid var(--border-color);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  /* Mobile horizontal nav: single row, scrollable if overflow */
-  .nav-track {
-    display: flex;
-    flex-wrap: nowrap;            /* keep in one line */
-    gap: 16px;                    /* spacing between larger pills */
-    justify-content: flex-start;
-    align-items: center;
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;        /* Firefox */
-    scroll-snap-type: x mandatory; /* enable snap scrolling */
-    padding: 6px 24px;             /* increased vertical + horizontal padding */
-    position: relative;            /* for gradient overlays */
-  }
-  .nav-track::-webkit-scrollbar { display: none; }
-  /* Gradient fade edges */
-  .nav-track::before,
-  .nav-track::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    width: 32px;
-    height: 100%;
-    pointer-events: none;
-    z-index: 5;
-  }
-  .nav-track::before {
-    left: 0;
-    background: linear-gradient(90deg, rgba(0,8,20,0.9), rgba(0,8,20,0));
-  }
-  .nav-track::after {
-    right: 0;
-    background: linear-gradient(270deg, rgba(0,8,20,0.9), rgba(0,8,20,0));
-  }
-  /* Advanced nav container & scroll buttons */
-  nav.nav-advanced { display: flex; align-items: center; gap: 8px; }
-  .nav-btn {
-    display: flex; /* Ensure visible on mobile */
-    background: linear-gradient(135deg, #003566, #001d3d);
-    color: #b0e0ff;
-    border: 2px solid #004b7a;
-    width: 44px; /* Standard large touch target */
-    height: 44px;
-    border-radius: 50%;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    cursor: pointer;
-    flex: 0 0 auto;
-    box-shadow: 0 0 15px rgba(0,212,255,0.3);
-    transition: background 0.3s, transform 0.3s;
-  }
-  .nav-btn:hover:not(:disabled) { transform: scale(1.05); background: linear-gradient(135deg, #004b7a, #002d4d); }
-  .nav-btn:disabled { opacity: 0.35; cursor: default; }
-  .nav-track:focus { outline: 2px solid #00d4ff; outline-offset: 3px; }
-
-  /* Horizontal pill links */
-  nav a {
-    flex: 0 0 auto;               /* prevent stretching */
-    display: inline-flex;
-    padding: 12px 20px;           /* Balanced large padding */
-    font-size: 1rem;
-    line-height: 1.2;
-    white-space: nowrap;
-    border-radius: 28px;
-    scroll-snap-align: start;     /* each pill snaps to start */
-    scroll-snap-stop: always;     /* better user control */
-    min-height: 44px;
-  }
-  /* Enlarge header padding for large nav bar */
-  header { padding: 10px 16px; border-radius: 36px; }
-
-  /* If there are too many links, allow horizontal scroll without visual scrollbar */
-  nav {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  nav::-webkit-scrollbar { display: none; }
-
-  /* Ensure floating desktop header becomes full-width bar on mobile */
-  header {
-    position: sticky;
-    top: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    max-width: none;
-    border-radius: 16px;
-    z-index: 1000; /* Below theme toggle (10001) */
-    background: linear-gradient(135deg, rgba(0, 119, 255, 0.25), rgba(0, 212, 255, 0.25));
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-  }
-
-  /* prevent header movement on tap */
-  header:hover { 
-    transform: none !important; 
-    background: linear-gradient(135deg, rgba(0, 119, 255, 0.25), rgba(0, 212, 255, 0.25));
-  }
-
-  nav {
-    gap: 6px;
-    padding: 4px 8px;
-  }
-
-  /* Make nav list wrap/scroll safely */
-  nav ul {
-    flex-wrap: wrap;
-    gap: 6px;
-    justify-content: center;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; /* Firefox */
-  }
-  nav ul::-webkit-scrollbar { display: none; } /* WebKit */
-
-  body { padding-top: 0; }
-
-  nav {
-    display: flex;
-    flex-wrap: wrap; /* allow wrapping to next line */
-    gap: 8px;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  nav a {
-    min-height: 44px; /* touch target */
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 8px 12px;
-  }
-  body { padding-top: 0; }
-
-  header {
-    top: 0;
-    min-width: 0;
-    max-width: none;
-    width: 100%;
-    padding: 6px 10px;            /* compact header padding */
-  }
-
-  nav {
-    gap: 6px;
-    flex-wrap: wrap;
-  }
-
-  nav a {
-    padding: 8px 12px;
-    font-size: 0.9rem;
-  }
-
-  .profile-pic {
-    width: 140px;
-    height: 140px;
-  }
-
-  .hero h1 {
-    font-size: 1.6em;
-  }
-
-  /* Mobile Navigation */
-  .center-nav {
-    padding: 10px 0;
-  }
-
-  .center-nav li {
-    margin: 5px 10px;
-    display: inline-block;
-  }
-
-  .center-nav a {
-    font-size: 0.95em;
-    padding: 8px 12px;
-    display: inline-block;
-  }
-
-  /* Mobile Content Adjustments */
-  .hero {
-    padding-top: 100px;
-  }
-
-  section {
-    padding: 15px;
-    margin: 15px auto;
-  }
-
-  .skills-grid,
-  .projects-grid {
-    grid-template-columns: 1fr;
-    gap: 15px;
-    padding: 0 10px;
-  }
-
-  .card {
-    padding: 15px;
-  }
-}
+/* Responsive styles moved to end of file */
 
 /* ===== Materials Page Styling ===== */
-/* ===== Premium Floating Navbar ===== */
-header {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: fit-content;
-  min-width: 320px;
-  max-width: 95%;
-  background: linear-gradient(135deg, rgba(0, 119, 255, 0.15), rgba(0, 212, 255, 0.15));
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 2px solid rgba(0, 212, 255, 0.3);
-  border-radius: 50px;
-  padding: 8px 20px;
-  z-index: 1000;
-  box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2),
-    0 0 20px rgba(0, 212, 255, 0.1),
-    0 0 0 1px rgba(0, 212, 255, 0.1) inset;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+/* ===== Premium Floating Navbar (Desktop Only) ===== */
+@media (min-width: 769px) {
+  header {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: fit-content;
+    min-width: 320px;
+    max-width: 95%;
+    background: linear-gradient(135deg, rgba(0, 119, 255, 0.15), rgba(0, 212, 255, 0.15));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 2px solid rgba(0, 212, 255, 0.3);
+    border-radius: 50px;
+    padding: 8px 20px;
+    z-index: 1000;
+    box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2),
+      0 0 20px rgba(0, 212, 255, 0.1),
+      0 0 0 1px rgba(0, 212, 255, 0.1) inset;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 
-header:hover {
-  background: linear-gradient(135deg, rgba(0, 119, 255, 0.25), rgba(0, 212, 255, 0.25));
-  border-color: rgba(0, 212, 255, 0.5);
-  box-shadow: 0 15px 40px rgba(0, 212, 255, 0.3),
-    0 0 30px rgba(0, 212, 255, 0.2),
-    0 0 0 1px rgba(0, 212, 255, 0.2) inset;
-  transform: translateX(-50%) translateY(-2px);
+  header:hover {
+    background: linear-gradient(135deg, rgba(0, 119, 255, 0.25), rgba(0, 212, 255, 0.25));
+    border-color: rgba(0, 212, 255, 0.5);
+    box-shadow: 0 15px 40px rgba(0, 212, 255, 0.3),
+      0 0 30px rgba(0, 212, 255, 0.2),
+      0 0 0 1px rgba(0, 212, 255, 0.2) inset;
+    transform: translateX(-50%) translateY(-2px);
+  }
 }
 
 /* Global Nav Styles (Desktop defaults) */
@@ -2314,67 +2116,10 @@ footer {
 
 /* ===== Mobile Nav Scroll (iPhone) ===== */
 @media (max-width: 600px) {
-
-  header {
-    position: fixed;
-    /* Ensure fixed positioning */
-    top: 15px;
-    /* Explicitly set top */
-    bottom: auto;
-    /* Reset bottom */
-    width: 90%;
-    max-width: 90%;
-    padding: 8px 15px;
-    border-radius: 30px;
-    flex-direction: row;
-    justify-content: space-between;
-    gap: 10px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3),
-      0 0 0 1px rgba(255, 255, 255, 0.05) inset;
-  }
-
-  nav {
-    flex-direction: row;
-    /* Changed to row */
-    width: 100%;
-    gap: 0;
-    justify-content: flex-start;
-    overflow: hidden;
-    /* Ensure track handles scrolling */
-  }
-
-  header nav {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 100%;
-    justify-content: flex-start;
-  }
-
-  .nav-track {
-    display: flex;
-    gap: 0;
-    overflow-x: auto;
-    white-space: nowrap;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    padding: 2px 0;
-    max-width: 100%;
-    scrollbar-width: none;
-    /* Firefox */
-    align-items: center;
-  }
-
-  .nav-track::-webkit-scrollbar {
-    display: none;
-  }
-
-  nav a {
-    margin: 0 4px;
-    font-size: 13px;
-    flex-shrink: 0;
-    padding: 6px 12px;
-  }
+  /* 
+     Most styles are now handled by the max-width: 768px block 
+     to ensure consistent "Premium Large" navigation on all mobile devices.
+  */
 
   /* Materials page Study Hub title - Hide on mobile if needed or make small */
   header nav h2 {
@@ -5122,3 +4867,165 @@ main.materials-container {
   }
 }
 
+
+/* =========================================
+   MOBILE RESPONSIVE OVERRIDES (Must be last)
+   ========================================= */
+@media (max-width: 768px) {
+  /* Mobile horizontal nav: single row, scrollable if overflow */
+  .nav-track {
+    display: flex;
+    flex-wrap: nowrap;            /* keep in one line */
+    gap: 16px;                    /* spacing between larger pills */
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;        /* Firefox */
+    scroll-snap-type: x mandatory; /* enable snap scrolling */
+    padding: 6px 24px;             /* increased vertical + horizontal padding */
+    position: relative;            /* for gradient overlays */
+  }
+  .nav-track::-webkit-scrollbar { display: none; }
+  /* Gradient fade edges */
+  .nav-track::before,
+  .nav-track::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 32px;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .nav-track::before {
+    left: 0;
+    background: linear-gradient(90deg, rgba(0,8,20,0.9), rgba(0,8,20,0));
+  }
+  .nav-track::after {
+    right: 0;
+    background: linear-gradient(270deg, rgba(0,8,20,0.9), rgba(0,8,20,0));
+  }
+  /* Advanced nav container & scroll buttons */
+  nav.nav-advanced { display: flex; align-items: center; gap: 8px; }
+  .nav-btn {
+    display: flex; /* Ensure visible on mobile */
+    background: linear-gradient(135deg, #003566, #001d3d);
+    color: #b0e0ff;
+    border: 2px solid #004b7a;
+    width: 44px; /* Standard large touch target */
+    height: 44px;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    flex: 0 0 auto;
+    box-shadow: 0 0 15px rgba(0,212,255,0.3);
+    transition: background 0.3s, transform 0.3s;
+  }
+  .nav-btn:hover:not(:disabled) { transform: scale(1.05); background: linear-gradient(135deg, #004b7a, #002d4d); }
+  .nav-btn:disabled { opacity: 0.35; cursor: default; }
+  .nav-track:focus { outline: 2px solid #00d4ff; outline-offset: 3px; }
+
+  /* Horizontal pill links */
+  nav a {
+    flex: 0 0 auto;               /* prevent stretching */
+    display: inline-flex;
+    padding: 12px 20px;           /* Balanced large padding */
+    font-size: 1rem;
+    line-height: 1.2;
+    white-space: nowrap;
+    border-radius: 28px;
+    scroll-snap-align: start;     /* each pill snaps to start */
+    scroll-snap-stop: always;     /* better user control */
+    min-height: 44px;
+    /* Override global styles */
+    position: relative;
+    z-index: 2;
+    text-decoration: none;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+  
+  nav a.active {
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(0, 119, 255, 0.3));
+    color: var(--text-primary);
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+  }
+
+  /* Enlarge header padding for large nav bar */
+  header { 
+    padding: 10px 16px; 
+    border-radius: 36px; 
+    position: sticky;
+    top: 10px;
+    left: 0;
+    right: 0;
+    width: 95%;
+    margin: 0 auto;
+    max-width: none;
+    z-index: 1000;
+    background: linear-gradient(135deg, rgba(0, 119, 255, 0.25), rgba(0, 212, 255, 0.25));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    /* Reset desktop fixed positioning if it leaks */
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* prevent header movement on tap */
+  header:hover { 
+    transform: none !important; 
+  }
+
+  body { padding-top: 0; }
+
+  .profile-pic {
+    width: 140px;
+    height: 140px;
+  }
+
+  .hero h1 {
+    font-size: 1.6em;
+  }
+
+  /* Mobile Navigation */
+  .center-nav {
+    padding: 10px 0;
+  }
+
+  .center-nav li {
+    margin: 5px 10px;
+    display: inline-block;
+  }
+
+  .center-nav a {
+    font-size: 0.95em;
+    padding: 8px 12px;
+    display: inline-block;
+  }
+
+  /* Mobile Content Adjustments */
+  .hero {
+    padding-top: 100px;
+  }
+
+  section {
+    padding: 15px;
+    margin: 15px auto;
+  }
+
+  .skills-grid,
+  .projects-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    padding: 0 10px;
+  }
+
+  .card {
+    padding: 15px;
+  }
+}
