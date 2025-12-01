@@ -5072,6 +5072,27 @@ main.materials-container {
     text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
   }
 
+  /* Strong visual current indicator */
+  nav a[aria-current="page"] {
+    background: linear-gradient(90deg, rgba(0, 212, 255, 0.18), rgba(0,119,255,0.03));
+    border-left-color: #00d4ff;
+    color: #ffffff !important;
+    box-shadow: 0 4px 20px rgba(0,212,255,0.06) inset;
+  }
+
+  /* small badge on the active item */
+  nav a[aria-current="page"]::after {
+    content: "Current";
+    font-size: 0.7rem;
+    color: rgba(0,0,0,0.75);
+    background: #00d4ff;
+    padding: 3px 8px;
+    border-radius: 12px;
+    margin-left: auto;
+    margin-right: 20px;
+    display: inline-block;
+  }
+
   /* Staggered Animation Removed for Stability */
   /* body.nav-active nav a:nth-child(1) { transition-delay: 0.05s; } */
   

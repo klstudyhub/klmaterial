@@ -175,6 +175,29 @@ document.addEventListener('DOMContentLoaded', () => {
             link.addEventListener('click', () => closeMenu());
         });
 
+        // Update aria-current based on current URL (helps screen readers)
+        function updateAriaCurrent() {
+            if (!nav) return;
+            const items = Array.from(nav.querySelectorAll('a[role="menuitem"]'));
+            const currentPath = window.location.pathname.replace(/\/+$/, ''); // strip trailing slash
+            items.forEach(item => {
+                try {
+                    const url = new URL(item.href, window.location.origin);
+                    const itemPath = url.pathname.replace(/\/+$/, '');
+                    if (itemPath === currentPath) {
+                        item.setAttribute('aria-current', 'page');
+                    } else {
+                        item.removeAttribute('aria-current');
+                    }
+                } catch (e) {
+                    // ignore malformed href
+                }
+            });
+        }
+
+        // run initially
+        updateAriaCurrent();
+
         // Keyboard controls: Escape to close, trap focus inside the menu
         document.addEventListener('keydown', (e) => {
             if (!body.classList.contains('nav-active')) return;
@@ -185,8 +208,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (e.key === 'Tab') {
-                // very small focus trap: cycle focus among nav links and hamburger
-                const focusable = [hamburger].concat(navLinks);
+                // compute focusable controls dynamically (hamburger + visible menu items)
+                const visibleItems = nav ? Array.from(nav.querySelectorAll('a[role="menuitem"]')) : [];
+                const focusable = [hamburger].concat(visibleItems);
                 const current = document.activeElement;
                 const idx = focusable.indexOf(current);
                 if (e.shiftKey) {
