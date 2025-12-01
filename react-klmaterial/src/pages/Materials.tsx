@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useGitHubMaterials } from '../hooks/useGitHubMaterials';
+import { useGitHubMaterials, type Material } from '../hooks/useGitHubMaterials';
 import './Materials.css';
 
 const Materials = () => {
@@ -9,18 +9,18 @@ const Materials = () => {
 
   const categories = ['BEEC', 'DM', 'PSC', 'DSD'];
 
-  const filteredMaterials = materials.filter(material => {
+  const filteredMaterials = materials.filter((material: Material) => {
     const matchesSearch = material.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = !selectedCategory || material.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
-  const groupedMaterials = filteredMaterials.reduce((acc, material) => {
+  const groupedMaterials = filteredMaterials.reduce((acc: Record<string, Material[]>, material: Material) => {
     const category = material.category || 'Other';
     if (!acc[category]) acc[category] = [];
     acc[category].push(material);
     return acc;
-  }, {} as Record<string, typeof materials>);
+  }, {} as Record<string, Material[]>);
 
   return (
     <div className="materials-page page-content">
@@ -79,11 +79,11 @@ const Materials = () => {
         {/* Materials Grid */}
         {!loading && !error && (
           <div className="materials-content">
-            {Object.entries(groupedMaterials).map(([category, items]) => (
+            {(Object.entries(groupedMaterials) as [string, Material[]][]).map(([category, items]) => (
               <div key={category} className="category-section fade-in">
                 <h2 className="category-title">{category}</h2>
                 <div className="materials-grid">
-                  {items.map((material) => (
+                  {items.map((material: Material) => (
                     <div key={material.name} className="material-card">
                       <div className="material-icon">
                         <i className="fas fa-file-pdf"></i>

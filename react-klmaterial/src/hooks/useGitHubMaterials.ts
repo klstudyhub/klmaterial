@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { materialsData, SUBJECTS } from '../data/materials';
 
-interface Material {
+export interface Material {
   name: string;
   displayName: string;
   download_url: string;
