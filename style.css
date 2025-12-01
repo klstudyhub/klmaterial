@@ -4942,6 +4942,8 @@ main.materials-container {
     -webkit-text-fill-color: transparent;
     text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
     letter-spacing: 0.5px;
+    margin: 0 auto; /* center the brand inside the header on mobile */
+    text-align: center;
   }
 
   /* Hamburger: Large, High Contrast, Interactive */
@@ -4956,7 +4958,7 @@ main.materials-container {
     cursor: pointer;
     padding: 0;
     z-index: 2001; /* Above header */
-    margin-right: 0; /* Reset margin */
+    margin-left: 8px; /* keep hamburger on the left side */
   }
 
   .hamburger span {
