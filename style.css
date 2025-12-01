@@ -543,7 +543,9 @@ nav a::after {
 
 .materials-container {
   max-width: 900px;
-  margin: 50px auto;
+  margin: 0 auto;
+  padding-top: 120px; /* Space for fixed header on desktop */
+  padding-bottom: 50px;
   text-align: center;
 }
 
@@ -703,7 +705,9 @@ nav a::after {
 /* ===== Page Styles for About & Contact ===== */
 .page-content {
   max-width: 900px;
-  margin: 60px auto;
+  margin: 0 auto;
+  padding-top: 120px; /* Space for fixed header on desktop */
+  padding-bottom: 60px;
   text-align: center;
   color: var(--text-primary);
 }
@@ -1525,7 +1529,9 @@ nav a::after {
 
 .materials-container {
   max-width: 900px;
-  margin: 50px auto;
+  margin: 0 auto;
+  padding-top: 120px; /* Space for fixed header on desktop */
+  padding-bottom: 50px;
   text-align: center;
 }
 
@@ -3108,7 +3114,10 @@ html[data-theme="light"] .no-results {
 .roadmap-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding-top: 120px; /* Space for fixed header on desktop */
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 40px;
 }
 
 .roadmap-header {
