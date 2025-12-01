@@ -4904,6 +4904,9 @@ main.materials-container {
     right: 0;
     margin: 0;
     max-width: 100%;
+    transform: none; /* Fix overlap/shifting */
+    position: fixed; /* Ensure it stays fixed */
+    background: rgba(15, 23, 42, 0.95); /* Solid background to prevent see-through overlap */
   }
 
   nav.nav-advanced {
@@ -4987,11 +4990,17 @@ main.materials-container {
     display: none !important;
   }
 
-  /* Content Adjustments */
+  /* Content Adjustments to prevent overlap */
   .hero {
-    padding-top: 120px;
+    padding-top: 140px;
   }
   
+  .materials-container,
+  .roadmap-container,
+  .page-content {
+    padding-top: 100px;
+  }
+
   .hero h1 {
     font-size: 2rem;
   }
