@@ -5,6 +5,12 @@ const GITHUB_REPO = "praveenreddy8942-debug/klmaterial";
 const GITHUB_BRANCH = "main";
 const MATERIALS_PATH = "materials";
 
+// Optional: Add your GitHub Personal Access Token to increase rate limit from 60 to 5000 requests/hour
+// Leave empty for public access (60 requests/hour limit)
+// To create a token: GitHub Settings → Developer settings → Personal access tokens → Generate new token (classic)
+// Only needs "public_repo" scope
+const GITHUB_TOKEN = ""; // Add your token here if you want higher rate limits
+
 // Subject configuration
 const subjects = {
   "BEEC": {
@@ -232,7 +238,13 @@ async function loadMaterials() {
     // Fetch files from each subject folder
     for (const [key, config] of Object.entries(subjects)) {
       try {
-        const response = await fetch(getGitHubAPIUrl(config.folder));
+        // Add authentication header if token is provided
+        const headers = {};
+        if (GITHUB_TOKEN) {
+          headers['Authorization'] = `token ${GITHUB_TOKEN}`;
+        }
+        
+        const response = await fetch(getGitHubAPIUrl(config.folder), { headers });
         
         if (!response.ok) {
           // Check for rate limiting
@@ -242,8 +254,10 @@ async function loadMaterials() {
               materialsList.innerHTML = `
                 <div class="no-results">
                   <h3>⏱️ GitHub API Rate Limit Reached</h3>
-                  <p>Please wait 10-15 minutes and refresh the page.</p>
-                  <p style="font-size: 0.9rem; opacity: 0.8;">The GitHub API has a limit on requests. Your materials are safe and will load after the limit resets.</p>
+                  <p>Too many requests! Please wait 10-15 minutes and refresh.</p>
+                  <p style="font-size: 0.9rem; opacity: 0.8; margin-top: 10px;">
+                    <strong>Fix this permanently:</strong> The site owner can add a GitHub token to increase the rate limit from 60 to 5,000 requests/hour.
+                  </p>
                 </div>
               `;
               return;
