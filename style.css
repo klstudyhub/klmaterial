@@ -429,6 +429,10 @@ footer {
 }
 
 /* Global Nav Styles (Desktop defaults) */
+.mobile-brand {
+  display: none;
+}
+
 .nav-btn {
   display: none;
 }
@@ -4902,7 +4906,7 @@ main.materials-container {
     padding: 15px 25px;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: space-between; /* Space between hamburger and brand */
     width: 100%;
     height: 70px; /* Fixed height for stability */
     top: 0;
@@ -4924,6 +4928,20 @@ main.materials-container {
     height: 100%;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+  }
+
+  /* Mobile Brand Name */
+  .mobile-brand {
+    display: block;
+    font-size: 1.4rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #00d4ff, #0077ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+    letter-spacing: 0.5px;
   }
 
   /* Hamburger: Large, High Contrast, Interactive */
@@ -4931,14 +4949,14 @@ main.materials-container {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 35px;
-    height: 24px;
+    width: 30px;
+    height: 20px;
     background: transparent;
     border: none;
     cursor: pointer;
     padding: 0;
     z-index: 2001; /* Above header */
-    margin-right: 20px;
+    margin-right: 0; /* Reset margin */
   }
 
   .hamburger span {
@@ -4953,14 +4971,14 @@ main.materials-container {
 
   /* Hamburger Animation State */
   body.nav-active .hamburger span:nth-child(1) {
-    transform: translateY(10.5px) rotate(45deg);
+    transform: translateY(8.5px) rotate(45deg);
   }
   body.nav-active .hamburger span:nth-child(2) {
     opacity: 0;
     transform: translateX(-20px);
   }
   body.nav-active .hamburger span:nth-child(3) {
-    transform: translateY(-10.5px) rotate(-45deg);
+    transform: translateY(-8.5px) rotate(-45deg);
   }
 
   /* Mobile Menu Drawer: Robust, Scrollable, Clean */
@@ -4970,7 +4988,7 @@ main.materials-container {
     left: -100%;
     width: 85%;
     max-width: 320px;
-    height: calc(100vh - 70px); /* Full height minus header */
+    height: calc(100dvh - 70px); /* Full height minus header (dvh for mobile) */
     background: linear-gradient(180deg, #001229 0%, #000814 100%);
     border-right: 1px solid rgba(0, 212, 255, 0.1);
     display: flex;
@@ -5018,6 +5036,7 @@ main.materials-container {
     background: transparent;
     opacity: 0;
     transform: translateX(-20px);
+    gap: 15px; /* Space between icon and text */
   }
 
   body.nav-active nav a {
