@@ -42,7 +42,7 @@ function createSeasonalAnimation() {
 
 function createSnowfall(container) {
   const snowflakes = ['❄', '❅', '❆'];
-  const count = 50;
+  const count = 60; // More snowflakes for realistic effect
   
   // Check if mobile device
   const isMobile = window.innerWidth <= 768;
@@ -51,11 +51,29 @@ function createSnowfall(container) {
     const snowflake = document.createElement('div');
     snowflake.className = 'snowflake';
     snowflake.textContent = snowflakes[Math.floor(Math.random() * snowflakes.length)];
+    
+    // Random horizontal position
     snowflake.style.left = Math.random() * 100 + '%';
-    // Slower winter animation: Mobile 15-25s, PC 8-12s
-    snowflake.style.animationDuration = isMobile ? (Math.random() * 10 + 15) + 's' : (Math.random() * 4 + 8) + 's';
-    snowflake.style.animationDelay = Math.random() * 5 + 's';
-    snowflake.style.fontSize = (Math.random() * 0.7 + 0.5) + 'em';
+    
+    // Realistic varying speeds: some fast, some slow
+    const speed = Math.random();
+    const duration = isMobile 
+      ? (speed < 0.3 ? Math.random() * 5 + 20 : speed < 0.7 ? Math.random() * 8 + 12 : Math.random() * 5 + 8) 
+      : (speed < 0.3 ? Math.random() * 3 + 12 : speed < 0.7 ? Math.random() * 4 + 7 : Math.random() * 3 + 4);
+    
+    snowflake.style.animationDuration = duration + 's, ' + (Math.random() * 2 + 2) + 's';
+    snowflake.style.animationDelay = Math.random() * 8 + 's, ' + Math.random() * 2 + 's';
+    
+    // Realistic size variation: smaller = further away, larger = closer
+    const size = Math.random();
+    snowflake.style.fontSize = (size * 1.2 + 0.3) + 'em';
+    
+    // Depth perception with opacity: smaller/further = more transparent
+    snowflake.style.opacity = (size * 0.6 + 0.4);
+    
+    // Add horizontal drift data attribute for CSS animation
+    snowflake.setAttribute('data-drift', Math.floor(Math.random() * 3));
+    
     container.appendChild(snowflake);
   }
 }

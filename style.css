@@ -2204,19 +2204,77 @@ footer {
   font-size: 1em;
   font-family: Arial, sans-serif;
   text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
-  animation: fall linear infinite;
+  animation: fall linear infinite, sway ease-in-out infinite;
   opacity: 0.8;
+  will-change: transform;
 }
 
+/* Different drift patterns for natural variation */
+.snowflake[data-drift="0"] {
+  animation: fall linear infinite, swayLeft ease-in-out infinite;
+}
+
+.snowflake[data-drift="1"] {
+  animation: fall linear infinite, swayRight ease-in-out infinite;
+}
+
+.snowflake[data-drift="2"] {
+  animation: fall linear infinite, swayBoth ease-in-out infinite;
+}
+
+/* Main falling animation with gentle rotation */
 @keyframes fall {
   0% {
     transform: translateY(0) rotate(0deg);
-    opacity: 0.8;
   }
-
+  
   100% {
-    transform: translateY(100vh) rotate(360deg);
-    opacity: 0.3;
+    transform: translateY(100vh) rotate(180deg);
+  }
+}
+
+/* Swaying motion - left drift */
+@keyframes swayLeft {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  
+  25% {
+    transform: translateX(-25px);
+  }
+  
+  75% {
+    transform: translateX(-15px);
+  }
+}
+
+/* Swaying motion - right drift */
+@keyframes swayRight {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  
+  25% {
+    transform: translateX(15px);
+  }
+  
+  75% {
+    transform: translateX(25px);
+  }
+}
+
+/* Swaying motion - both directions */
+@keyframes swayBoth {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  
+  33% {
+    transform: translateX(-20px);
+  }
+  
+  66% {
+    transform: translateX(20px);
   }
 }
 
