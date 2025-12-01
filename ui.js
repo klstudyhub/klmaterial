@@ -123,5 +123,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Theme Toggle + Hamburger Logic
-// (Removed theme toggle & hamburger logic per revert request)
+// Hamburger Menu Logic
+document.addEventListener('DOMContentLoaded', () => {
+    const hamburger = document.querySelector('.hamburger');
+    const body = document.body;
+    const navLinks = document.querySelectorAll('.nav-track a');
+
+    if (hamburger) {
+        hamburger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            body.classList.toggle('nav-active');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (body.classList.contains('nav-active') && 
+                !e.target.closest('.nav-track') && 
+                !e.target.closest('.hamburger')) {
+                body.classList.remove('nav-active');
+            }
+        });
+
+        // Close menu when clicking a link
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                body.classList.remove('nav-active');
+            });
+        });
+    }
+});
