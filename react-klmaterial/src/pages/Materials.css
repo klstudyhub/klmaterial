@@ -3,12 +3,16 @@
 .materials-page {
   padding-top: 100px;
   min-height: 100vh;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 .materials-container {
   max-width: 1400px;
   margin: 0 auto;
   padding: 2rem;
+  width: 100%;
 }
 
 /* ===== HEADER ===== */
@@ -292,16 +296,25 @@
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
+  .materials-page {
+    padding-top: 70px;
+  }
+  
   .materials-container {
-    padding: 1rem;
+    padding: 1.5rem 1rem;
   }
   
   .materials-header h1 {
     font-size: 2.5rem;
   }
   
+  .materials-header p {
+    font-size: 1rem;
+  }
+  
   .search-container {
     margin-bottom: 1.5rem;
+    padding: 0 0.5rem;
   }
   
   .search-input {
@@ -311,11 +324,13 @@
   
   .filter-buttons {
     gap: 0.75rem;
+    padding: 0 0.5rem;
   }
   
   .filter-btn {
     padding: 0.6rem 1.25rem;
     font-size: 0.9rem;
+    min-height: 44px;
   }
   
   .materials-grid {
