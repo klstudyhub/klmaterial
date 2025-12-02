@@ -24,6 +24,8 @@
     widgetId: 'aime-widget',
     storageKey: 'aime-chat-history',
     maxHistoryLength: 50,
+    maxMessageLength: 1000, // Max characters per message
+    maxStorageSize: 100000, // Max localStorage size in bytes (~100KB)
     
     // Messages
     welcomeMessage: "Hi! I'm AIME, your AI assistant for KL Material. How can I help you today?",
@@ -92,31 +94,35 @@
    * DEVELOPERS: Implement this function to connect to your AI backend.
    * Return a Promise that resolves with the AI response string.
    * 
-   * Example with OpenAI:
+   * SECURITY NOTES:
+   * - Never include API keys in client-side code
+   * - Use a backend proxy server to handle API authentication
+   * - Validate and sanitize all inputs on your server
+   * - Implement rate limiting on your backend
+   * 
+   * Example backend proxy approach:
    * 
    * async function sendToServer(message, history) {
-   *   const response = await fetch('YOUR_API_ENDPOINT', {
+   *   // Validate input before sending
+   *   if (!message || typeof message !== 'string') return null;
+   *   
+   *   const response = await fetch('YOUR_BACKEND_PROXY_ENDPOINT', {
    *     method: 'POST',
-   *     headers: {
-   *       'Content-Type': 'application/json',
-   *       'Authorization': 'Bearer YOUR_API_KEY' // Store securely on server!
-   *     },
+   *     headers: { 'Content-Type': 'application/json' },
    *     body: JSON.stringify({
-   *       model: 'gpt-3.5-turbo',
-   *       messages: [
-   *         { role: 'system', content: 'You are AIME, a helpful assistant for KL Material study hub.' },
-   *         ...history.map(m => ({ role: m.role, content: m.content })),
-   *         { role: 'user', content: message }
-   *       ]
+   *       message: message.substring(0, 1000), // Limit message length
+   *       // Only send minimal history needed
+   *       historyCount: Math.min(history.length, 10)
    *     })
    *   });
+   *   if (!response.ok) throw new Error('Server error');
    *   const data = await response.json();
-   *   return data.choices[0].message.content;
+   *   return data.reply;
    * }
    * 
-   * @param {string} message - The user's message
+   * @param {string} message - The user's message (already sanitized)
    * @param {Array} history - Previous messages [{role: 'user'|'assistant', content: string}]
-   * @returns {Promise<string>} The AI response
+   * @returns {Promise<string|null>} The AI response or null to use fallback
    */
   async function sendToServer(message, history) {
     // TODO: Implement your AI backend integration here
@@ -125,14 +131,20 @@
     // Example placeholder - uncomment and modify for your backend:
     /*
     try {
-      const response = await fetch('https://your-api-endpoint.com/chat', {
+      // Input validation
+      if (!message || typeof message !== 'string') return null;
+      
+      const response = await fetch('https://your-backend-proxy.com/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message, history })
+        body: JSON.stringify({ 
+          message: message.substring(0, 1000),
+          historyLength: history.length 
+        })
       });
       if (!response.ok) throw new Error('Server error');
       const data = await response.json();
-      return data.reply;
+      return typeof data.reply === 'string' ? data.reply : null;
     } catch (error) {
       console.error('[AIME] Server error:', error);
       return null; // Fall back to local responses
@@ -221,10 +233,18 @@
   }
 
   /**
-   * Add message to chat
+   * Add message to chat with sanitization
    */
   function addMessage(role, content) {
-    const message = { role, content, timestamp: Date.now() };
+    // Validate role
+    const validRoles = ['user', 'assistant'];
+    const safeRole = validRoles.includes(role) ? role : 'assistant';
+    
+    // Sanitize content
+    const safeContent = sanitizeMessage(content);
+    if (!safeContent) return;
+    
+    const message = { role: safeRole, content: safeContent, timestamp: Date.now() };
     messageHistory.push(message);
     
     // Trim history if too long
@@ -246,8 +266,12 @@
     const container = document.querySelector('.aime-messages');
     if (!container) return;
     
+    // Validate role to prevent CSS injection
+    const validRoles = ['user', 'assistant'];
+    const safeRole = validRoles.includes(message.role) ? message.role : 'assistant';
+    
     const div = document.createElement('div');
-    div.className = 'aime-message aime-message--' + message.role;
+    div.className = 'aime-message aime-message--' + safeRole;
     div.setAttribute('role', 'listitem');
     div.textContent = message.content;
     
@@ -281,28 +305,65 @@
   // ============================================================================
 
   /**
-   * Save chat history to localStorage
+   * Sanitize message content for safe storage
+   */
+  function sanitizeMessage(content) {
+    if (typeof content !== 'string') return '';
+    // Truncate to max length and remove control characters
+    return content
+      .substring(0, CONFIG.maxMessageLength)
+      .replace(/[\x00-\x1F\x7F]/g, '');
+  }
+
+  /**
+   * Save chat history to localStorage with size limits
    */
   function saveHistory() {
     try {
+      const data = JSON.stringify(messageHistory);
+      // Check size limit
+      if (data.length > CONFIG.maxStorageSize) {
+        // Trim oldest messages until under limit
+        while (messageHistory.length > 1 && JSON.stringify(messageHistory).length > CONFIG.maxStorageSize) {
+          messageHistory.shift();
+        }
+      }
       localStorage.setItem(CONFIG.storageKey, JSON.stringify(messageHistory));
     } catch (e) {
       console.warn('[AIME] Could not save history:', e);
+      // If quota exceeded, clear old history
+      if (e.name === 'QuotaExceededError') {
+        clearHistory();
+      }
     }
   }
 
   /**
-   * Load chat history from localStorage
+   * Load chat history from localStorage with validation
    */
   function loadHistory() {
     try {
       const saved = localStorage.getItem(CONFIG.storageKey);
       if (saved) {
-        messageHistory = JSON.parse(saved);
-        return true;
+        const parsed = JSON.parse(saved);
+        // Validate structure
+        if (Array.isArray(parsed)) {
+          messageHistory = parsed.filter(msg => 
+            msg && 
+            typeof msg.content === 'string' &&
+            ['user', 'assistant'].includes(msg.role)
+          ).map(msg => ({
+            role: msg.role,
+            content: sanitizeMessage(msg.content),
+            timestamp: msg.timestamp || Date.now()
+          }));
+          return messageHistory.length > 0;
+        }
       }
     } catch (e) {
       console.warn('[AIME] Could not load history:', e);
+      // Clear corrupted data
+      localStorage.removeItem(CONFIG.storageKey);
     }
     return false;
   }
@@ -567,13 +628,12 @@
     }
   }
 
-  // Expose API
+  // Expose API (limited for security - sendToServer is internal only)
   window.AIME = {
     init: init,
     destroy: destroy,
     toggle: toggle,
     clearHistory: clearHistory,
-    sendToServer: sendToServer,
     config: CONFIG
   };
 

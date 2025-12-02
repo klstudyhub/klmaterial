@@ -31,6 +31,8 @@
   let isMouseActive = false;
   let animationFrameId = null;
   let startTime = Date.now();
+  let lastColorUpdate = 0;
+  const COLOR_UPDATE_INTERVAL = 100; // Update color every 100ms instead of every frame
 
   /**
    * Initialize the AI lighting effect
@@ -207,6 +209,8 @@
    * Main animation loop
    */
   function animate() {
+    const now = Date.now();
+    
     // Smooth cursor following
     if (CONFIG.enableCursorFollow && isMouseActive) {
       cursorX += (targetCursorX - cursorX) * CONFIG.cursorSmoothness;
@@ -219,8 +223,9 @@
       }
     }
 
-    // Time-based color shift
-    if (CONFIG.timeBasedColorShift) {
+    // Time-based color shift (throttled for performance)
+    if (CONFIG.timeBasedColorShift && (now - lastColorUpdate) >= COLOR_UPDATE_INTERVAL) {
+      lastColorUpdate = now;
       updateTimeBasedColors();
     }
 
@@ -236,8 +241,9 @@
 
     const container = document.getElementById('ai-lighting-container');
     if (container) {
-      // Subtle hue rotation over time
-      container.style.filter = 'hue-rotate(' + hueShift + 'deg)';
+      // Subtle hue rotation over time - using CSS custom property for better performance
+      container.style.setProperty('--ai-hue-shift', hueShift + 'deg');
+      container.style.filter = 'hue-rotate(var(--ai-hue-shift, 0deg))';
     }
   }
 
