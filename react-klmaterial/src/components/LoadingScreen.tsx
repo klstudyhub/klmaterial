@@ -28,13 +28,13 @@ const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
             setIsComplete(true);
             setTimeout(() => {
               onComplete?.();
-            }, 400);
-          }, 200);
+            }, 600);
+          }, 300);
           return 100;
         }
-        return prev + Math.random() * 25; // Faster increment
+        return prev + Math.random() * 20; // Controlled increment
       });
-    }, 80); // Faster interval
+    }, 100); // Balanced interval for smooth animation
 
     return () => clearInterval(interval);
   }, [onComplete]);

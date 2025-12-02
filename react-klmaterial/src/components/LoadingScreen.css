@@ -11,12 +11,17 @@
   justify-content: center;
   z-index: 99999;
   opacity: 1;
-  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  visibility: visible;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0s linear 0s;
 }
 
 .loading-screen.loading-complete {
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0s linear 0.8s;
 }
 
 .loading-content {
