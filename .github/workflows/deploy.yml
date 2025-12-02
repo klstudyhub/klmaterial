@@ -35,7 +35,7 @@ jobs:
       - name: Build
         working-directory: react-klmaterial
         env:
-          VITE_GA_ID: ${{ secrets.VITE_GA_ID }}
+          VITE_GA_ID: ${{ secrets.VITE_GA_ID || '' }}
         run: npm run build
 
       - name: SPA fallback (404.html)
