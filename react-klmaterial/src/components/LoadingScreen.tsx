@@ -8,6 +8,15 @@ interface LoadingScreenProps {
 const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
   const [progress, setProgress] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    // Check if mobile
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+  }, []);
 
   useEffect(() => {
     // Simulate loading progress
@@ -72,19 +81,21 @@ const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
         </div>
 
         {/* Particles */}
-        <div className="loading-particles">
-          {Array.from({ length: 20 }).map((_, i) => (
-            <div 
-              key={i} 
-              className="loading-particle"
-              style={{
-                left: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 3}s`,
-                animationDuration: `${3 + Math.random() * 2}s`,
-              }}
-            ></div>
-          ))}
-        </div>
+        {!isMobile && (
+          <div className="loading-particles">
+            {Array.from({ length: 20 }).map((_, i) => (
+              <div 
+                key={i} 
+                className="loading-particle"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 3}s`,
+                  animationDuration: `${3 + Math.random() * 2}s`,
+                }}
+              ></div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
