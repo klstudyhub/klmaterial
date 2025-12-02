@@ -1,4 +1,8 @@
 import { Link } from 'react-router-dom';
+import { ScrollReveal } from '../components/animations/AdvancedScrollAnimations';
+import { TextReveal, GlitchText } from '../components/TextReveal';
+import GlassCard from '../components/GlassCard';
+import { RippleButton, Floating, Shine } from '../components/MicroInteractions';
 import './Home.css';
 
 const Home = () => {
@@ -13,48 +17,78 @@ const Home = () => {
         </div>
         
         <div className="hero-content">
-          <div className="hero-badge fade-in">
-            <span className="badge-icon">✨</span>
-            <span>Welcome to KL Material</span>
-          </div>
-          
-          <h1 className="hero-title fade-in-delay-1">
-            Your Ultimate
-            <span className="gradient-text"> Study Hub </span>
-            for CSE Excellence
-          </h1>
-          
-          <p className="hero-subtitle fade-in-delay-2">
-            Access comprehensive study materials, career roadmaps, and expert guidance.
-            <br />
-            Everything you need to succeed in Computer Science Engineering.
-          </p>
-          
-          <div className="hero-buttons fade-in-delay-3">
-            <Link to="/materials" className="btn btn-primary">
-              <span>Browse Materials</span>
-              <i className="fas fa-arrow-right"></i>
-            </Link>
-            <Link to="/roadmap" className="btn btn-secondary">
-              <span>View Roadmap</span>
-              <i className="fas fa-map"></i>
-            </Link>
-          </div>
-          
-          <div className="hero-stats fade-in-delay-4">
-            <div className="stat-card">
-              <div className="stat-number">500+</div>
-              <div className="stat-label">Study Materials</div>
+          <Floating distance={10} duration={4}>
+            <div className="hero-badge fade-in">
+              <span className="badge-icon">✨</span>
+              <span>Welcome to KL Material</span>
             </div>
-            <div className="stat-card">
-              <div className="stat-number">4 Years</div>
-              <div className="stat-label">Complete Roadmap</div>
+          </Floating>
+          
+          <ScrollReveal direction="up" delay={0.2}>
+            <h1 className="hero-title">
+              <TextReveal speed={30}>Your Ultimate</TextReveal>
+              <br />
+              <GlitchText>
+                <span className="gradient-text"> Study Hub </span>
+              </GlitchText>
+              <br />
+              <TextReveal speed={30} delay={0.5}>for CSE Excellence</TextReveal>
+            </h1>
+          </ScrollReveal>
+          
+          <ScrollReveal direction="up" delay={0.4}>
+            <p className="hero-subtitle">
+              Access comprehensive study materials, career roadmaps, and expert guidance.
+              <br />
+              Everything you need to succeed in Computer Science Engineering.
+            </p>
+          </ScrollReveal>
+          
+          <ScrollReveal direction="up" delay={0.6}>
+            <div className="hero-buttons">
+              <Link to="/materials" style={{ textDecoration: 'none' }}>
+                <RippleButton variant="primary" className="btn-large">
+                  <span>Browse Materials</span>
+                  <i className="fas fa-arrow-right"></i>
+                </RippleButton>
+              </Link>
+              <Link to="/roadmap" style={{ textDecoration: 'none' }}>
+                <RippleButton variant="secondary" className="btn-large">
+                  <span>View Roadmap</span>
+                  <i className="fas fa-map"></i>
+                </RippleButton>
+              </Link>
             </div>
-            <div className="stat-card">
-              <div className="stat-number">24/7</div>
-              <div className="stat-label">Access Anytime</div>
+          </ScrollReveal>
+          
+          <ScrollReveal direction="up" delay={0.8}>
+            <div className="hero-stats">
+              <Shine duration={4}>
+                <GlassCard blur={15} opacity={0.15}>
+                  <div className="stat-card">
+                    <div className="stat-number">500+</div>
+                    <div className="stat-label">Study Materials</div>
+                  </div>
+                </GlassCard>
+              </Shine>
+              <Shine duration={5}>
+                <GlassCard blur={15} opacity={0.15}>
+                  <div className="stat-card">
+                    <div className="stat-number">4 Years</div>
+                    <div className="stat-label">Complete Roadmap</div>
+                  </div>
+                </GlassCard>
+              </Shine>
+              <Shine duration={6}>
+                <GlassCard blur={15} opacity={0.15}>
+                  <div className="stat-card">
+                    <div className="stat-number">24/7</div>
+                    <div className="stat-label">Access Anytime</div>
+                  </div>
+                </GlassCard>
+              </Shine>
             </div>
-          </div>
+          </ScrollReveal>
         </div>
       </section>
 
