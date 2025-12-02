@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './MeshGradient.css';
 
 const MeshGradient = () => {
@@ -6,8 +6,22 @@ const MeshGradient = () => {
   const mouseRef = useRef({ x: 0, y: 0 });
   const animationFrameRef = useRef<number>();
   const timeRef = useRef(0);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    // Check if mobile
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768 || 'ontouchstart' in window);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) return; // Don't run on mobile
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 

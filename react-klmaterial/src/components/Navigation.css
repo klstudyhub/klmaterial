@@ -374,6 +374,24 @@
   
   .mobile-nav {
     display: flex;
+    backdrop-filter: blur(15px) saturate(120%); /* Reduce blur on mobile */
+    -webkit-backdrop-filter: blur(15px) saturate(120%);
+  }
+  
+  /* Disable heavy animations on mobile */
+  .desktop-nav::before,
+  .desktop-nav::after,
+  .mobile-nav::before,
+  .mobile-nav::after {
+    animation: none;
+  }
+  
+  .nav-links a::before {
+    display: none; /* Remove shimmer effect */
+  }
+  
+  .nav-links a {
+    backdrop-filter: none; /* Remove glass effect on mobile */
   }
 }
 

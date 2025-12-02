@@ -878,6 +878,56 @@
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
+  /* Disable heavy animations on mobile for performance */
+  .home-page::before {
+    animation: none;
+    background: radial-gradient(circle at 50% 50%, rgba(0, 53, 102, 0.05) 0%, transparent 60%);
+    filter: blur(40px);
+  }
+  
+  .hero::before {
+    display: none; /* Remove hero overlay on mobile */
+  }
+  
+  .gradient-orb {
+    filter: blur(60px); /* Reduce blur intensity */
+    opacity: 0.15; /* Further reduce opacity */
+    animation: none; /* Disable floating animation */
+  }
+  
+  /* Simplify glass effects */
+  .hero-badge::before,
+  .btn::after,
+  .skill-card::before,
+  .feature-card::before,
+  .stat-card::before {
+    display: none; /* Remove shimmer effects */
+  }
+  
+  .hero-badge,
+  .btn,
+  .skill-card,
+  .feature-card,
+  .stat-card {
+    backdrop-filter: blur(10px) saturate(120%); /* Reduce blur */
+    -webkit-backdrop-filter: blur(10px) saturate(120%);
+  }
+  
+  .skill-bar::before {
+    display: none; /* Remove shimmer from progress bars */
+  }
+  
+  .cta-section::before {
+    animation: none; /* Stop pulse animation */
+  }
+  
+  /* Reduce text shadows for performance */
+  .hero-title,
+  .gradient-text,
+  .section-title {
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  }
+  
   .home-page {
     padding-top: 60px;
   }
