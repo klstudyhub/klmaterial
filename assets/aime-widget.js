@@ -20,8 +20,8 @@
   const CONFIG = {
     welcomeMessage: "👋 Hi! I'm AIME, your study assistant. Ask me about CSE topics, materials, or career guidance!",
     placeholderText: "Ask me anything...",
-    typingDelay: 500,
-    minTypingTime: 1000,
+    typingDelay: 300,       // Delay before showing typing indicator
+    minTypingTime: 600,     // Simulated response time (reduced for demo)
   };
 
   // Demo responses for client-side operation (no API keys needed)
@@ -342,6 +342,7 @@
     widget.init();
   }
 
-  // Expose for external control if needed
-  window.AIMEWidget = AIMEWidget;
+  // Expose for external control if needed (namespaced to avoid conflicts)
+  window.KLMaterial = window.KLMaterial || {};
+  window.KLMaterial.AIMEWidget = AIMEWidget;
 })();

@@ -145,9 +145,11 @@
       this.isActive = true;
       this.container.setAttribute('data-paused', 'false');
       
-      if (CONFIG.useRAF) {
-        this.animateWithRAF();
-      }
+      // Note: animateWithRAF() is not called here because all animations
+      // are currently CSS-based. Uncomment when JS-based animations are added:
+      // if (CONFIG.useRAF) {
+      //   this.animateWithRAF();
+      // }
     }
 
     pause() {
@@ -168,15 +170,18 @@
 
     /**
      * Optional: Additional animation logic using requestAnimationFrame
-     * The main animations are CSS-based for performance,
-     * but this can be used for more complex effects
+     * The main animations are CSS-based for performance.
+     * This method is a placeholder for future enhancements
+     * like mouse-reactive lighting or dynamic color changes.
+     * 
+     * Currently not called to avoid wasting CPU cycles.
+     * Uncomment the call in start() when JS-based animations are added.
      */
     animateWithRAF() {
       if (!this.isActive) return;
 
-      // Currently, all animations are CSS-based
-      // This RAF loop is here for future enhancements
-      // like mouse-reactive lighting or dynamic color changes
+      // Add JS-based animation logic here when needed
+      // Example: orb position based on mouse, dynamic color shifts, etc.
 
       this.rafId = requestAnimationFrame(() => this.animateWithRAF());
     }
@@ -224,8 +229,9 @@
     const lighting = new AILighting();
     lighting.init();
     
-    // Expose for external control
-    window.aiLighting = lighting;
+    // Expose for external control (namespaced to avoid conflicts)
+    window.KLMaterial = window.KLMaterial || {};
+    window.KLMaterial.aiLighting = lighting;
   }
 
   if (document.readyState === 'loading') {
