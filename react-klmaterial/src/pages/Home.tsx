@@ -20,8 +20,7 @@ const Home = () => {
           
           <h1 className="hero-title fade-in-delay-1">
             Your Ultimate
-            <span className="gradient-text"> Study Hub</span>
-            <br />
+            <span className="gradient-text"> Study Hub </span>
             for CSE Excellence
           </h1>
           

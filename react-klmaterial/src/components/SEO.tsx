@@ -46,7 +46,7 @@ const SEO: React.FC<SEOProps> = ({
     name: 'KL Material',
     description: description,
     url: url,
-    logo: `${url}icons/icon-512x512.png`,
+    logo: `${url}icon.svg`,
     sameAs: [
       'https://github.com/praveenreddy8942-debug',
       'https://linkedin.com/in/praveenreddy',

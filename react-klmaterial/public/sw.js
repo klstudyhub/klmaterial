@@ -80,8 +80,8 @@ async function syncData() {
 self.addEventListener('push', (event) => {
   const options = {
     body: event.data ? event.data.text() : 'New update available!',
-    icon: '/klmaterial/icons/icon-192x192.png',
-    badge: '/klmaterial/icons/icon-72x72.png',
+    icon: '/klmaterial/icon.svg',
+    badge: '/klmaterial/icon.svg',
     vibrate: [200, 100, 200],
     data: {
       dateOfArrival: Date.now(),
