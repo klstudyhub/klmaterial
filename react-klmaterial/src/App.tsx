@@ -2,12 +2,17 @@ import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { AppProvider } from './context/AppContext';
+import { ToastProvider } from './context/ToastContext';
+import { BookmarkProvider } from './context/BookmarkContext';
 import { registerServiceWorker } from './hooks/usePWA';
 import { initGA, initPerformanceMonitoring, useAnalytics } from './utils/analytics';
 import Navigation from './components/Navigation';
 import SEO from './components/SEO';
 import Breadcrumbs from './components/Breadcrumbs';
 import InstallPrompt from './components/InstallPrompt';
+import CommandPalette from './components/CommandPalette';
+import ParticleNetwork from './components/ParticleNetwork';
+import KeyboardHelper from './components/KeyboardHelper';
 import Home from './pages/Home';
 import Materials from './pages/Materials';
 import Roadmap from './pages/Roadmap';
@@ -32,8 +37,11 @@ function AppContent() {
   return (
     <div className="app">
       <SEO />
+      <ParticleNetwork />
       <SeasonalAnimation />
       <Navigation />
+      <CommandPalette />
+      <KeyboardHelper />
       <main className="main-content">
         <Breadcrumbs />
         <Routes>
@@ -53,11 +61,15 @@ function AppContent() {
 function App() {
   return (
     <HelmetProvider>
-      <AppProvider>
-        <Router basename="/klmaterial">
-          <AppContent />
-        </Router>
-      </AppProvider>
+      <ToastProvider>
+        <BookmarkProvider>
+          <AppProvider>
+            <Router basename="/klmaterial">
+              <AppContent />
+            </Router>
+          </AppProvider>
+        </BookmarkProvider>
+      </ToastProvider>
     </HelmetProvider>
   );
 }
