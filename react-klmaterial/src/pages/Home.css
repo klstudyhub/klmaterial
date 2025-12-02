@@ -956,12 +956,13 @@
   }
   
   .home-page {
-    padding-top: 60px;
+    padding-top: 0;
   }
   
   .hero {
-    min-height: 90vh;
+    min-height: 100vh;
     padding: 1.5rem 1rem;
+    padding-top: 80px; /* Add padding to hero instead to push content below navbar */
   }
   
   .hero-title {
