@@ -19,7 +19,7 @@ const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
   }, []);
 
   useEffect(() => {
-    // Simulate loading progress
+    // Simulate loading progress - much faster
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -28,13 +28,13 @@ const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
             setIsComplete(true);
             setTimeout(() => {
               onComplete?.();
-            }, 800);
-          }, 500);
+            }, 400);
+          }, 200);
           return 100;
         }
-        return prev + Math.random() * 15;
+        return prev + Math.random() * 25; // Faster increment
       });
-    }, 150);
+    }, 80); // Faster interval
 
     return () => clearInterval(interval);
   }, [onComplete]);
