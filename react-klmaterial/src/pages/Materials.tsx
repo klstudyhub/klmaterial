@@ -92,14 +92,25 @@ const Materials = () => {
                         <h3 className="material-name">{material.displayName}</h3>
                         <p className="material-size">{material.size}</p>
                       </div>
-                      <a
-                        href={material.download_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="download-btn"
-                      >
-                        <i className="fas fa-download"></i>
-                      </a>
+                      <div className="material-actions">
+                        <a
+                          href={material.download_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="action-btn view-btn"
+                          title="Open PDF"
+                        >
+                          <i className="fas fa-eye"></i>
+                        </a>
+                        <a
+                          href={material.download_url}
+                          download={material.displayName}
+                          className="action-btn download-btn"
+                          title="Download PDF"
+                        >
+                          <i className="fas fa-download"></i>
+                        </a>
+                      </div>
                     </div>
                   ))}
                 </div>
