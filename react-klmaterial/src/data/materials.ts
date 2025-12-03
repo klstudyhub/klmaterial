@@ -106,6 +106,34 @@ export const materialsData: Material[] = [
     size: '4.5 MB',
     category: 'PSC'
   },
+  {
+    name: 'PSC_Full_Notes_2.pdf',
+    displayName: 'PSC Full Notes 2',
+    download_url: 'https://raw.githubusercontent.com/praveenreddy8942-debug/klmaterial/main/materials/PSC/PSC%20Full%20Notes%202.pdf',
+    size: '133 MB',
+    category: 'PSC'
+  },
+  {
+    name: 'PSC_CO1_Material.docx',
+    displayName: 'PSC CO-1 Material',
+    download_url: 'https://raw.githubusercontent.com/praveenreddy8942-debug/klmaterial/main/materials/PSC/PSC%20CO-1%20Material.docx',
+    size: '140 KB',
+    category: 'PSC'
+  },
+  {
+    name: 'PSC_CO3_Important_Questions.docx',
+    displayName: 'PSC CO3 Important Questions',
+    download_url: 'https://raw.githubusercontent.com/praveenreddy8942-debug/klmaterial/main/materials/PSC/PSC%20C03%20Important%20Questions.docx',
+    size: '1.6 MB',
+    category: 'PSC'
+  },
+  {
+    name: 'PSC_CO4_Important_Questions.docx',
+    displayName: 'PSC CO4 Important Questions',
+    download_url: 'https://raw.githubusercontent.com/praveenreddy8942-debug/klmaterial/main/materials/PSC/PSC%20Co4%20Important%20Questions.docx',
+    size: '110 KB',
+    category: 'PSC'
+  },
 ];
 
 export const SUBJECTS: Record<string, string> = {
