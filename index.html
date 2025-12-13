@@ -17,6 +17,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="KL Material - Study Hub" />
+  <meta name="twitter:image" content="https://praveenreddy8942-debug.github.io/klmaterial/profile.jpg" />
 
   <title>KL Material - Study Hub</title>
 
@@ -26,6 +27,7 @@
   <link rel="stylesheet" href="style.css?v=8.0">
   <link rel="manifest" href="/klmaterial/manifest.json" />
   <link rel="icon" href="/klmaterial/icon.svg" />
+  <link rel="apple-touch-icon" href="/klmaterial/icon.svg" />
 
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-NZ0SERPS7L"></script>
@@ -107,6 +109,18 @@
   <script src="animations.js"></script>
   <script src="chatbot.js"></script>
   <script src="ui.js?v=6.0"></script>
+  <!-- Register service worker (if supported) to enable offline cache and updates -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/klmaterial/sw.js').then(function(reg) {
+          console.log('ServiceWorker registration successful with scope: ', reg.scope);
+        }).catch(function(err) {
+          console.warn('ServiceWorker registration failed: ', err);
+        });
+      });
+    }
+  </script>
 </body>
 
 </html>
