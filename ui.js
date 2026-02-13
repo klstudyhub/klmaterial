@@ -230,8 +230,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // run initially
     updateAriaCurrent();
-    // update when history changes (back/forward)
-    window.addEventListener('popstate', updateAriaCurrent);
+    
+    // update when history changes (back/forward) and close menu
+    window.addEventListener('popstate', () => {
+        updateAriaCurrent();
+        // Close menu when user presses back button (Android/mobile)
+        if (body.classList.contains('nav-active')) {
+            closeMenu();
+        }
+    });
 
         // Keyboard controls: Escape to close. We'll add a robust focus trap on open.
         let _previouslyFocused = null;
