@@ -730,6 +730,13 @@ nav a::after {
   color: var(--text-primary);
 }
 
+@media (max-width: 768px) {
+  .page-content {
+    padding-top: 90px; /* Account for 70px mobile header + spacing */
+    padding-bottom: 40px;
+  }
+}
+
 .page-content h1 {
   font-size: 2rem;
   margin-bottom: 30px;
@@ -2011,6 +2018,13 @@ footer {
   .profile-pic {
     width: 120px;
     height: 120px;
+  }
+}
+
+/* Mobile portrait optimization - account for 70px fixed header */
+@media (max-width: 768px) and (orientation: portrait) {
+  .hero {
+    padding-top: 90px;
   }
 }
 
