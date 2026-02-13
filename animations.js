@@ -1,122 +1,227 @@
-// Seasonal Animation System
+/**
+ * Advanced Seasonal Animations System
+ * Creates sophisticated particle effects for each season
+ * Optimized for performance across all devices
+ */
+
+// Determine current season
 function getSeason() {
-  const month = new Date().getMonth() + 1; // 1-12
-  
-  // Winter: December (12), January (1), February (2)
+  const month = new Date().getMonth() + 1;
   if (month === 12 || month === 1 || month === 2) return 'winter';
-  
-  // Spring: March (3), April (4), May (5)
   if (month >= 3 && month <= 5) return 'spring';
-  
-  // Summer: June (6), July (7), August (8)
   if (month >= 6 && month <= 8) return 'summer';
-  
-  // Autumn: September (9), October (10), November (11)
   return 'autumn';
 }
 
+// Check if device performance is limited
+function isLowPerformanceDevice() {
+  return window.innerWidth < 600 || 
+         (navigator.deviceMemory && navigator.deviceMemory < 4);
+}
+
+// Main animation initialization
 function createSeasonalAnimation() {
   const container = document.getElementById('seasonalAnimation');
-  if (!container) return; // Guard clause if element doesn't exist
+  if (!container) return;
 
   const season = getSeason();
-  
-  // Clear any existing animations
   container.innerHTML = '';
-  
-  switch(season) {
+
+  // Reduce particle count on low-performance devices
+  const perfMultiplier = isLowPerformanceDevice() ? 0.5 : 1;
+
+  switch (season) {
     case 'winter':
-      createSnowfall(container);
+      createSnowfall(container, Math.floor(50 * perfMultiplier));
       break;
     case 'spring':
-      createPetals(container);
+      createPetals(container, Math.floor(40 * perfMultiplier));
       break;
     case 'summer':
-      createFireflies(container);
+      createFireflies(container, Math.floor(25 * perfMultiplier));
       break;
     case 'autumn':
-      createLeaves(container);
+      createLeaves(container, Math.floor(45 * perfMultiplier));
       break;
   }
 }
 
-function createSnowfall(container) {
-  const snowflakes = ['❄', '❅', '❆'];
-  const count = 50;
-  
-  // Check if mobile device
-  const isMobile = window.innerWidth <= 768;
+/**
+ * Winter: Advanced Snowfall with varied particles
+ */
+function createSnowfall(container, count) {
+  const snowflakes = ['❄', '❅', '❆', '✻', '✼'];
   
   for (let i = 0; i < count; i++) {
     const snowflake = document.createElement('div');
     snowflake.className = 'snowflake';
     snowflake.textContent = snowflakes[Math.floor(Math.random() * snowflakes.length)];
-    snowflake.style.left = Math.random() * 100 + '%';
-    // Slower winter animation: Mobile 15-25s, PC 8-12s
-    snowflake.style.animationDuration = isMobile ? (Math.random() * 10 + 15) + 's' : (Math.random() * 4 + 8) + 's';
-    snowflake.style.animationDelay = Math.random() * 5 + 's';
-    snowflake.style.fontSize = (Math.random() * 0.7 + 0.5) + 'em';
+    
+    const randomLeft = Math.random() * 100;
+    const randomSize = 0.8 + Math.random() * 0.6; // 0.8 - 1.4
+    const duration = 8 + Math.random() * 14; // 8-22 seconds
+    const delay = Math.random() * 5; // Random start delay
+    
+    snowflake.style.left = randomLeft + '%';
+    snowflake.style.fontSize = (1 * randomSize) + 'em';
+    snowflake.style.opacity = 0.4 + Math.random() * 0.6; // 0.4-1.0
+    snowflake.style.animationDuration = duration + 's';
+    snowflake.style.animationDelay = delay + 's';
+    snowflake.style.animationTimingFunction = 'linear';
+    
     container.appendChild(snowflake);
   }
 }
 
-function createPetals(container) {
-  const petals = ['🌸', '🌺', '🌼', '🌻'];
-  const count = 30;
-  
-  // Check if mobile device
-  const isMobile = window.innerWidth <= 768;
+/**
+ * Spring: Graceful falling petals with swirling motion
+ */
+function createPetals(container, count) {
+  const petals = ['🌸', '🌺', '🌼', '🌻', '💐', '🌷'];
   
   for (let i = 0; i < count; i++) {
     const petal = document.createElement('div');
     petal.className = 'petal';
     petal.textContent = petals[Math.floor(Math.random() * petals.length)];
-    petal.style.left = Math.random() * 100 + '%';
-    // Faster spring animation: Mobile 10-15s, PC 4-7s
-    petal.style.animationDuration = isMobile ? (Math.random() * 5 + 10) + 's' : (Math.random() * 3 + 4) + 's';
-    petal.style.animationDelay = Math.random() * 5 + 's';
-    petal.style.fontSize = (Math.random() * 0.8 + 0.8) + 'em';
+    
+    const randomLeft = Math.random() * 100;
+    const duration = 6 + Math.random() * 10; // 6-16 seconds
+    const delay = Math.random() * 8;
+    
+    petal.style.left = randomLeft + '%';
+    petal.style.fontSize = (1.1 + Math.random() * 0.4) + 'em';
+    petal.style.opacity = 0.5 + Math.random() * 0.5;
+    petal.style.animationDuration = duration + 's';
+    petal.style.animationDelay = delay + 's';
+    petal.style.animationTimingFunction = 'ease-in-out';
+    
     container.appendChild(petal);
   }
 }
 
-function createFireflies(container) {
-  const count = 20;
-  
-  // Check if mobile device
-  const isMobile = window.innerWidth <= 768;
-  
+/**
+ * Summer: Glowing fireflies with complex motion patterns
+ */
+function createFireflies(container, count) {
   for (let i = 0; i < count; i++) {
     const firefly = document.createElement('div');
     firefly.className = 'firefly';
-    firefly.style.left = Math.random() * 100 + '%';
-    firefly.style.top = (Math.random() * 80 + 10) + '%';
-    // Faster summer animation: Mobile 4-7s, PC 1.5-3s
-    firefly.style.animationDuration = isMobile ? (Math.random() * 3 + 4) + 's' : (Math.random() * 1.5 + 1.5) + 's';
-    firefly.style.animationDelay = Math.random() * 3 + 's';
+    
+    const randomLeft = Math.random() * 100;
+    const randomStartHeight = Math.random() * 50 + 20; // Start 20-70% down
+    const duration = 3 + Math.random() * 6; // 3-9 seconds
+    const delay = Math.random() * 10;
+    
+    firefly.style.left = randomLeft + '%';
+    firefly.style.top = randomStartHeight + '%';
+    firefly.style.width = (2 + Math.random() * 3) + 'px'; // 2-5px
+    firefly.style.height = firefly.style.width;
+    firefly.style.animationDuration = duration + 's';
+    firefly.style.animationDelay = delay + 's';
+    firefly.style.animationTimingFunction = 'ease-in-out';
+    
+    // Add color variation
+    const hue = 45 + Math.random() * 15; // Gold to orange hues
+    firefly.style.filter = `hue-rotate(${hue}deg)`;
+    
     container.appendChild(firefly);
   }
 }
 
-function createLeaves(container) {
-  const leaves = ['🍂', '🍁', '🍃'];
-  const count = 35;
-  
-  // Check if mobile device
-  const isMobile = window.innerWidth <= 768;
+/**
+ * Autumn: Leaves with complex swaying and rotation
+ */
+function createLeaves(container, count) {
+  const leaves = ['🍂', '🍁', '🍃', '🌿', '🌾'];
   
   for (let i = 0; i < count; i++) {
     const leaf = document.createElement('div');
     leaf.className = 'leaf';
     leaf.textContent = leaves[Math.floor(Math.random() * leaves.length)];
-    leaf.style.left = Math.random() * 100 + '%';
-    // Faster autumn animation: Mobile 8-14s, PC 3-6s
-    leaf.style.animationDuration = isMobile ? (Math.random() * 6 + 8) + 's' : (Math.random() * 3 + 3) + 's';
-    leaf.style.animationDelay = Math.random() * 5 + 's';
-    leaf.style.fontSize = (Math.random() * 0.9 + 0.8) + 'em';
+    
+    const randomLeft = Math.random() * 100;
+    const duration = 7 + Math.random() * 13; // 7-20 seconds (complex motion)
+    const delay = Math.random() * 6;
+    
+    leaf.style.left = randomLeft + '%';
+    leaf.style.fontSize = (1.2 + Math.random() * 0.5) + 'em';
+    leaf.style.opacity = 0.6 + Math.random() * 0.4;
+    leaf.style.animationDuration = duration + 's';
+    leaf.style.animationDelay = delay + 's';
+    leaf.style.animationTimingFunction = 'ease-in-out';
+    
     container.appendChild(leaf);
   }
 }
 
-// Initialize seasonal animation on page load
-window.addEventListener('load', createSeasonalAnimation);
+/**
+ * Counter animation for stats section
+ * Animates numbers from 0 to target value
+ */
+function animateCounter() {
+  const statNumbers = document.querySelectorAll('.stat-number');
+  
+  const observerOptions = {
+    threshold: 0.5,
+    rootMargin: '0px 0px -100px 0px'
+  };
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !entry.target.dataset.animated) {
+        const element = entry.target;
+        const target = parseInt(element.dataset.target);
+        const suffix = element.dataset.suffix || '';
+        const duration = 2000; // 2 seconds animation
+        const startTime = Date.now();
+        
+        element.dataset.animated = 'true';
+        
+        function updateCount() {
+          const elapsed = Date.now() - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          
+          // Easing function for smooth animation
+          const eased = progress < 0.5 
+            ? 2 * progress * progress 
+            : -1 + (4 - 2 * progress) * progress;
+          
+          const current = Math.floor(target * eased);
+          element.textContent = current + suffix;
+          
+          if (progress < 1) {
+            requestAnimationFrame(updateCount);
+          }
+        }
+        
+        updateCount();
+        observer.unobserve(element);
+      }
+    });
+  }, observerOptions);
+  
+  statNumbers.forEach(num => observer.observe(num));
+}
+
+// Initialize on page load
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    createSeasonalAnimation();
+    animateCounter();
+  });
+} else {
+  createSeasonalAnimation();
+  animateCounter();
+}
+
+// Reinitialize animations on window resize (debounced)
+let resizeTimeout;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(() => {
+    const container = document.getElementById('seasonalAnimation');
+    if (container) {
+      createSeasonalAnimation();
+    }
+  }, 250);
+});

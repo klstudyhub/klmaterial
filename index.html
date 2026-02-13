@@ -24,7 +24,7 @@
   <!-- Styles & fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="style.css?v=16.0">
+  <link rel="stylesheet" href="style.css?v=17.0">
   <link rel="manifest" href="/klmaterial/manifest.json" />
   <link rel="icon" href="/klmaterial/icon.svg" />
   <link rel="apple-touch-icon" href="/klmaterial/icon.svg" />
@@ -66,35 +66,105 @@
   <main class="page-content home-page">
     <!-- Seasonal animation overlay (created by animations.js) -->
     <div id="seasonalAnimation" class="season-container" aria-hidden="true"></div>
+    
     <section class="hero">
       <div class="hero-inner">
-  <img src="profile.jpg" alt="Praveen Reddy" class="profile-img" width="160" height="160" loading="eager">
+        <img src="profile.jpg" alt="Praveen Reddy" class="profile-img" width="160" height="160" loading="eager">
         <div class="hero-text">
           <h1 class="hero-title">KL Material</h1>
-          <p class="hero-subtitle">Study materials, roadmaps and resources for CSE students.</p>
+          <p class="hero-subtitle">Your complete study hub for CSE materials, roadmaps and resources</p>
           <div class="hero-cta">
-            <a class="btn" href="materials.html">Browse Materials</a>
-            <a class="btn btn-ghost" href="roadmap.html">View Roadmap</a>
+            <a class="btn" href="materials.html">
+              <i class="fas fa-book-open"></i> Browse Materials
+            </a>
+            <a class="btn btn-ghost" href="roadmap.html">
+              <i class="fas fa-map"></i> View Roadmap
+            </a>
           </div>
         </div>
       </div>
     </section>
 
+    <!-- Advanced Stats Section -->
+    <section class="stats-section">
+      <h2>By The Numbers</h2>
+      <div class="stats-container">
+        <div class="stat-item">
+          <div class="stat-number" data-target="4">0</div>
+          <div class="stat-label">Subjects</div>
+          <p class="stat-desc">Comprehensive course coverage</p>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-target="100" data-suffix="+">0</div>
+          <div class="stat-label">Materials</div>
+          <p class="stat-desc">PDFs, notes & resources</p>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-target="4">0</div>
+          <div class="stat-label">Years</div>
+          <p class="stat-desc">Complete B.Tech roadmap</p>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-target="1000" data-suffix="+">0</div>
+          <div class="stat-label">Students</div>
+          <p class="stat-desc">Already benefited</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Features Section -->
     <section class="features">
+      <h2>Core Features</h2>
       <div class="feature-cards">
-        <a class="card" href="materials.html">
-          <h3>📚 Materials</h3>
-          <p>Notes, PDFs and curated resources grouped by subject.</p>
+        <a class="card advanced-card" href="materials.html">
+          <div class="card-icon">📚</div>
+          <h3>Materials Hub</h3>
+          <p>Notes, PDFs and curated resources grouped by subject for easy access.</p>
+          <span class="card-arrow">→</span>
         </a>
-        <a class="card" href="roadmap.html">
-          <h3>🗺️ Roadmap</h3>
-          <p>4-year roadmap for B.Tech CSE with suggested learning paths.</p>
+        <a class="card advanced-card" href="roadmap.html">
+          <div class="card-icon">🗺️</div>
+          <h3>Career Roadmap</h3>
+          <p>4-year roadmap for B.Tech CSE with suggested learning paths and milestones.</p>
+          <span class="card-arrow">→</span>
         </a>
-        <a class="card" href="about.html">
-          <h3>👨‍💻 About</h3>
-          <p>About the project and contact details.</p>
+        <a class="card advanced-card" href="about.html">
+          <div class="card-icon">👨‍💻</div>
+          <h3>About</h3>
+          <p>Learn about the project and contact details for feedback or collaboration.</p>
+          <span class="card-arrow">→</span>
         </a>
       </div>
+    </section>
+
+    <!-- Quick Access Categories -->
+    <section class="quick-access">
+      <h2>Quick Access</h2>
+      <div class="category-grid">
+        <a href="materials.html?category=BEEC" class="category-btn" style="--accent: #ff6b6b;">
+          <span class="cat-icon">⚡</span>
+          <span class="cat-name">BEEC</span>
+        </a>
+        <a href="materials.html?category=DM" class="category-btn" style="--accent: #4ecdc4;">
+          <span class="cat-icon">🧮</span>
+          <span class="cat-name">Discrete Math</span>
+        </a>
+        <a href="materials.html?category=DSD" class="category-btn" style="--accent: #45b7d1;">
+          <span class="cat-icon">🔌</span>
+          <span class="cat-name">DSD</span>
+        </a>
+        <a href="materials.html?category=PSC" class="category-btn" style="--accent: #96ceb4;">
+          <span class="cat-icon">💻</span>
+          <span class="cat-name">PSC</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-advanced">
+      <h2>Get Started Now</h2>
+      <p>Access curated study materials organized by semester and subject</p>
+      <a href="materials.html" class="btn btn-lg">Explore All Materials</a>
     </section>
   </main>
 
