@@ -70,6 +70,9 @@ class ParticleSystem {
   }
 
   init() {
+    // Disable on mobile devices
+    if (window.innerWidth < 768) return;
+
     this.createCanvas();
     this.createParticles();
     this.animate();
@@ -81,7 +84,7 @@ class ParticleSystem {
     this.canvas.id = 'particleCanvas';
     this.canvas.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none;';
     document.body.appendChild(this.canvas);
-    
+
     this.ctx = this.canvas.getContext('2d');
     this.resize();
   }
@@ -105,7 +108,7 @@ class ParticleSystem {
 
   animate() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    
+
     this.particles.forEach((particle, i) => {
       // Update position
       particle.x += particle.vx;
@@ -120,7 +123,7 @@ class ParticleSystem {
         const dx = this.mouse.x - particle.x;
         const dy = this.mouse.y - particle.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        
+
         if (distance < this.mouse.radius) {
           const force = (this.mouse.radius - distance) / this.mouse.radius;
           particle.x -= (dx / distance) * force * 3;
@@ -139,7 +142,7 @@ class ParticleSystem {
         const dx = particle.x - otherParticle.x;
         const dy = particle.y - otherParticle.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        
+
         if (distance < 120) {
           this.ctx.strokeStyle = `rgba(0, 212, 255, ${0.2 * (1 - distance / 120)})`;
           this.ctx.lineWidth = 1;
@@ -156,7 +159,7 @@ class ParticleSystem {
 
   attachEventListeners() {
     window.addEventListener('resize', () => this.resize());
-    
+
     window.addEventListener('mousemove', (e) => {
       this.mouse.x = e.clientX;
       this.mouse.y = e.clientY;
@@ -192,7 +195,7 @@ class ScrollReveal {
   observe() {
     // Add reveal-on-scroll class to elements
     const selectors = ['.card', '.about-section', '.contact-card-modern', 'section', '.stat-card', '.feature-item'];
-    
+
     selectors.forEach(selector => {
       const elements = document.querySelectorAll(selector);
       elements.forEach(el => {
@@ -219,7 +222,7 @@ class TypingEffect {
 
   type() {
     const currentText = this.texts[this.textIndex];
-    
+
     if (this.isDeleting) {
       this.element.textContent = currentText.substring(0, this.charIndex - 1);
       this.charIndex--;
@@ -266,7 +269,7 @@ class ScrollProgress {
     const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
     const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
     const scrolled = (winScroll / height) * 100;
-    
+
     const progressBar = document.getElementById('scrollProgress');
     if (progressBar) {
       progressBar.style.width = scrolled + '%';
@@ -310,7 +313,7 @@ class CustomCursor {
     document.addEventListener('mousemove', (e) => {
       this.cursor.style.left = e.clientX + 'px';
       this.cursor.style.top = e.clientY + 'px';
-      
+
       this.cursorDot.style.left = e.clientX + 'px';
       this.cursorDot.style.top = e.clientY + 'px';
     });
@@ -322,7 +325,7 @@ class CustomCursor {
         this.cursor.classList.add('cursor-hover');
         this.cursorDot.classList.add('cursor-hover');
       });
-      
+
       el.addEventListener('mouseleave', () => {
         this.cursor.classList.remove('cursor-hover');
         this.cursorDot.classList.remove('cursor-hover');
@@ -343,16 +346,16 @@ class AnimatedCounter {
 
   animate() {
     if (!this.startTime) this.startTime = Date.now();
-    
+
     const elapsed = Date.now() - this.startTime;
     const progress = Math.min(elapsed / this.duration, 1);
-    
+
     // Easing function
     const easeOutQuad = progress * (2 - progress);
     const current = Math.floor(easeOutQuad * this.target);
-    
+
     this.element.textContent = current;
-    
+
     if (progress < 1) {
       requestAnimationFrame(() => this.animate());
     } else {
