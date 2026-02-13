@@ -4,6 +4,7 @@
 const GITHUB_REPO = "praveenreddy8942-debug/klmaterial";
 const GITHUB_BRANCH = "main";
 const MATERIALS_PATH = "materials";
+const CDN_BASE = `https://cdn.jsdelivr.net/gh/${GITHUB_REPO}@${GITHUB_BRANCH}`;
 
 // Optional: Add your GitHub Personal Access Token to increase rate limit from 60 to 5000 requests/hour
 // Leave empty for public access (60 requests/hour limit)
@@ -49,10 +50,51 @@ function getGitHubAPIUrl(folder) {
   return `https://api.github.com/repos/${GITHUB_REPO}/contents/${MATERIALS_PATH}/${folder}?ref=${GITHUB_BRANCH}`;
 }
 
+// jsDelivr flat API (single call) to list repo files
+function getJsDelivrFlatUrl() {
+  return `https://data.jsdelivr.com/v1/package/gh/${GITHUB_REPO}@${GITHUB_BRANCH}/flat`;
+}
+
 // Get direct download URL for GitHub file
 // Use github.com/raw path which handles Git LFS properly
 function getDownloadUrl(file) {
-  return `https://github.com/${GITHUB_REPO}/raw/${GITHUB_BRANCH}/${MATERIALS_PATH}/${file.folder}/${file.name}`;
+  return `${CDN_BASE}/${MATERIALS_PATH}/${file.folder}/${file.name}`;
+}
+
+async function loadMaterialsFromJsDelivr() {
+  const response = await fetch(getJsDelivrFlatUrl());
+  if (!response.ok) {
+    throw new Error(`jsDelivr API error: ${response.status}`);
+  }
+
+  const data = await response.json();
+  if (!data || !Array.isArray(data.files)) {
+    throw new Error('jsDelivr API returned unexpected data');
+  }
+
+  const grouped = {};
+  const materialsPrefix = `${MATERIALS_PATH}/`;
+
+  data.files.forEach((file) => {
+    if (file.type !== 'file' || !file.name.startsWith(materialsPrefix)) return;
+
+    const relative = file.name.slice(materialsPrefix.length);
+    const [folder, fileName] = relative.split('/');
+    if (!folder || !fileName) return;
+    if (fileName.toLowerCase() === 'readme.md') return;
+
+    const subjectConfig = subjects[folder];
+    if (!subjectConfig) return;
+
+    if (!grouped[subjectConfig.name]) grouped[subjectConfig.name] = [];
+    grouped[subjectConfig.name].push({
+      name: fileName,
+      folder: folder,
+      size: file.size || 0
+    });
+  });
+
+  return grouped;
 }
 
 // Filter button functionality
@@ -238,59 +280,66 @@ async function loadMaterials() {
   materialsList.innerHTML = skeletonHTML;
 
   try {
-    const grouped = {};
+    let grouped = {};
 
-    // Fetch files from each subject folder
-    for (const [key, config] of Object.entries(subjects)) {
-      try {
-        // Add authentication header if token is provided
-        const headers = {};
-        if (GITHUB_TOKEN) {
-          headers['Authorization'] = `token ${GITHUB_TOKEN}`;
-        }
+    try {
+      grouped = await loadMaterialsFromJsDelivr();
+      console.log('Loaded materials via jsDelivr API.');
+    } catch (error) {
+      console.warn('jsDelivr API failed, falling back to GitHub API:', error);
 
-        console.log(`Fetching ${config.folder}...`);
-        const response = await fetch(getGitHubAPIUrl(config.folder), { headers });
-
-        if (!response.ok) {
-          console.error(`API Error for ${config.folder}: ${response.status} ${response.statusText}`);
-
-          // Check for rate limiting
-          if (response.status === 403) {
-            const errorData = await response.json();
-            console.error('403 Error details:', errorData);
-            if (errorData.message && errorData.message.includes('rate limit')) {
-              materialsList.innerHTML = `
-                <div class="no-results">
-                  <h3>⏱️ GitHub API Rate Limit Reached</h3>
-                  <p>Too many requests! Please wait 10-15 minutes and refresh.</p>
-                  <p style="font-size: 0.9rem; opacity: 0.8; margin-top: 10px;">
-                    <strong>Fix this permanently:</strong> The site owner can add a GitHub token to increase the rate limit from 60 to 5,000 requests/hour.
-                  </p>
-                </div>
-              `;
-              return;
-            }
+      // Fetch files from each subject folder (GitHub API fallback)
+      for (const [key, config] of Object.entries(subjects)) {
+        try {
+          // Add authentication header if token is provided
+          const headers = {};
+          if (GITHUB_TOKEN) {
+            headers['Authorization'] = `token ${GITHUB_TOKEN}`;
           }
-          console.warn(`Folder ${config.folder} not found or empty`);
-          continue;
+
+          console.log(`Fetching ${config.folder}...`);
+          const response = await fetch(getGitHubAPIUrl(config.folder), { headers });
+
+          if (!response.ok) {
+            console.error(`API Error for ${config.folder}: ${response.status} ${response.statusText}`);
+
+            // Check for rate limiting
+            if (response.status === 403) {
+              const errorData = await response.json();
+              console.error('403 Error details:', errorData);
+              if (errorData.message && errorData.message.includes('rate limit')) {
+                materialsList.innerHTML = `
+                  <div class="no-results">
+                    <h3>⏱️ GitHub API Rate Limit Reached</h3>
+                    <p>Too many requests! Please wait 10-15 minutes and refresh.</p>
+                    <p style="font-size: 0.9rem; opacity: 0.8; margin-top: 10px;">
+                      <strong>Fix this permanently:</strong> The site now uses jsDelivr, but you can also add a GitHub token to increase the rate limit from 60 to 5,000 requests/hour.
+                    </p>
+                  </div>
+                `;
+                return;
+              }
+            }
+            console.warn(`Folder ${config.folder} not found or empty`);
+            continue;
+          }
+
+          const files = await response.json();
+          console.log(`Found ${files.length} items in ${config.folder}`);
+
+          // Filter only files (not directories)
+          const materialFiles = files.filter(file => file.type === 'file');
+
+          if (materialFiles.length > 0) {
+            grouped[config.name] = materialFiles.map(file => ({
+              name: file.name,
+              folder: config.folder,
+              size: file.size
+            }));
+          }
+        } catch (fallbackError) {
+          console.error(`Error loading ${config.folder}:`, fallbackError);
         }
-
-        const files = await response.json();
-        console.log(`Found ${files.length} items in ${config.folder}`);
-
-        // Filter only files (not directories)
-        const materialFiles = files.filter(file => file.type === 'file');
-
-        if (materialFiles.length > 0) {
-          grouped[config.name] = materialFiles.map(file => ({
-            name: file.name,
-            folder: config.folder,
-            size: file.size
-          }));
-        }
-      } catch (error) {
-        console.error(`Error loading ${config.folder}:`, error);
       }
     }
 
