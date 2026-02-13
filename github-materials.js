@@ -219,7 +219,7 @@ function getFileIcon(ext) {
 
 // Load materials from GitHub
 async function loadMaterials() {
-  if (!materialsList) return;
+  if (!materialsList) return Promise.resolve();
   if (!materialsList) return;
 
   // Create Skeleton Grid
