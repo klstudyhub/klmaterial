@@ -64,7 +64,7 @@ if (filterButtons.length > 0) {
       activeCategory = btn.dataset.category;
       if (searchBar) searchBar.value = "";
       if (clearBtn) clearBtn.style.display = "none";
-      
+
       if (activeCategory === "all") {
         displayMaterials(allMaterials);
       } else {
@@ -86,7 +86,7 @@ if (searchBar) {
   searchBar.addEventListener("input", (e) => {
     const query = e.target.value.toLowerCase().trim();
     if (clearBtn) clearBtn.style.display = query ? "block" : "none";
-    
+
     if (searchDebounceId) clearTimeout(searchDebounceId);
     searchDebounceId = setTimeout(() => {
       if (query && filterButtons.length > 0) {
@@ -220,17 +220,22 @@ function getFileIcon(ext) {
 // Load materials from GitHub
 async function loadMaterials() {
   if (!materialsList) return;
-  materialsList.innerHTML = `
-    <div class="advanced-loader-container">
-      <div class="advanced-loader">
-        <div class="loader-ring"></div>
-        <div class="loader-ring"></div>
-        <div class="loader-ring"></div>
-        <span class="loader-emoji">📚</span>
+  if (!materialsList) return;
+
+  // Create Skeleton Grid
+  let skeletonHTML = '<div class="materials-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); width: 100%; gap: 20px;">';
+  for (let i = 0; i < 6; i++) {
+    skeletonHTML += `
+      <div class="skeleton-card">
+        <div class="skeleton-icon"></div>
+        <div class="skeleton-title"></div>
+        <div class="skeleton-footer"></div>
       </div>
-      <p class="loader-text">Loading materials from GitHub...</p>
-    </div>
-  `;
+    `;
+  }
+  skeletonHTML += '</div>';
+
+  materialsList.innerHTML = skeletonHTML;
 
   try {
     const grouped = {};
@@ -243,13 +248,13 @@ async function loadMaterials() {
         if (GITHUB_TOKEN) {
           headers['Authorization'] = `token ${GITHUB_TOKEN}`;
         }
-        
+
         console.log(`Fetching ${config.folder}...`);
         const response = await fetch(getGitHubAPIUrl(config.folder), { headers });
-        
+
         if (!response.ok) {
           console.error(`API Error for ${config.folder}: ${response.status} ${response.statusText}`);
-          
+
           // Check for rate limiting
           if (response.status === 403) {
             const errorData = await response.json();
@@ -273,10 +278,10 @@ async function loadMaterials() {
 
         const files = await response.json();
         console.log(`Found ${files.length} items in ${config.folder}`);
-        
+
         // Filter only files (not directories)
         const materialFiles = files.filter(file => file.type === 'file');
-        
+
         if (materialFiles.length > 0) {
           grouped[config.name] = materialFiles.map(file => ({
             name: file.name,
@@ -323,5 +328,22 @@ async function loadMaterials() {
 
 // Load materials when page loads
 if (materialsList) {
-  loadMaterials();
+  loadMaterials().then(() => {
+    // Check for search query param after materials load
+    const urlParams = new URLSearchParams(window.location.search);
+    const query = urlParams.get('q');
+
+    if (query && searchBar) {
+      searchBar.value = decodeURIComponent(query);
+      // Trigger input event to update clear button visibility
+      const inputEvent = new Event('input');
+      searchBar.dispatchEvent(inputEvent);
+      // Filter immediately
+      filterMaterials(decodeURIComponent(query).toLowerCase().trim());
+
+      // Scroll to results
+      const searchContainer = document.querySelector('.advanced-search-container');
+      if (searchContainer) searchContainer.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
 }

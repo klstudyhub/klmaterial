@@ -39,6 +39,26 @@
     }
     setTimeout(centerActive, 200);
 
+    // Home Page Search Redirect Logic
+    document.addEventListener('DOMContentLoaded', () => {
+        const homeSearchInput = document.getElementById('home-search-input');
+        const homeSearchBtn = document.getElementById('home-search-btn');
+
+        if (homeSearchInput && homeSearchBtn) {
+            const performSearch = () => {
+                const query = homeSearchInput.value.trim();
+                if (query) {
+                    // Redirect to materials page with query param
+                    window.location.href = `materials.html?q=${encodeURIComponent(query)}`;
+                }
+            };
+
+            homeSearchBtn.addEventListener('click', performSearch);
+            homeSearchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') performSearch();
+            });
+        }
+    });
     // Keyboard navigation (arrow keys) when track focused
     if (track) {
         track.addEventListener('keydown', (e) => {
@@ -228,10 +248,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-    // run initially
-    updateAriaCurrent();
-    // update when history changes (back/forward)
-    window.addEventListener('popstate', updateAriaCurrent);
+        // run initially
+        updateAriaCurrent();
+        // update when history changes (back/forward)
+        window.addEventListener('popstate', updateAriaCurrent);
 
         // Keyboard controls: Escape to close. We'll add a robust focus trap on open.
         let _previouslyFocused = null;

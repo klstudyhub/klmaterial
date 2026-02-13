@@ -42,6 +42,26 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
+  <!-- SEO Schema Markup -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "KL Material",
+      "url": "https://praveenreddy8942-debug.github.io/klmaterial/",
+      "description": "A centralized study hub for KL University CSE students.",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://praveenreddy8942-debug.github.io/klmaterial/materials.html?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Praveen Reddy",
+        "url": "https://praveenreddy8942-debug.github.io/klmaterial/about.html"
+      }
+    }
+  </script>
 </head>
 
 <body>
@@ -71,8 +91,21 @@
         <div class="hero-text-side">
           <div class="badge-pill">🚀 Your Ultimate Study Hub</div>
           <h1 class="hero-title">Master Your <span class="gradient-text">CSE Journey</span></h1>
-          <p class="hero-description">Access curated study materials, comprehensive roadmaps, and resources designed to
-            help you excel at KL University.</p>
+          <p class="hero-description">
+            A centralized platform for KL University CSE students to access notes,
+            question papers, and roadmaps.
+          </p>
+
+          <!-- Professional Home Search -->
+          <div class="home-search-container">
+            <div class="home-search-wrapper">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="home-search-input" placeholder="What do you want to learn today?"
+                autocomplete="off">
+              <button id="home-search-btn" aria-label="Search">Search</button>
+            </div>
+          </div>
+
           <div class="hero-cta-group">
             <a class="btn btn-primary glow-effect" href="materials.html">
               <span>📚 Browse Materials</span>
