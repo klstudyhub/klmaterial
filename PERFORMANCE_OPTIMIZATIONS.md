@@ -184,16 +184,17 @@ window.addEventListener('scroll', handleScroll, { passive: true });
 
 ### 8. Image Loading Optimization
 
-**Problem**: Profile image used `loading="eager"` which blocked other resources.
+**Problem**: Profile image loading strategy wasn't optimized for Largest Contentful Paint (LCP).
 
 **Solution**:
-- Changed to `loading="lazy"` with `decoding="async"`
-- Image loads only when needed
-- Doesn't block critical rendering path
+- Changed to `fetchpriority="high"` with `decoding="async"`
+- Image loads with high priority as it's above the fold
+- Async decoding prevents blocking of other rendering
 
 **Impact**:
-- Saves bandwidth on pages where image isn't immediately visible
-- Improves initial page load time
+- Improves Largest Contentful Paint (LCP) metric
+- Hero image loads faster and improves perceived performance
+- Doesn't block critical rendering path
 
 **Files Modified**:
 - `index.html`
