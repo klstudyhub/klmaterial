@@ -33,7 +33,7 @@
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-NZ0SERPS7L"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);} 
+    function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
     gtag('config', 'G-NZ0SERPS7L');
   </script>
@@ -68,7 +68,7 @@
     <div id="seasonalAnimation" class="season-container" aria-hidden="true"></div>
     <section class="hero">
       <div class="hero-inner">
-  <img src="profile.jpg" alt="Praveen Reddy" class="profile-img" width="160" height="160" loading="eager">
+        <img src="profile.jpg" alt="Praveen Reddy" class="profile-img" width="160" height="160" loading="eager">
         <div class="hero-text">
           <h1 class="hero-title">KL Material</h1>
           <p class="hero-subtitle">Study materials, roadmaps and resources for CSE students.</p>
@@ -108,14 +108,15 @@
   <script src="advanced-features.js"></script>
   <script src="animations.js"></script>
   <script src="chatbot.js"></script>
+  <script src="tilt.js"></script>
   <script src="ui.js?v=6.0"></script>
   <!-- Register service worker (if supported) to enable offline cache and updates -->
   <script>
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/klmaterial/sw.js').then(function(reg) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('/klmaterial/sw.js').then(function (reg) {
           console.log('ServiceWorker registration successful with scope: ', reg.scope);
-        }).catch(function(err) {
+        }).catch(function (err) {
           console.warn('ServiceWorker registration failed: ', err);
         });
       });
