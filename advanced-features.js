@@ -84,7 +84,8 @@ class ParticleSystem {
 
   isHighPerformance() {
     // Check if device has good performance characteristics
-    return navigator.hardwareConcurrency > 4;
+    // Fallback to false if hardwareConcurrency is not supported
+    return navigator.hardwareConcurrency ? navigator.hardwareConcurrency > 4 : false;
   }
 
   createCanvas() {
