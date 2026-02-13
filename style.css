@@ -242,6 +242,14 @@ body::after {
 .hero {
   text-align: center;
   padding-top: 140px;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.features {
+  padding-top: 0;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 /* hero-banner styles removed pending image placement choice */
