@@ -4995,38 +4995,43 @@ main.materials-container {
   .hamburger {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    width: 28px;
-    height: 22px;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    min-width: 48px;  /* Android minimum touch target */
+    min-height: 48px; /* Android minimum touch target */
     background: transparent;
     border: none;
     cursor: pointer;
-    padding: 0;
+    padding: 12px;
     z-index: 2001; /* Above everything */
     position: relative;
     flex-shrink: 0; /* Don't shrink */
+    -webkit-tap-highlight-color: rgba(0, 212, 255, 0.2);
+    touch-action: manipulation; /* Prevents zoom delay */
   }
 
   .hamburger span {
     display: block;
-    width: 100%;
+    width: 24px; /* Icon width inside touch target */
     height: 3px;
     background: #00d4ff; /* Neon Cyan */
     border-radius: 4px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
   }
 
   /* Hamburger Animation State */
   body.nav-active .hamburger span:nth-child(1) {
-    transform: translateY(9.5px) rotate(45deg);
+    transform: translateY(8px) rotate(45deg);
   }
   body.nav-active .hamburger span:nth-child(2) {
     opacity: 0;
     transform: translateX(-20px);
   }
   body.nav-active .hamburger span:nth-child(3) {
-    transform: translateY(-9.5px) rotate(-45deg);
+    transform: translateY(-8px) rotate(-45deg);
   }
 
   /* Mobile Menu Drawer: Robust, Scrollable, Clean */
@@ -5048,6 +5053,8 @@ main.materials-container {
     transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1999; /* Below header */
     overflow-y: auto; /* Scrollable if content overflows */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    overscroll-behavior: contain; /* Prevent scroll chaining */
     box-shadow: 10px 0 50px rgba(0, 0, 0, 0.7);
     visibility: visible; /* Always visible, just moved off-screen */
   }
@@ -5220,11 +5227,10 @@ main.materials-container {
     margin-bottom: 20px; 
   }
   
-  /* Disable Body Scroll when menu is open */
+  /* Disable Body Scroll when menu is open - Improved to prevent layout shift */
   body.nav-active { 
-    overflow: hidden; 
-    position: fixed;
-    width: 100%;
+    overflow-y: hidden; 
+    /* Removed position: fixed to prevent scroll position jump */
   }
 }
 
@@ -5243,8 +5249,13 @@ main.materials-container {
   }
   
   .hamburger {
-    width: 26px;
-    height: 20px;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 10px; /* Slightly less padding on very small screens */
+  }
+  
+  .hamburger span {
+    width: 22px; /* Slightly smaller icon */
   }
   
   .nav-track {
