@@ -20,7 +20,10 @@ To enable GitHub Pages for this repository, follow these steps:
 The deployment workflow (`.github/workflows/deploy.yml`) will:
 - Trigger on every push to the `main` branch
 - Can also be manually triggered via the Actions tab
-- Deploy all files from the root directory to GitHub Pages
+- Deploy files from the root directory to GitHub Pages
+  - **Note**: Hidden files/directories (starting with `.`) are automatically excluded by GitHub Actions
+  - This includes: `.git`, `.github`, `.vscode`, `.gitignore`, `.env`, etc.
+  - Only public-facing files (HTML, CSS, JS, images, docs) are deployed
 - Make the site available at: `https://praveenreddy8942-debug.github.io/klmaterial/`
 
 ## Manual Deployment
