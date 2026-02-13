@@ -48,16 +48,16 @@
 
 <body>
   <header>
-  <nav aria-label="Primary" role="navigation" class="nav-liquid">
+    <nav aria-label="Primary" role="navigation" class="nav-liquid">
       <button class="hamburger" aria-label="Toggle Menu" aria-expanded="false" aria-controls="mobile-nav">
         <span></span>
         <span></span>
         <span></span>
       </button>
-  <a href="index.html" class="mobile-brand" aria-label="KL Material Home">KL Material</a>
+      <a href="index.html" class="mobile-brand" aria-label="KL Material Home">KL Material</a>
       <div id="mobile-nav" class="nav-track" role="menu" aria-hidden="true">
         <a href="index.html" role="menuitem" tabindex="-1">🏠 Home</a>
-  <a href="materials.html" role="menuitem" tabindex="-1" class="active" aria-current="page">📚 Materials</a>
+        <a href="materials.html" role="menuitem" tabindex="-1" class="active" aria-current="page">📚 Materials</a>
         <a href="roadmap.html" role="menuitem" tabindex="-1">🗺️ Roadmap</a>
         <a href="about.html" role="menuitem" tabindex="-1">👨‍💻 About</a>
         <a href="contact.html" role="menuitem" tabindex="-1">📞 Contact</a>
@@ -66,6 +66,14 @@
   </header>
 
   <main class="materials-container">
+    <!-- Breadcrumbs -->
+    <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+      <ol>
+        <li><a href="index.html">Home</a></li>
+        <li aria-current="page">Materials</li>
+      </ol>
+    </nav>
+
     <div class="materials-hero">
       <div class="hero-content">
         <h1 class="materials-title">📚 CSE Study Materials</h1>
@@ -82,9 +90,8 @@
     <div class="advanced-search-container">
       <div class="search-wrapper">
         <span class="search-icon">🔍</span>
-        <input type="text" id="search-bar" class="advanced-search-input" 
-          placeholder="Search by material name, subject, or topic..." 
-          autocomplete="off" />
+        <input type="text" id="search-bar" class="advanced-search-input"
+          placeholder="Search by material name, subject, or topic..." autocomplete="off" />
         <button id="clear-search" class="clear-search-btn" style="display: none;">
           <span>✕</span>
         </button>

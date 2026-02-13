@@ -48,17 +48,17 @@
 
 <body>
   <header>
-  <nav class="nav-liquid">
+    <nav class="nav-liquid">
       <button class="hamburger" aria-label="Toggle Menu" aria-expanded="false" aria-controls="mobile-nav">
         <span></span>
         <span></span>
         <span></span>
       </button>
-        <a href="index.html" class="mobile-brand" aria-label="KL Material Home">KL Material</a>
+      <a href="index.html" class="mobile-brand" aria-label="KL Material Home">KL Material</a>
       <div id="mobile-nav" class="nav-track" role="menu" aria-hidden="true">
         <a href="index.html" role="menuitem" tabindex="-1">🏠 Home</a>
         <a href="materials.html" role="menuitem" tabindex="-1">📚 Materials</a>
-  <a href="roadmap.html" role="menuitem" tabindex="-1" class="active" aria-current="page">🗺️ Roadmap</a>
+        <a href="roadmap.html" role="menuitem" tabindex="-1" class="active" aria-current="page">🗺️ Roadmap</a>
         <a href="about.html" role="menuitem" tabindex="-1">👨‍💻 About</a>
         <a href="contact.html" role="menuitem" tabindex="-1">📞 Contact</a>
       </div>
@@ -67,6 +67,14 @@
 
   <main>
     <section class="roadmap-container">
+      <!-- Breadcrumbs -->
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+        <ol>
+          <li><a href="index.html">Home</a></li>
+          <li aria-current="page">Roadmap</li>
+        </ol>
+      </nav>
+
       <div class="roadmap-header">
         <h1>🎯 4-Year B.Tech Roadmap</h1>
         <p class="roadmap-quote">"Records and assignments will be forgotten. Skills stay. Focus on them."</p>

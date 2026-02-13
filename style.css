@@ -6031,3 +6031,49 @@ body::after {
   align-items: center;
   width: 100%;
 }
+
+/* ===========================
+   Breadcrumbs
+   =========================== */
+.breadcrumb-nav {
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.breadcrumb-nav ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.breadcrumb-nav li {
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumb-nav li:not(:last-child)::after {
+  content: "›";
+  margin-left: 10px;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.breadcrumb-nav a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.breadcrumb-nav a:hover {
+  color: var(--accent-primary);
+}
+
+.breadcrumb-nav li[aria-current="page"] {
+  color: var(--accent-primary);
+  font-weight: 600;
+}
