@@ -5033,31 +5033,32 @@ main.materials-container {
 
   /* Mobile Menu Drawer: Robust, Scrollable, Clean */
   .nav-track {
-    position: fixed;
-    top: 70px; /* Starts exactly below header */
-    left: -100%;
-    width: 85%;
-    max-width: 320px;
-    height: calc(100dvh - 70px); /* Full height minus header (dvh for mobile) */
-    background: linear-gradient(180deg, #001229 0%, #000814 100%);
-    border-right: 1px solid rgba(0, 212, 255, 0.1);
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    padding: 20px 0;
-    gap: 0;
-    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 2000; /* Below header, above overlay */
-    overflow-y: auto; /* Scrollable if content overflows */
-    box-shadow: 10px 0 50px rgba(0, 0, 0, 0.7);
-    visibility: visible; /* Always visible, just moved off-screen */
+    position: fixed !important;
+    top: 70px !important; /* Starts exactly below header */
+    left: -100% !important;
+    width: 85% !important;
+    max-width: 320px !important;
+    height: calc(100dvh - 70px) !important; /* Full height minus header (dvh for mobile) */
+    background: linear-gradient(180deg, #001229 0%, #000814 100%) !important;
+    border-right: 1px solid rgba(0, 212, 255, 0.1) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+    padding: 20px 0 !important;
+    gap: 0 !important;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    z-index: 2000 !important; /* Below header, above overlay */
+    overflow-y: auto !important; /* Scrollable if content overflows */
+    box-shadow: 10px 0 50px rgba(0, 0, 0, 0.7) !important;
+    visibility: visible !important; /* Always visible, just moved off-screen */
     opacity: 1 !important;
   }
 
   body.nav-active .nav-track {
-    left: 0;
+    left: 0 !important;
     visibility: visible !important;
+    opacity: 1 !important;
   }
 
   /* Dark Overlay Backdrop */
