@@ -5,7 +5,7 @@
   'use strict';
 
   // ─── CONFIG ───────────────────────────────────────────
-  const GEMINI_API_KEY = 'AIzaSyA_W8GFEooAY3WPGuVfkBiU8vZIH39j6G0'; // ← Get free key: https://aistudio.google.com/apikey
+  const GEMINI_API_KEY = 'AIzaSyDHZrHZRhDhvzmCANQZ0NXrf0qLjv1r484'; // ← Get free key: https://aistudio.google.com/apikey
   const MODEL = 'gemini-2.0-flash';
   const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${GEMINI_API_KEY}`;
 
