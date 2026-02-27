@@ -4898,18 +4898,9 @@ main.materials-container {
 }
 
 @media (max-width: 480px) {
-  body { padding-top: 0; }
+  body { padding-top: 70px; }
 
-  header {
-    top: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    min-width: 0;
-    padding: 8px 12px;
-    z-index: 1000;
-    transform: none;
-  }
+  /* header positioning handled by mobile nav section */
 
   nav {
     gap: 6px;
@@ -5088,17 +5079,7 @@ main.materials-container {
     line-height: 1.6;
   }
 
-  header {
-    top: 5px;
-    left: 5px;
-    right: auto;
-    transform: none;
-    min-width: auto;
-    max-width: calc(100% - 70px); /* Leave space for theme toggle on right */
-    width: auto;
-    padding: 5px 8px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  }
+  /* header positioning handled by mobile nav section below */
 
   nav {
     flex-wrap: wrap;
@@ -5592,8 +5573,8 @@ main.materials-container {
   }
 
   header {
-    top: 5px;
-    padding: 4px 10px;
+    height: 60px;
+    padding: 0;
   }
 
   nav a {
