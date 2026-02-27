@@ -5645,6 +5645,130 @@ main.materials-container {
 
 
 /* =========================================
+   MOBILE BOTTOM NAVIGATION BAR
+   ========================================= */
+
+/* Hidden on desktop */
+.bottom-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 60px;
+    background: linear-gradient(180deg, #001229 0%, #000814 100%);
+    border-top: 1px solid rgba(0, 212, 255, 0.15);
+    z-index: 4000;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px); /* iPhone notch/home bar */
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+
+  .bottom-nav-item {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+    color: #6b8faa !important;
+    -webkit-text-fill-color: #6b8faa !important;
+    font-size: 0.65rem !important;
+    font-weight: 500 !important;
+    gap: 2px !important;
+    padding: 6px 0 !important;
+    min-height: auto !important;
+    min-width: 0 !important;
+    flex: 1;
+    position: relative;
+    transition: color 0.2s ease, transform 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+    background: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    background-clip: border-box !important;
+    -webkit-background-clip: border-box !important;
+  }
+
+  .bottom-nav-item i {
+    font-size: 1.15rem;
+    transition: transform 0.2s ease;
+    display: block !important;
+    color: inherit !important;
+    -webkit-text-fill-color: inherit !important;
+  }
+
+  .bottom-nav-item span {
+    display: block !important;
+    color: inherit !important;
+    -webkit-text-fill-color: inherit !important;
+    letter-spacing: 0.3px;
+    line-height: 1;
+  }
+
+  /* Active state */
+  .bottom-nav-item.active {
+    color: #00d4ff !important;
+    -webkit-text-fill-color: #00d4ff !important;
+  }
+
+  .bottom-nav-item.active i {
+    transform: scale(1.1);
+    color: #00d4ff !important;
+    -webkit-text-fill-color: #00d4ff !important;
+    filter: drop-shadow(0 0 6px rgba(0, 212, 255, 0.5));
+  }
+
+  /* Active indicator dot */
+  .bottom-nav-item.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 3px;
+    background: #00d4ff;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 2px 8px rgba(0, 212, 255, 0.4);
+  }
+
+  /* Tap feedback */
+  .bottom-nav-item:active {
+    transform: scale(0.9);
+    color: #00d4ff !important;
+    -webkit-text-fill-color: #00d4ff !important;
+  }
+
+  /* Add padding to body bottom so content isn't hidden behind the nav */
+  body {
+    padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Move back-to-top button above the bottom nav */
+  #backToTop {
+    bottom: calc(70px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Move chatbot FAB above the bottom nav */
+  #gemini-chat-fab {
+    bottom: calc(75px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+
+/* =========================================
    MOBILE RESPONSIVE OVERRIDES (Must be last)
    ========================================= */
 
@@ -5708,7 +5832,7 @@ main.materials-container {
     position: relative;
   }
 
-  /* Mobile Brand Name - Centered */
+  /* Mobile Brand Name - Centered (no hamburger) */
   .mobile-brand {
     display: block;
     font-size: 1.3rem;
@@ -5719,31 +5843,36 @@ main.materials-container {
     -webkit-text-fill-color: transparent;
     text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
     letter-spacing: 0.5px;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%); /* Perfect centering */
     text-align: center;
-    pointer-events: none;
+    pointer-events: auto;
     z-index: 1;
+    margin: 0 auto;
+    min-height: auto;
   }
 
-  /* Hamburger: Large, High Contrast, Interactive */
+  /* Hide hamburger and drawer on mobile — bottom nav replaces them */
   .hamburger {
-    display: flex !important;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 28px;
-    height: 22px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    z-index: 3001;
+    display: none !important;
+  }
+
+  .nav-track,
+  #mobile-nav {
+    display: none !important;
+  }
+
+  /* Center the nav-liquid on mobile since we removed hamburger */
+  nav.nav-advanced,
+  nav.nav-liquid {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 20px;
+    box-sizing: border-box;
     position: relative;
-    flex-shrink: 0;
-    pointer-events: auto !important;
-    touch-action: manipulation;
-    -webkit-appearance: none;
+  }
     -webkit-tap-highlight-color: transparent;
   }
 
@@ -6005,24 +6134,6 @@ main.materials-container {
     font-size: 1.15rem; /* Smaller text */
   }
   
-  .hamburger {
-    width: 26px;
-    height: 20px;
-  }
-  
-  .nav-track {
-    top: 65px !important;
-    height: calc(100vh - 65px) !important; /* Fallback for older iOS */
-    height: calc(100dvh - 65px) !important;
-    width: 90% !important; /* Wider drawer on small screens */
-    max-width: 280px !important;
-  }
-  
-  .nav-track a {
-    padding: 16px 25px;
-    font-size: 1.05rem;
-  }
-  
   .hero {
     padding-top: 145px;
   }
@@ -6030,12 +6141,6 @@ main.materials-container {
   .materials-container,
   .roadmap-container {
     padding-top: 125px;
-  }
-  
-  body.nav-active::before {
-    top: 65px;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
   }
 }
 

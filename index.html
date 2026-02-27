@@ -335,24 +335,48 @@
   <script defer src="advanced-features.js"></script>
   <script defer src="animations.js"></script>
   <script defer src="chatbot.js?v=3.0"></script>
-  <script defer src="ui.js?v=6.0"></script>
-  <!-- script.js removed - file does not exist -->
+  <script defer src="ui.js?v=7.0"></script>
 
-  <!-- Navigation menu keyboard accessibility fix -->
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="bottom-nav" aria-label="Mobile navigation">
+    <a href="index.html" class="bottom-nav-item active" aria-current="page">
+      <i class="fa-solid fa-house"></i>
+      <span>Home</span>
+    </a>
+    <a href="materials.html" class="bottom-nav-item">
+      <i class="fa-solid fa-book"></i>
+      <span>Materials</span>
+    </a>
+    <a href="roadmap.html" class="bottom-nav-item">
+      <i class="fa-solid fa-map"></i>
+      <span>Roadmap</span>
+    </a>
+    <a href="about.html" class="bottom-nav-item">
+      <i class="fa-solid fa-user"></i>
+      <span>About</span>
+    </a>
+    <a href="contact.html" class="bottom-nav-item">
+      <i class="fa-solid fa-address-book"></i>
+      <span>Contact</span>
+    </a>
+  </nav>
+
+  <!-- Navigation menu keyboard accessibility fix (desktop only) -->
   <script>
     (function() {
       const nav = document.querySelector('.nav-track');
+      const hamburger = nav ? nav.parentElement.querySelector('.hamburger') : null;
+      if (!nav || !hamburger) return; // Skip on mobile where these are hidden
       const navLinks = document.querySelectorAll('[data-nav-link]');
       
-      // When menu is active, enable tab navigation by setting tabindex to 0
       const observer = new MutationObserver(() => {
-        const isActive = nav.parentElement.querySelector('.hamburger').getAttribute('aria-expanded') === 'true';
+        const isActive = hamburger.getAttribute('aria-expanded') === 'true';
         navLinks.forEach(link => {
           link.setAttribute('tabindex', isActive ? '0' : '-1');
         });
       });
       
-      observer.observe(nav.parentElement.querySelector('.hamburger'), { attributes: true });
+      observer.observe(hamburger, { attributes: true });
     })();
   </script>
 
