@@ -3072,6 +3072,93 @@ html[data-theme="light"] #backToTop:hover {
   transform: translateY(-3px) scale(1.05);
 }
 
+/* Light Mode - Gemini Chatbot */
+html[data-theme="light"] #gemini-chat-fab {
+  background: linear-gradient(135deg, #0077ff, #00b4d8);
+  box-shadow: 0 4px 20px rgba(0, 119, 255, 0.35);
+}
+
+html[data-theme="light"] #gemini-chat-window {
+  background: linear-gradient(180deg, #f0f4f8 0%, #ffffff 100%);
+  border: 1px solid rgba(0, 119, 255, 0.2);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15), 0 0 20px rgba(0, 119, 255, 0.08);
+}
+
+html[data-theme="light"] .gchat-header {
+  background: rgba(0, 119, 255, 0.08);
+  border-bottom: 1px solid rgba(0, 119, 255, 0.15);
+}
+
+html[data-theme="light"] .gchat-header-info strong {
+  color: #1a1a2e;
+}
+
+html[data-theme="light"] .gchat-header-info small {
+  color: #555;
+}
+
+html[data-theme="light"] .gchat-close {
+  color: #888;
+}
+
+html[data-theme="light"] .gchat-close:hover {
+  color: #e53935;
+}
+
+html[data-theme="light"] .gchat-messages {
+  scrollbar-color: rgba(0, 119, 255, 0.25) transparent;
+}
+
+html[data-theme="light"] .gchat-bubble {
+  color: #1a1a2e;
+}
+
+html[data-theme="light"] .gchat-msg.bot .gchat-bubble {
+  background: rgba(0, 119, 255, 0.08);
+  border: 1px solid rgba(0, 119, 255, 0.12);
+}
+
+html[data-theme="light"] .gchat-msg.user .gchat-bubble {
+  background: linear-gradient(135deg, rgba(0, 119, 255, 0.15), rgba(0, 180, 216, 0.15));
+  border: 1px solid rgba(0, 119, 255, 0.2);
+  color: #1a1a2e;
+}
+
+html[data-theme="light"] .gchat-bubble code {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+html[data-theme="light"] .gchat-bubble a {
+  color: #0077ff;
+}
+
+html[data-theme="light"] .gchat-typing .dot {
+  background: #0077ff;
+}
+
+html[data-theme="light"] .gchat-input-area {
+  border-top: 1px solid rgba(0, 119, 255, 0.1);
+  background: rgba(240, 244, 248, 0.8);
+}
+
+html[data-theme="light"] .gchat-input-area input {
+  background: #fff;
+  border: 1px solid rgba(0, 119, 255, 0.2);
+  color: #1a1a2e;
+}
+
+html[data-theme="light"] .gchat-input-area input::placeholder {
+  color: rgba(100, 100, 100, 0.6);
+}
+
+html[data-theme="light"] .gchat-input-area input:focus {
+  border-color: #0077ff;
+}
+
+html[data-theme="light"] .gchat-send {
+  background: linear-gradient(135deg, #0077ff, #00b4d8);
+}
+
 /* Light Mode - Loader */
 html[data-theme="light"] .advanced-loader-container {
   color: #0077ff;
