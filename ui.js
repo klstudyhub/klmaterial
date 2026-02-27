@@ -1,75 +1,34 @@
 // ui.js
 
-// Mobile nav chevron scroll
+// Mobile nav chevron scroll (only runs if .nav-btn elements exist)
 (function () {
     const track = document.querySelector('header nav .nav-track');
-    const prevBtn = document.querySelector('header nav .nav-btn.prev');
-    const nextBtn = document.querySelector('header nav .nav-btn.next');
 
-    function updateArrowState() {
-        if (!track || !prevBtn || !nextBtn) return;
-        const maxScroll = track.scrollWidth - track.clientWidth;
-        prevBtn.disabled = track.scrollLeft <= 2;
-        nextBtn.disabled = track.scrollLeft >= maxScroll - 2;
-    }
-
-    function scrollAmount(dir) {
-        // Scroll by width of ~2 pills or 60% of viewport
-        const pill = track.querySelector('a');
-        const base = pill ? (pill.offsetWidth + 12) * 2 : track.clientWidth * 0.6;
-        track.scrollBy({ left: dir * base, behavior: 'smooth' });
-    }
-
-    if (track && prevBtn && nextBtn) {
-        prevBtn.addEventListener('click', () => scrollAmount(-1));
-        nextBtn.addEventListener('click', () => scrollAmount(1));
-        track.addEventListener('scroll', updateArrowState, { passive: true });
-        window.addEventListener('resize', updateArrowState);
-        setTimeout(updateArrowState, 150);
-    }
-
-    // Center active link on load for better visibility
-    function centerActive() {
-        if (!track) return;
-        const active = track.querySelector('a.active');
-        if (!active) return;
-        const offset = active.offsetLeft - (track.clientWidth - active.offsetWidth) / 2;
-        track.scrollTo({ left: Math.max(offset, 0), behavior: 'instant' });
-        updateArrowState();
-    }
-    setTimeout(centerActive, 200);
-
-    // Home Page Search Redirect Logic
-    document.addEventListener('DOMContentLoaded', () => {
-        const homeSearchInput = document.getElementById('home-search-input');
-        const homeSearchBtn = document.getElementById('home-search-btn');
-
-        if (homeSearchInput && homeSearchBtn) {
-            const performSearch = () => {
-                const query = homeSearchInput.value.trim();
-                if (query) {
-                    // Redirect to materials page with query param
-                    window.location.href = `materials.html?q=${encodeURIComponent(query)}`;
-                }
-            };
-
-            homeSearchBtn.addEventListener('click', performSearch);
-            homeSearchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') performSearch();
-            });
-        }
-    });
     // Keyboard navigation (arrow keys) when track focused
     if (track) {
         track.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight') {
                 e.preventDefault();
-                scrollAmount(1);
+                const pill = track.querySelector('a');
+                const base = pill ? (pill.offsetWidth + 12) * 2 : track.clientWidth * 0.6;
+                track.scrollBy({ left: base, behavior: 'smooth' });
             } else if (e.key === 'ArrowLeft') {
                 e.preventDefault();
-                scrollAmount(-1);
+                const pill = track.querySelector('a');
+                const base = pill ? (pill.offsetWidth + 12) * 2 : track.clientWidth * 0.6;
+                track.scrollBy({ left: -base, behavior: 'smooth' });
             }
         });
+    }
+
+    // Center active link on load for better visibility
+    if (track) {
+        setTimeout(() => {
+            const active = track.querySelector('a.active');
+            if (!active) return;
+            const offset = active.offsetLeft - (track.clientWidth - active.offsetWidth) / 2;
+            track.scrollTo({ left: Math.max(offset, 0), behavior: 'instant' });
+        }, 200);
     }
 
     // Sliding Nav Marker Logic
@@ -150,24 +109,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const nav = document.getElementById('mobile-nav');
     const navLinks = nav ? Array.from(nav.querySelectorAll('a[role="menuitem"]')) : [];
 
-    function openMenu() {
-        body.classList.add('nav-active');
-        hamburger.setAttribute('aria-expanded', 'true');
-        if (nav) nav.setAttribute('aria-hidden', 'false');
-        navLinks.forEach(link => link.setAttribute('tabindex', '0'));
-        if (navLinks.length) navLinks[0].focus();
-        // prevent body scroll
-        document.documentElement.style.overflow = 'hidden';
-    }
-
-    function closeMenu() {
-        body.classList.remove('nav-active');
-        hamburger.setAttribute('aria-expanded', 'false');
-        if (nav) nav.setAttribute('aria-hidden', 'true');
-        navLinks.forEach(link => link.setAttribute('tabindex', '-1'));
-        hamburger.focus();
-        document.documentElement.style.overflow = '';
-    }
+    // Use an object so event listeners always call the latest version
+    const menuActions = {
+        open() {
+            body.classList.add('nav-active');
+            hamburger.setAttribute('aria-expanded', 'true');
+            if (nav) nav.setAttribute('aria-hidden', 'false');
+            navLinks.forEach(link => link.setAttribute('tabindex', '0'));
+            if (navLinks.length) navLinks[0].focus();
+            // prevent body scroll
+            document.documentElement.style.overflow = 'hidden';
+        },
+        close() {
+            body.classList.remove('nav-active');
+            hamburger.setAttribute('aria-expanded', 'false');
+            if (nav) nav.setAttribute('aria-hidden', 'true');
+            navLinks.forEach(link => link.setAttribute('tabindex', '-1'));
+            hamburger.focus();
+            document.documentElement.style.overflow = '';
+        }
+    };
 
     if (hamburger) {
         // ensure initial state
@@ -177,8 +138,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         hamburger.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (body.classList.contains('nav-active')) closeMenu();
-            else openMenu();
+            if (body.classList.contains('nav-active')) menuActions.close();
+            else menuActions.open();
         });
 
         // Close menu when clicking outside
@@ -186,13 +147,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (body.classList.contains('nav-active') &&
                 !e.target.closest('#mobile-nav') &&
                 !e.target.closest('.hamburger')) {
-                closeMenu();
+                menuActions.close();
             }
         });
 
         // Close menu when clicking a link
         navLinks.forEach(link => {
-            link.addEventListener('click', () => closeMenu());
+            link.addEventListener('click', () => menuActions.close());
         });
 
         // Update aria-current based on current URL (helps screen readers)
@@ -277,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
             _trapListener = function (e) {
                 if (e.key === 'Escape') {
                     e.preventDefault();
-                    closeMenu();
+                    menuActions.close();
                     return;
                 }
 
@@ -315,18 +276,18 @@ document.addEventListener('DOMContentLoaded', () => {
             _previouslyFocused = null;
         }
 
-        // enhance open/close to activate/deactivate trap
-        const _origOpen = openMenu;
-        const _origClose = closeMenu;
+        // Enhance open/close to include focus trap and nav text fallback
+        const _origOpen = menuActions.open.bind(menuActions);
+        const _origClose = menuActions.close.bind(menuActions);
 
-        openMenu = function () {
+        menuActions.open = function () {
             _origOpen();
             // Make sure labels are visible across browsers (fallback)
             try { ensureNavTextVisible(); } catch (e) { /* ignore */ }
             activateFocusTrap();
         };
 
-        closeMenu = function () {
+        menuActions.close = function () {
             _origClose();
             deactivateFocusTrap();
             // keep aria-current in sync after closing

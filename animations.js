@@ -27,8 +27,10 @@ function createSeasonalAnimation() {
   const season = getSeason();
   container.innerHTML = '';
 
-  // Reduce particle count on low-performance devices
-  const perfMultiplier = isLowPerformanceDevice() ? 0.5 : 1;
+  // Reduce particle count on low-performance devices or when particle canvas is also running
+  const particleCanvasActive = !!document.getElementById('particleCanvas');
+  const basePerfMultiplier = isLowPerformanceDevice() ? 0.5 : 1;
+  const perfMultiplier = particleCanvasActive ? basePerfMultiplier * 0.5 : basePerfMultiplier;
 
   switch (season) {
     case 'winter':
@@ -214,14 +216,19 @@ if (document.readyState === 'loading') {
   animateCounter();
 }
 
-// Reinitialize animations on window resize (debounced)
+// Reinitialize animations on window resize (debounced) — only on significant width change
 let resizeTimeout;
+let lastWidth = window.innerWidth;
 window.addEventListener('resize', () => {
   clearTimeout(resizeTimeout);
   resizeTimeout = setTimeout(() => {
+    const newWidth = window.innerWidth;
+    // Only rebuild if width changed significantly (orientation change or desktop resize)
+    if (Math.abs(newWidth - lastWidth) < 100) return;
+    lastWidth = newWidth;
     const container = document.getElementById('seasonalAnimation');
     if (container) {
       createSeasonalAnimation();
     }
-  }, 250);
+  }, 500);
 });

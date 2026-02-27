@@ -36,6 +36,7 @@ class ThemeManager {
       </svg>
     `;
     themeToggle.title = 'Toggle Theme';
+    themeToggle.setAttribute('aria-label', 'Toggle colour theme');
     document.body.appendChild(themeToggle);
   }
 
@@ -64,7 +65,10 @@ class ParticleSystem {
     this.canvas = null;
     this.ctx = null;
     this.particles = [];
-    this.particleCount = 50;
+    // Reduce particle count on mobile/low-end devices
+    const isLowEnd = window.innerWidth < 600 || (navigator.deviceMemory && navigator.deviceMemory < 4);
+    this.particleCount = isLowEnd ? 15 : 50;
+    this.connectionDistance = 120;
     this.mouse = { x: null, y: null, radius: 150 };
     this.init();
   }
@@ -106,6 +110,10 @@ class ParticleSystem {
   animate() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     
+    // Build spatial grid for efficient neighbor lookup (avoids O(n²))
+    const cellSize = this.connectionDistance;
+    const grid = {};
+    
     this.particles.forEach((particle, i) => {
       // Update position
       particle.x += particle.vx;
@@ -133,22 +141,47 @@ class ParticleSystem {
       this.ctx.beginPath();
       this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
       this.ctx.fill();
-
-      // Connect nearby particles
-      this.particles.slice(i + 1).forEach(otherParticle => {
-        const dx = particle.x - otherParticle.x;
-        const dy = particle.y - otherParticle.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        
-        if (distance < 120) {
-          this.ctx.strokeStyle = `rgba(0, 212, 255, ${0.2 * (1 - distance / 120)})`;
-          this.ctx.lineWidth = 1;
-          this.ctx.beginPath();
-          this.ctx.moveTo(particle.x, particle.y);
-          this.ctx.lineTo(otherParticle.x, otherParticle.y);
-          this.ctx.stroke();
+      
+      // Insert into spatial grid
+      const cx = Math.floor(particle.x / cellSize);
+      const cy = Math.floor(particle.y / cellSize);
+      const key = cx + ',' + cy;
+      if (!grid[key]) grid[key] = [];
+      grid[key].push({ particle, index: i });
+    });
+    
+    // Draw connections using spatial grid (only check neighboring cells)
+    const checked = new Set();
+    this.particles.forEach((particle, i) => {
+      const cx = Math.floor(particle.x / cellSize);
+      const cy = Math.floor(particle.y / cellSize);
+      
+      for (let nx = cx - 1; nx <= cx + 1; nx++) {
+        for (let ny = cy - 1; ny <= cy + 1; ny++) {
+          const neighbors = grid[nx + ',' + ny];
+          if (!neighbors) continue;
+          
+          for (const neighbor of neighbors) {
+            if (neighbor.index <= i) continue; // avoid duplicate pairs
+            const pairKey = i + '-' + neighbor.index;
+            if (checked.has(pairKey)) continue;
+            checked.add(pairKey);
+            
+            const dx = particle.x - neighbor.particle.x;
+            const dy = particle.y - neighbor.particle.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < this.connectionDistance) {
+              this.ctx.strokeStyle = `rgba(0, 212, 255, ${0.2 * (1 - distance / this.connectionDistance)})`;
+              this.ctx.lineWidth = 1;
+              this.ctx.beginPath();
+              this.ctx.moveTo(particle.x, particle.y);
+              this.ctx.lineTo(neighbor.particle.x, neighbor.particle.y);
+              this.ctx.stroke();
+            }
+          }
         }
-      });
+      }
     });
 
     requestAnimationFrame(() => this.animate());
@@ -190,8 +223,8 @@ class ScrollReveal {
   }
 
   observe() {
-    // Add reveal-on-scroll class to elements
-    const selectors = ['.card', '.about-section', '.contact-card-modern', 'section', '.stat-card', '.feature-item'];
+    // Add reveal-on-scroll class to elements (excluding <section> to avoid hiding entire page sections)
+    const selectors = ['.card', '.about-section', '.contact-card-modern', '.stat-card', '.feature-item'];
     
     selectors.forEach(selector => {
       const elements = document.querySelectorAll(selector);
@@ -304,6 +337,9 @@ class CustomCursor {
     this.cursorDot = document.createElement('div');
     this.cursorDot.className = 'custom-cursor-dot';
     document.body.appendChild(this.cursorDot);
+
+    // Hide native cursor
+    document.body.classList.add('custom-cursor-active');
   }
 
   attachEventListeners() {
@@ -378,33 +414,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Custom Cursor (desktop only)
   if (window.innerWidth >= 768) {
     new CustomCursor();
-  }
-
-  // Typing Effect (if element exists)
-  const typingElement = document.querySelector('.typing-text');
-  if (typingElement) {
-    new TypingEffect(typingElement, [
-      'Web Developer',
-      'Data Enthusiast',
-      'Problem Solver',
-      'Tech Explorer'
-    ]);
-  }
-
-  // Animated Counters (if they exist)
-  const counters = document.querySelectorAll('.counter');
-  if (counters.length > 0) {
-    const counterObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const target = entry.target.getAttribute('data-target');
-          new AnimatedCounter(entry.target, target);
-          counterObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.5 });
-
-    counters.forEach(counter => counterObserver.observe(counter));
   }
 });
 
