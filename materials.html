@@ -98,7 +98,7 @@
   <a href="index.html" class="mobile-brand" aria-label="KL Material Home">KL Material</a>
       <div id="mobile-nav" class="nav-track" role="menu" aria-hidden="true">
         <a href="index.html" role="menuitem" tabindex="-1">🏠 Home</a>
-  <a href="materials.html" role="menuitem" tabindex="-1" class="active" aria-current="page">📚 Materials</a>
+  <a href="materials.html" role="menuitem" tabindex="-1" class="active" aria-current="page"><i class="fa-solid fa-book"></i> Materials</a>
         <a href="roadmap.html" role="menuitem" tabindex="-1">🗺️ Roadmap</a>
         <a href="about.html" role="menuitem" tabindex="-1">👨‍💻 About</a>
         <a href="contact.html" role="menuitem" tabindex="-1">📞 Contact</a>
@@ -109,12 +109,12 @@
   <main class="materials-container">
     <div class="materials-hero">
       <div class="hero-content">
-        <h1 class="materials-title">📚 CSE Study Materials</h1>
+        <h1 class="materials-title"><i class="fa-solid fa-graduation-cap"></i> CSE Study Materials</h1>
         <p class="materials-subtitle">Access comprehensive study resources for your engineering journey</p>
         <div class="stats-badges">
-          <span class="stat-badge">📖 100+ Materials</span>
-          <span class="stat-badge">🎯 9 Subjects</span>
-          <span class="stat-badge">🚀 Free Access</span>
+          <span class="stat-badge"><i class="fa-solid fa-file-lines"></i> 100+ Materials</span>
+          <span class="stat-badge"><i class="fa-solid fa-bullseye"></i> 9 Subjects</span>
+          <span class="stat-badge"><i class="fa-solid fa-rocket"></i> Free Access</span>
         </div>
       </div>
     </div>
@@ -122,7 +122,7 @@
     <!-- Advanced Search Bar -->
     <div class="advanced-search-container">
       <div class="search-wrapper">
-        <span class="search-icon">🔍</span>
+        <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
         <input type="text" id="search-bar" class="advanced-search-input" 
           placeholder="Search by material name, subject, or topic..." 
           autocomplete="off" />
@@ -137,7 +137,7 @@
       <div class="filter-selectors">
         <!-- Year Selector -->
         <div class="selector-group">
-          <label class="selector-label">📅 Select Year</label>
+          <label class="selector-label"><i class="fa-solid fa-calendar-days"></i> Select Year</label>
           <div class="selector-pills" id="year-selector">
             <button class="selector-pill active" data-year="all">All Years</button>
             <button class="selector-pill" data-year="1">1st Year</button>
@@ -149,7 +149,7 @@
 
         <!-- Semester Selector -->
         <div class="selector-group" id="semester-group" style="display: none;">
-          <label class="selector-label">📖 Select Semester</label>
+          <label class="selector-label"><i class="fa-solid fa-book-open"></i> Select Semester</label>
           <div class="selector-pills" id="semester-selector">
             <!-- Populated dynamically -->
           </div>
@@ -157,7 +157,7 @@
 
         <!-- Subject Selector -->
         <div class="selector-group" id="subject-group" style="display: none;">
-          <label class="selector-label">📚 Select Subject</label>
+          <label class="selector-label"><i class="fa-solid fa-book"></i> Select Subject</label>
           <div class="selector-pills" id="subject-selector">
             <!-- Populated dynamically -->
           </div>
@@ -168,7 +168,7 @@
       <div class="filter-breadcrumb" id="filter-breadcrumb" style="display: none;">
         <span class="breadcrumb-label">Showing:</span>
         <span class="breadcrumb-path" id="breadcrumb-path"></span>
-        <button class="breadcrumb-reset" id="breadcrumb-reset" title="Reset filters">✕ Reset</button>
+        <button class="breadcrumb-reset" id="breadcrumb-reset" title="Reset filters"><i class="fa-solid fa-xmark"></i> Reset</button>
       </div>
     </div>
 
@@ -179,7 +179,7 @@
           <div class="loader-ring"></div>
           <div class="loader-ring"></div>
           <div class="loader-ring"></div>
-          <span class="loader-emoji">📚</span>
+          <span class="loader-emoji"><i class="fa-solid fa-book-open-reader"></i></span>
         </div>
         <p class="loader-text">Loading amazing materials...</p>
       </div>

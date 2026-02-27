@@ -25,28 +25,28 @@ const subjects = {
   // ── 1st Year Odd Semester ──
   "BEEC": {
     name: "Basic Electrical & Electronic Circuits (BEEC)",
-    icon: "⚡",
+    icon: '<i class="fa-solid fa-bolt"></i>',
     folder: "BEEC",
     year: 1,
     semester: 1
   },
   "DM": {
     name: "Discrete Mathematics (DM)",
-    icon: "🔢",
+    icon: '<i class="fa-solid fa-calculator"></i>',
     folder: "DM",
     year: 1,
     semester: 1
   },
   "PSC": {
     name: "Problem Solving Through C (PSC)",
-    icon: "💻",
+    icon: '<i class="fa-solid fa-code"></i>',
     folder: "PSC",
     year: 1,
     semester: 1
   },
   "DSD": {
     name: "Digital System Design (DSD)",
-    icon: "🔌",
+    icon: '<i class="fa-solid fa-microchip"></i>',
     folder: "DSD",
     year: 1,
     semester: 1
@@ -54,35 +54,35 @@ const subjects = {
   // ── 1st Year Even Semester ──
   "PP": {
     name: "Python Programming (PP)",
-    icon: "🐍",
+    icon: '<i class="fa-brands fa-python"></i>',
     folder: "PP",
     year: 1,
     semester: 2
   },
   "LACE": {
     name: "Linear Algebra & Calculus for Engineers (LACE)",
-    icon: "📐",
+    icon: '<i class="fa-solid fa-square-root-variable"></i>',
     folder: "LACE",
     year: 1,
     semester: 2
   },
   "DS": {
     name: "Data Structures (DS)",
-    icon: "🏗️",
+    icon: '<i class="fa-solid fa-diagram-project"></i>',
     folder: "DS",
     year: 1,
     semester: 2
   },
   "FIS": {
     name: "Fundamentals of IoT & Sensors (FIS)",
-    icon: "📡",
+    icon: '<i class="fa-solid fa-tower-broadcast"></i>',
     folder: "FIS",
     year: 1,
     semester: 2
   },
   "COA": {
     name: "Computer Organization & Architecture (COA)",
-    icon: "🖥️",
+    icon: '<i class="fa-solid fa-computer"></i>',
     folder: "COA",
     year: 1,
     semester: 2
@@ -199,7 +199,7 @@ function populateSubjectSelector(year, semester) {
   if (!subjectSelector) return;
 
   let html = `<button class="selector-pill active" data-subject="all">
-    <span class="pill-icon">📚</span><span>All Subjects</span>
+    <span class="pill-icon"><i class="fa-solid fa-book"></i></span><span>All Subjects</span>
   </button>`;
 
   for (const [key, config] of Object.entries(subjects)) {
@@ -294,7 +294,7 @@ function applyFilters() {
   }
 
   if (Object.keys(filtered).length === 0) {
-    materialsList.innerHTML = `<p class="no-results">📭 No materials available for this selection yet. Stay tuned!</p>`;
+    materialsList.innerHTML = `<p class="no-results"><i class="fa-solid fa-box-open"></i> No materials available for this selection yet. Stay tuned!</p>`;
   } else {
     displayMaterials(filtered);
   }
@@ -491,7 +491,7 @@ function filterMaterials(query) {
 
   if (Object.keys(filtered).length === 0) {
     const safeQuery = query.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-    materialsList.innerHTML = `<p class="no-results">🔍 No materials found for "${safeQuery}"</p>`;
+    materialsList.innerHTML = `<p class="no-results"><i class="fa-solid fa-magnifying-glass"></i> No materials found for "${safeQuery}"</p>`;
   } else {
     displayMaterials(filtered);
   }
@@ -506,7 +506,7 @@ function displayMaterials(grouped) {
     subjectCard.className = "subject-card";
 
     const subjectKey = Object.keys(subjects).find(key => subjects[key].name === subject);
-    const subjectIcon = subjects[subjectKey]?.icon || "📚";
+    const subjectIcon = subjects[subjectKey]?.icon || '<i class="fa-solid fa-book"></i>';
 
     const header = document.createElement("div");
     header.className = "subject-header";
@@ -559,7 +559,7 @@ function displayMaterials(grouped) {
         <div class="card-body">
           <h3 class="material-name">${displayName}</h3>
           <div class="material-meta">
-            <span class="meta-downloads" title="Downloads">⬇ ${downloadCount}</span>
+            <span class="meta-downloads" title="Downloads"><i class="fa-solid fa-download"></i> ${downloadCount}</span>
             <span class="meta-rating" title="${rating} / 5 (${ratingCount} ratings)">
               <span class="stars-row" data-folder="${file.folder}" data-file="${escapeHtml(file.name)}">${starsHtml}</span>
               <small>${ratingCount > 0 ? rating.toFixed(1) : ''}</small>
@@ -568,7 +568,7 @@ function displayMaterials(grouped) {
         </div>
         <div class="card-footer">
           <a href="${downloadUrl}" target="_blank" rel="noopener" class="download-link" data-folder="${file.folder}" data-file="${escapeHtml(file.name)}">
-            <span class="download-icon">⬇</span>
+            <span class="download-icon"><i class="fa-solid fa-download"></i></span>
             <span>Download</span>
           </a>
         </div>
@@ -612,16 +612,19 @@ function highlightMatch(text, query) {
 
 function getFileIcon(ext) {
   const icons = {
-    'PDF': '📄',
-    'DOC': '📝',
-    'DOCX': '📝',
-    'PPT': '📊',
-    'PPTX': '📊',
-    'ZIP': '📦',
-    'RAR': '📦',
-    'TXT': '📃'
+    'PDF': '<i class="fa-solid fa-file-pdf" style="color:#e74c3c"></i>',
+    'DOC': '<i class="fa-solid fa-file-word" style="color:#2b579a"></i>',
+    'DOCX': '<i class="fa-solid fa-file-word" style="color:#2b579a"></i>',
+    'PPT': '<i class="fa-solid fa-file-powerpoint" style="color:#d04423"></i>',
+    'PPTX': '<i class="fa-solid fa-file-powerpoint" style="color:#d04423"></i>',
+    'ZIP': '<i class="fa-solid fa-file-zipper" style="color:#f39c12"></i>',
+    'RAR': '<i class="fa-solid fa-file-zipper" style="color:#f39c12"></i>',
+    'TXT': '<i class="fa-solid fa-file-lines" style="color:#95a5a6"></i>',
+    'JPG': '<i class="fa-solid fa-file-image" style="color:#27ae60"></i>',
+    'JPEG': '<i class="fa-solid fa-file-image" style="color:#27ae60"></i>',
+    'PNG': '<i class="fa-solid fa-file-image" style="color:#27ae60"></i>'
   };
-  return icons[ext] || '📄';
+  return icons[ext] || '<i class="fa-solid fa-file" style="color:#00d4ff"></i>';
 }
 
 // Load materials from GitHub
@@ -680,7 +683,7 @@ async function loadMaterials() {
                 if (errorData.message && errorData.message.includes('rate limit')) {
                   materialsList.innerHTML = `
                     <div class="no-results">
-                      <h3>⏱️ GitHub API Rate Limit Reached</h3>
+                      <h3><i class="fa-solid fa-clock"></i> GitHub API Rate Limit Reached</h3>
                       <p>Too many requests! Please wait a few minutes and refresh.</p>
                     </div>
                   `;
@@ -716,7 +719,7 @@ async function loadMaterials() {
       console.warn('No materials found!');
       materialsList.innerHTML = `
         <div class="no-results">
-          <h3>📭 No Materials Found</h3>
+          <h3><i class="fa-solid fa-box-open"></i> No Materials Found</h3>
           <p>Please add your PDF files to the <code>/materials</code> folder in your GitHub repository.</p>
           <p style="margin-top: 15px;">
             Folders needed: <strong>BEEC</strong>, <strong>DM</strong>, <strong>PSC</strong>, <strong>DSD</strong>
@@ -743,7 +746,7 @@ async function loadMaterials() {
     console.error("Error loading materials:", error);
     materialsList.innerHTML = `
       <div class="no-results">
-        <h3>⚠️ Error Loading Materials</h3>
+        <h3><i class="fa-solid fa-triangle-exclamation"></i> Error Loading Materials</h3>
         <p>Could not load files from GitHub.</p>
         <p style="margin-top: 10px; font-size: 0.9rem;">Error: ${(error.message || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>
         <p style="margin-top: 10px; font-size: 0.85rem; opacity: 0.7;">Check browser console for details.</p>
@@ -826,7 +829,7 @@ if (materialsList) {
           const countEl = card.querySelector('.meta-downloads');
           if (countEl) {
             const current = parseInt(countEl.textContent.replace(/\D/g, '')) || 0;
-            countEl.textContent = '⬇ ' + (current + 1);
+            countEl.innerHTML = '<i class="fa-solid fa-download"></i> ' + (current + 1);
           }
         }
       }
