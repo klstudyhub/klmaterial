@@ -6,7 +6,7 @@
 
   // ─── CONFIG ───────────────────────────────────────────
   const GEMINI_API_KEY = 'AIzaSyDHZrHZRhDhvzmCANQZ0NXrf0qLjv1r484'; // ← Get free key: https://aistudio.google.com/apikey
-  const MODELS = ['gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash'];
+  const MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-2.0-flash-lite'];
   function getApiUrl(model) {
     return `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
   }
