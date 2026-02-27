@@ -38,6 +38,22 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Skip to content link - hidden until focused */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  background: #000;
+  color: #fff;
+  padding: 8px 16px;
+  z-index: 10000;
+  min-height: auto;
+  font-size: 0.9rem;
+}
+.skip-link:focus {
+  top: 0;
+}
+
 body {
   margin: 0;
   padding-top: 0;
