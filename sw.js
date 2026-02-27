@@ -1,12 +1,20 @@
 // Service Worker for PWA
-const CACHE_NAME = 'klmaterial-v1';
+const CACHE_NAME = 'klmaterial-v2';
 const urlsToCache = [
   '/klmaterial/',
   '/klmaterial/index.html',
+  '/klmaterial/materials.html',
+  '/klmaterial/roadmap.html',
+  '/klmaterial/about.html',
+  '/klmaterial/contact.html',
   '/klmaterial/style.css',
-  '/klmaterial/script.js',
   '/klmaterial/ui.js',
+  '/klmaterial/advanced-features.js',
+  '/klmaterial/chatbot.js',
+  '/klmaterial/github-materials.js',
   '/klmaterial/profile.jpg',
+  '/klmaterial/icon.svg',
+  '/klmaterial/manifest.json',
 ];
 
 // Install Service Worker
@@ -39,6 +47,9 @@ self.addEventListener('activate', (event) => {
 
 // Fetch with Network First, Cache Fallback strategy
 self.addEventListener('fetch', (event) => {
+  // Only cache GET requests
+  if (event.request.method !== 'GET') return;
+
   event.respondWith(
     fetch(event.request)
       .then((response) => {
@@ -92,7 +103,7 @@ self.addEventListener('push', (event) => {
     actions: [
       {
         action: 'explore',
-        title: 'View Materials',
+        title: 'View Materials'
       },
       {
         action: 'close',

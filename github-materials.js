@@ -181,7 +181,8 @@ function filterMaterials(query) {
   }
 
   if (Object.keys(filtered).length === 0) {
-    materialsList.innerHTML = `<p class="no-results">🔍 No materials found for "${query}"</p>`;
+    const safeQuery = query.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    materialsList.innerHTML = `<p class="no-results">🔍 No materials found for "${safeQuery}"</p>`;
   } else {
     displayMaterials(filtered);
   }
@@ -286,7 +287,6 @@ function getFileIcon(ext) {
 // Load materials from GitHub
 async function loadMaterials() {
   if (!materialsList) return Promise.resolve();
-  if (!materialsList) return;
 
   // Create Skeleton Grid
   let skeletonHTML = '<div class="materials-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); width: 100%; gap: 20px;">';
@@ -392,7 +392,7 @@ async function loadMaterials() {
       <div class="no-results">
         <h3>⚠️ Error Loading Materials</h3>
         <p>Could not load files from GitHub.</p>
-        <p style="margin-top: 10px; font-size: 0.9rem;">Error: ${error.message}</p>
+        <p style="margin-top: 10px; font-size: 0.9rem;">Error: ${(error.message || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>
         <p style="margin-top: 10px; font-size: 0.85rem; opacity: 0.7;">Check browser console for details.</p>
       </div>
     `;

@@ -13,19 +13,19 @@
       "src": "/klmaterial/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ],
   "categories": ["education", "productivity"],
   "shortcuts": [
     {
       "name": "Materials",
-      "url": "/klmaterial/materials",
+      "url": "/klmaterial/materials.html",
       "description": "Browse study materials"
     },
     {
       "name": "Roadmap",
-      "url": "/klmaterial/roadmap",
+      "url": "/klmaterial/roadmap.html",
       "description": "View career roadmap"
     }
   ]

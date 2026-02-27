@@ -112,8 +112,11 @@ If asked about unrelated topics, politely redirect to academics.`;
   async function callGemini(userMessage) {
     chatHistory.push({ role: 'user', parts: [{ text: userMessage }] });
 
-    // Keep last 20 messages for context window
-    const recent = chatHistory.slice(-20);
+    // Trim history to last 20 messages to prevent memory leak
+    if (chatHistory.length > 20) {
+      chatHistory = chatHistory.slice(-20);
+    }
+    const recent = chatHistory;
 
     const res = await fetch(API_URL, {
       method: 'POST',
