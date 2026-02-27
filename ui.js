@@ -109,9 +109,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const nav = document.getElementById('mobile-nav');
     const navLinks = nav ? Array.from(nav.querySelectorAll('a[role="menuitem"]')) : [];
 
+    // Track scroll position to prevent jump when body becomes position:fixed
+    let _savedScrollY = 0;
+
     // Use an object so event listeners always call the latest version
     const menuActions = {
         open() {
+            // Save scroll position before body becomes position:fixed
+            _savedScrollY = window.scrollY;
+            body.style.top = `-${_savedScrollY}px`;
             body.classList.add('nav-active');
             hamburger.setAttribute('aria-expanded', 'true');
             if (nav) nav.setAttribute('aria-hidden', 'false');
@@ -122,6 +128,9 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         close() {
             body.classList.remove('nav-active');
+            body.style.top = '';
+            // Restore scroll position
+            window.scrollTo(0, _savedScrollY);
             hamburger.setAttribute('aria-expanded', 'false');
             if (nav) nav.setAttribute('aria-hidden', 'true');
             navLinks.forEach(link => link.setAttribute('tabindex', '-1'));
@@ -195,9 +204,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Force inline styles that override problematic rules (safe defaults)
                 link.style.color = '#b0e0ff';
-                link.style.webkitTextFillColor = 'initial';
-                link.style.backgroundClip = 'initial';
-                link.style.webkitBackgroundClip = 'initial';
+                link.style.webkitTextFillColor = '#b0e0ff'; // Use explicit color, NOT 'initial' (some browsers treat initial as transparent)
+                link.style.backgroundClip = 'border-box';
+                link.style.webkitBackgroundClip = 'border-box';
                 link.style.textShadow = 'none';
             });
 

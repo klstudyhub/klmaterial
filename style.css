@@ -5052,6 +5052,16 @@ main.materials-container {
     transition-duration: 1s !important;
   }
 
+  /* CRITICAL FIX: Exclude mobile nav from the global 1s transition-duration
+     override above. Without this, nav link color/opacity/visibility all
+     transition over 1 second, making text appear invisible when the menu
+     opens and JS briefly sets conflicting inline styles. */
+  .nav-track,
+  .nav-track a,
+  .nav-track a * {
+    transition-duration: 0.2s !important;
+  }
+
   /* Smooth fade-in animations */
   .fade-in,
   .fadeInUp {
@@ -5844,7 +5854,7 @@ main.materials-container {
     -webkit-text-fill-color: #b0e0ff !important; /* iOS Safari fix */
     text-decoration: none;
     border-left: 4px solid transparent;
-    transition: background 0.2s ease, color 0.2s ease, border-left-color 0.2s ease;
+    transition: background 0.2s ease, color 0.2s ease, border-left-color 0.2s ease !important;
     background: transparent;
     opacity: 1 !important; /* Always visible */
     transform: none; /* No movement */
@@ -5852,6 +5862,13 @@ main.materials-container {
     white-space: nowrap;
     z-index: 2001;
     visibility: visible !important;
+  }
+
+  /* Hide desktop nav marker in mobile drawer — it has no mobile styles
+     (desktop CSS is inside min-width:769px) so it becomes an unstyled
+     flex item that can interfere with the drawer layout. */
+  .nav-track .nav-marker {
+    display: none !important;
   }
 
   /* Removed complex animations that were hiding text */
