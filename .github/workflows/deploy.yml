@@ -20,29 +20,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'npm'
-          cache-dependency-path: react-klmaterial/package-lock.json
-
-      - name: Install dependencies
-        working-directory: react-klmaterial
-        run: npm ci
-
-      - name: Build
-        working-directory: react-klmaterial
-        run: npm run build
-
-      - name: SPA fallback (404.html)
-        run: cp react-klmaterial/dist/index.html react-klmaterial/dist/404.html
+          lfs: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: react-klmaterial/dist
+          path: .
 
   deploy:
     needs: build

@@ -43,11 +43,11 @@
   <noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"></noscript>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="style.css?v=19.0">
-  <link rel="manifest" href="/klmaterial/manifest.json" />
+  <link rel="manifest" href="manifest.json" />
   <link rel="icon"
-    href="/klmaterial/icon.svg" />
+    href="icon.svg" />
   <link rel="apple-touch-icon"
-    href="/klmaterial/icon.svg" />
+    href="icon.svg" />
 
   <!-- Google tag (gtag.js) -->
   <script async
@@ -360,7 +360,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/klmaterial/sw.js').then(function(reg) {
+        navigator.serviceWorker.register('sw.js').then(function(reg) {
           console.log('ServiceWorker registration successful with scope: ', reg.scope);
         }).catch(function(err) {
           console.warn('ServiceWorker registration failed: ', err);
