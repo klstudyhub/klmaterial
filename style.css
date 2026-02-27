@@ -5127,7 +5127,7 @@ main.materials-container {
 
   .hero {
     padding: 30px 15px;
-    padding-top: 100px;
+    padding-top: 20px;
   }
 
   .hero h1 {
@@ -6083,7 +6083,7 @@ main.materials-container {
 
   /* Content Spacing: Guaranteed No Overlap */
   .hero { 
-    padding-top: 160px; 
+    padding-top: 90px; 
     padding-left: 20px;
     padding-right: 20px;
   }
@@ -6138,7 +6138,7 @@ main.materials-container {
   }
   
   .hero {
-    padding-top: 145px;
+    padding-top: 80px;
   }
   
   .materials-container,
