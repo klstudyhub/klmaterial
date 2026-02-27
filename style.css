@@ -1361,48 +1361,84 @@ nav a::after {
   }
 
   /* Enhanced Contact Page Mobile */
+  .page-content.contact-page {
+    padding: 0;
+    padding-top: 90px; /* 70px header + 20px spacing */
+    padding-bottom: 40px;
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
   .contact-hero {
-    margin-bottom: 30px;
+    margin-bottom: 25px;
+    padding: 0 15px;
   }
 
   .contact-title {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
 
   .contact-subtitle {
-    font-size: 1rem;
+    font-size: 0.95rem;
+    padding: 0 10px;
   }
 
   .contact-grid {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 16px;
     padding: 0 15px;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .contact-card-link {
+    display: block;
+    min-height: auto;
   }
 
   .contact-card-modern {
-    padding: 25px 20px;
+    padding: 22px 18px;
     min-height: auto;
+    border-radius: 16px;
   }
 
   .contact-icon {
-    width: 50px;
-    height: 50px;
-    font-size: 1.5rem;
+    width: 48px;
+    height: 48px;
+    font-size: 1.4rem;
     border-radius: 12px;
+    margin-bottom: 12px;
   }
 
   .contact-card-modern h3 {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
+    margin: 6px 0;
   }
 
   .contact-card-modern p {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     min-height: auto;
+    margin: 6px 0 12px 0;
+  }
+
+  .contact-action {
+    font-size: 0.85rem;
+  }
+
+  .contact-footer-section {
+    margin-top: 30px;
+    padding: 0 15px;
   }
 
   .response-time {
     flex-direction: column;
     padding: 15px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .response-icon {
@@ -1547,6 +1583,7 @@ nav a::after {
   max-width: 100%;
   width: 100%;
   padding: 0;
+  padding-top: 120px; /* Space for fixed header on desktop */
 }
 
 .contact-hero {
@@ -1580,17 +1617,19 @@ nav a::after {
 
 .contact-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 30px;
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 20px;
+  box-sizing: border-box;
 }
 
 .contact-card-link {
   text-decoration: none;
   color: inherit;
   display: block;
+  min-height: auto;
 }
 
 .contact-card-modern {
@@ -6100,6 +6139,14 @@ main.materials-container {
     padding-top: 140px; 
     padding-left: 20px;
     padding-right: 20px;
+  }
+
+  /* Contact page needs less top padding since .contact-page has its own layout */
+  .page-content.contact-page {
+    padding-top: 90px;
+    padding-left: 0;
+    padding-right: 0;
+    margin: 0;
   }
   
   /* Typography Adjustments */
