@@ -3,81 +3,112 @@
 
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="KL Material - Your complete study hub for CSE materials, roadmaps, and resources" />
+  <meta
+    name="viewport" content="width=device-width, initial-scale=1" />
+  <meta
+    name="description" content="KL Material - Your complete study hub for CSE materials, roadmaps, and resources" />
   <meta name="keywords" content="KL University, CSE, Study Materials, Roadmap, BEEC, DM, PSC, DSD" />
 
   <!-- Open Graph -->
-  <meta property="og:type" content="website" />
+  <meta
+    property="og:type" content="website" />
   <meta property="og:title" content="KL Material - Study Hub" />
   <meta property="og:description" content="Access comprehensive CSE study materials and career roadmaps" />
-  <meta property="og:image" content="/klmaterial/profile.jpg" />
-  <meta property="og:url" content="https://praveenreddy8942-debug.github.io/klmaterial/index.html" />
+  <meta property="og:image"
+    content="/klmaterial/profile.jpg" />
+  <meta property="og:url"
+    content="https://praveenreddy8942-debug.github.io/klmaterial/index.html" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="KL Material - Study Hub" />
-  <meta name="twitter:image" content="https://praveenreddy8942-debug.github.io/klmaterial/profile.jpg" />
+  <meta
+    name="twitter:title" content="KL Material - Study Hub" />
+  <meta name="twitter:image"
+    content="https://praveenreddy8942-debug.github.io/klmaterial/profile.jpg" />
 
   <title>KL Material - Study Hub</title>
 
+  <!-- Optimize Font Loading with preconnect and async loading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="profile.jpg" as="image">
+  
   <!-- Styles & fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="style.css?v=19.0">
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet"
+    href="style.css?v=19.0">
   <link rel="manifest" href="/klmaterial/manifest.json" />
-  <link rel="icon" href="/klmaterial/icon.svg" />
-  <link rel="apple-touch-icon" href="/klmaterial/icon.svg" />
+  <link rel="icon"
+    href="/klmaterial/icon.svg" />
+  <link rel="apple-touch-icon"
+    href="/klmaterial/icon.svg" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+    rel="stylesheet" media="print" onload="this.media='all'">
 
   <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-NZ0SERPS7L"></script>
+  <script async
+    src="https://www.googletagmanager.com/gtag/js?id=G-NZ0SERPS7L"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);} 
+    function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'G-NZ0SERPS7L');
   </script>
 
-  <!-- Cache control for refresh during development/Pages rollout -->
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
+  <!-- Cache control moved to server headers (.htaccess / _headers file) -->
 </head>
 
 <body>
+  <!-- Skip to main content link for keyboard accessibility -->
+  <a href="#main-content" class="skip-link" style="position: absolute; top: -40px; left: 0; background: #000; color: #fff; padding: 8px; z-index: 100;">Skip to main content</a>
+  
   <header>
     <nav class="nav-liquid">
-      <button class="hamburger" aria-label="Toggle Menu" aria-expanded="false" aria-controls="mobile-nav">
+      <button
+        class="hamburger" aria-label="Toggle Menu" aria-expanded="false"
+        aria-controls="mobile-nav">
         <span></span>
         <span></span>
         <span></span>
       </button>
       <a href="index.html" class="mobile-brand" aria-label="KL Material Home">KL Material</a>
-      <div id="mobile-nav" class="nav-track" role="menu" aria-hidden="true">
-        <a href="index.html" role="menuitem" tabindex="-1">🏠 Home</a>
-        <a href="materials.html" role="menuitem" tabindex="-1">📚 Materials</a>
-        <a href="roadmap.html" role="menuitem" tabindex="-1">🗺️ Roadmap</a>
-        <a href="about.html" role="menuitem" tabindex="-1">👨‍💻 About</a>
-        <a href="contact.html" role="menuitem" tabindex="-1">📞 Contact</a>
+      <div id="mobile-nav" class="nav-track"
+        role="menu" aria-hidden="true">
+        <a href="index.html" role="menuitem"
+          tabindex="-1" data-nav-link>🏠 Home</a>
+        <a href="materials.html" role="menuitem" tabindex="-1" data-nav-link>📚
+          Materials</a>
+        <a href="roadmap.html" role="menuitem" tabindex="-1" data-nav-link>🗺️
+          Roadmap</a>
+        <a href="about.html" role="menuitem" tabindex="-1" data-nav-link>👨‍💻
+          About</a>
+        <a href="contact.html" role="menuitem" tabindex="-1" data-nav-link>📞
+          Contact</a>
       </div>
     </nav>
   </header>
 
-  <main class="page-content home-page">
+  <main class="page-content home-page" id="main-content">
     <!-- Seasonal animation overlay (created by animations.js) -->
-    <div id="seasonalAnimation" class="season-container" aria-hidden="true"></div>
+    <div
+      id="seasonalAnimation" class="season-container" role="presentation" aria-hidden="true"></div>
     
     <section class="hero">
       <div class="hero-inner">
-        <img src="profile.jpg" alt="Praveen Reddy" class="profile-img" width="160" height="160" loading="eager">
+        <img
+          src="profile.jpg" alt="Praveen Reddy" class="profile-img" width="160" height="160"
+          loading="eager">
         <div class="hero-text">
           <h1 class="hero-title">KL Material</h1>
           <p class="hero-subtitle">Your complete study hub for CSE materials, roadmaps and resources</p>
           <div class="hero-cta">
-            <a class="btn" href="materials.html">
+            <a
+              class="btn" href="materials.html">
               <i class="fas fa-book-open"></i> Browse Materials
             </a>
-            <a class="btn btn-ghost" href="roadmap.html">
+            <a class="btn btn-ghost"
+              href="roadmap.html">
               <i class="fas fa-map"></i> View Roadmap
             </a>
           </div>
@@ -90,24 +121,31 @@
       <h2>By The Numbers</h2>
       <div class="stats-container">
         <div class="stat-item">
-          <div class="stat-number" data-target="4">0</div>
-          <div class="stat-label">Subjects</div>
+          <div class="stat-number" data-target="4">4</div>
+          <div
+            class="stat-label">Subjects</div>
           <p class="stat-desc">Comprehensive course coverage</p>
         </div>
         <div class="stat-item">
-          <div class="stat-number" data-target="100" data-suffix="+">0</div>
-          <div class="stat-label">Materials</div>
+          <div
+            class="stat-number" data-target="100" data-suffix="+">100+</div>
+          <div
+            class="stat-label">Materials</div>
           <p class="stat-desc">PDFs, notes & resources</p>
         </div>
         <div class="stat-item">
-          <div class="stat-number" data-target="4">0</div>
+          <div
+            class="stat-number" data-target="4">4</div>
           <div class="stat-label">Years</div>
           <p class="stat-desc">Complete B.Tech roadmap</p>
         </div>
-        <div class="stat-item">
-          <div class="stat-number" data-target="1000" data-suffix="+">0</div>
+        <div
+          class="stat-item">
+          <div class="stat-number" data-target="1000"
+            data-suffix="+">1000+</div>
           <div class="stat-label">Students</div>
-          <p class="stat-desc">Already benefited</p>
+          <p
+            class="stat-desc">Already benefited</p>
         </div>
       </div>
     </section>
@@ -116,23 +154,30 @@
     <section class="features">
       <h2>Core Features</h2>
       <div class="feature-cards">
-        <a class="card advanced-card" href="materials.html">
+        <a class="card
+          advanced-card" href="materials.html">
           <div class="card-icon">📚</div>
           <h3>Materials Hub</h3>
-          <p>Notes, PDFs and curated resources grouped by subject for easy access.</p>
+          <p>Notes, PDFs and curated resources
+            grouped by subject for easy access.</p>
           <span class="card-arrow">→</span>
         </a>
         <a class="card advanced-card" href="roadmap.html">
           <div class="card-icon">🗺️</div>
           <h3>Career Roadmap</h3>
-          <p>4-year roadmap for B.Tech CSE with suggested learning paths and milestones.</p>
+          <p>4-year roadmap for B.Tech CSE with suggested learning paths and
+            milestones.</p>
           <span class="card-arrow">→</span>
         </a>
-        <a class="card advanced-card" href="about.html">
-          <div class="card-icon">👨‍💻</div>
+        <a
+          class="card advanced-card" href="about.html">
+          <div
+            class="card-icon">👨‍💻</div>
           <h3>About</h3>
-          <p>Learn about the project and contact details for feedback or collaboration.</p>
-          <span class="card-arrow">→</span>
+          <p>Learn about the project and contact
+            details for feedback or collaboration.</p>
+          <span
+            class="card-arrow">→</span>
         </a>
       </div>
     </section>
@@ -140,20 +185,25 @@
     <!-- Quick Access Categories -->
     <section class="quick-access">
       <h2>Quick Access</h2>
-      <div class="category-grid">
-        <a href="materials.html?category=BEEC" class="category-btn" style="--accent: #ff6b6b;">
+      <div
+        class="category-grid">
+        <a href="materials.html?category=BEEC"
+          class="category-btn" style="--accent: #ff6b6b;">
           <span class="cat-icon">⚡</span>
           <span class="cat-name">BEEC</span>
         </a>
-        <a href="materials.html?category=DM" class="category-btn" style="--accent: #4ecdc4;">
+        <a
+          href="materials.html?category=DM" class="category-btn" style="--accent: #4ecdc4;">
           <span class="cat-icon">🧮</span>
           <span class="cat-name">Discrete Math</span>
         </a>
-        <a href="materials.html?category=DSD" class="category-btn" style="--accent: #45b7d1;">
+        <a href="materials.html?category=DSD"
+          class="category-btn" style="--accent: #45b7d1;">
           <span class="cat-icon">🔌</span>
           <span class="cat-name">DSD</span>
         </a>
-        <a href="materials.html?category=PSC" class="category-btn" style="--accent: #96ceb4;">
+        <a
+          href="materials.html?category=PSC" class="category-btn" style="--accent: #96ceb4;">
           <span class="cat-icon">💻</span>
           <span class="cat-name">PSC</span>
         </a>
@@ -161,24 +211,48 @@
     </section>
 
     <!-- CTA Section -->
-    <section class="cta-advanced">
+    <section
+      class="cta-advanced">
       <h2>Get Started Now</h2>
-      <p>Access curated study materials organized by semester and subject</p>
-      <a href="materials.html" class="btn btn-lg">Explore All Materials</a>
+      <p>Access curated study
+        materials organized by semester and subject</p>
+      <a href="materials.html"
+        class="btn btn-lg">Explore All Materials</a>
     </section>
   </main>
 
   <footer>
-    <p>© 2025 Praveen Reddy | All rights reserved.</p>
+    <p>© 2026 Praveen Reddy | All rights reserved.</p>
   </footer>
 
-  <button id="backToTop" title="Back to top">↑</button>
+  <button
+    id="backToTop" title="Back to top">↑</button>
 
-  <!-- Site scripts -->
-  <script src="advanced-features.js"></script>
-  <script src="animations.js"></script>
-  <script src="chatbot.js"></script>
-  <script src="ui.js?v=6.0"></script>
+  <!-- Site scripts (deferred for better performance) -->
+  <script defer src="advanced-features.js"></script>
+  <script defer src="animations.js"></script>
+  <script defer src="chatbot.js"></script>
+  <script defer src="ui.js?v=6.0"></script>
+  <script type="module" src="script.js"></script>
+
+  <!-- Navigation menu keyboard accessibility fix -->
+  <script>
+    (function() {
+      const nav = document.querySelector('.nav-track');
+      const navLinks = document.querySelectorAll('[data-nav-link]');
+      
+      // When menu is active, enable tab navigation by setting tabindex to 0
+      const observer = new MutationObserver(() => {
+        const isActive = nav.parentElement.querySelector('.hamburger').getAttribute('aria-expanded') === 'true';
+        navLinks.forEach(link => {
+          link.setAttribute('tabindex', isActive ? '0' : '-1');
+        });
+      });
+      
+      observer.observe(nav.parentElement.querySelector('.hamburger'), { attributes: true });
+    })();
+  </script>
+
   <!-- Register service worker (if supported) to enable offline cache and updates -->
   <script>
     if ('serviceWorker' in navigator) {
