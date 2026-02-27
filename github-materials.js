@@ -27,24 +27,28 @@ const subjects = {
     name: "Basic Electrical & Electronic Circuits (BEEC)",
     icon: "⚡",
     folder: "BEEC",
+    year: 1,
     semester: 1
   },
   "DM": {
     name: "Discrete Mathematics (DM)",
     icon: "🔢",
     folder: "DM",
+    year: 1,
     semester: 1
   },
   "PSC": {
     name: "Problem Solving Through C (PSC)",
     icon: "💻",
     folder: "PSC",
+    year: 1,
     semester: 1
   },
   "DSD": {
     name: "Digital System Design (DSD)",
     icon: "🔌",
     folder: "DSD",
+    year: 1,
     semester: 1
   },
   // ── 1st Year Even Semester ──
@@ -52,30 +56,35 @@ const subjects = {
     name: "Python Programming (PP)",
     icon: "🐍",
     folder: "PP",
+    year: 1,
     semester: 2
   },
   "LACE": {
     name: "Linear Algebra & Calculus for Engineers (LACE)",
     icon: "📐",
     folder: "LACE",
+    year: 1,
     semester: 2
   },
   "DS": {
     name: "Data Structures (DS)",
     icon: "🏗️",
     folder: "DS",
+    year: 1,
     semester: 2
   },
   "FIS": {
     name: "Fundamentals of IoT & Sensors (FIS)",
     icon: "📡",
     folder: "FIS",
+    year: 1,
     semester: 2
   },
   "COA": {
     name: "Computer Organization & Architecture (COA)",
     icon: "🖥️",
     folder: "COA",
+    year: 1,
     semester: 2
   }
 };
@@ -84,12 +93,212 @@ const subjects = {
 const materialsList = document.getElementById("materials-list");
 const searchBar = document.getElementById("search-bar");
 const clearBtn = document.getElementById("clear-search");
-const filterButtons = document.querySelectorAll(".filter-pill");
+
+// Selector elements
+const yearSelector = document.getElementById("year-selector");
+const semesterGroup = document.getElementById("semester-group");
+const semesterSelector = document.getElementById("semester-selector");
+const subjectGroup = document.getElementById("subject-group");
+const subjectSelector = document.getElementById("subject-selector");
+const filterBreadcrumb = document.getElementById("filter-breadcrumb");
+const breadcrumbPath = document.getElementById("breadcrumb-path");
+const breadcrumbReset = document.getElementById("breadcrumb-reset");
 
 let allMaterials = {};
-let activeCategory = "all";
+let activeYear = "all";
+let activeSemester = "all";
+let activeSubject = "all";
 let currentQuery = "";
 let materialsMetadata = new Map();
+
+// ─── Cascading Selectors ───
+
+function getYearLabel(y) {
+  const labels = { 1: "1st Year", 2: "2nd Year", 3: "3rd Year", 4: "4th Year" };
+  return labels[y] || `Year ${y}`;
+}
+
+function getSemesterLabel(year, sem) {
+  const semNum = (year - 1) * 2 + sem;
+  const suffixes = { 1: "Odd", 2: "Even" };
+  return `Semester ${semNum} (${suffixes[sem] || sem})`;
+}
+
+// Setup year selector clicks
+if (yearSelector) {
+  yearSelector.addEventListener("click", (e) => {
+    const pill = e.target.closest(".selector-pill");
+    if (!pill) return;
+
+    yearSelector.querySelectorAll(".selector-pill").forEach(p => p.classList.remove("active"));
+    pill.classList.add("active");
+
+    activeYear = pill.dataset.year;
+    activeSemester = "all";
+    activeSubject = "all";
+
+    if (activeYear === "all") {
+      // Hide semester & subject selectors
+      semesterGroup.style.display = "none";
+      subjectGroup.style.display = "none";
+      updateBreadcrumb();
+      applyFilters();
+    } else {
+      // Show semester selector for this year
+      populateSemesterSelector(parseInt(activeYear));
+      semesterGroup.style.display = "";
+      semesterGroup.classList.add("selector-animate");
+      subjectGroup.style.display = "none";
+      updateBreadcrumb();
+      applyFilters();
+    }
+  });
+}
+
+function populateSemesterSelector(year) {
+  if (!semesterSelector) return;
+
+  // Find which semesters exist for this year
+  const semesters = new Set();
+  for (const config of Object.values(subjects)) {
+    if (config.year === year) semesters.add(config.semester);
+  }
+
+  let html = `<button class="selector-pill active" data-semester="all">All Semesters</button>`;
+  Array.from(semesters).sort().forEach(sem => {
+    html += `<button class="selector-pill" data-semester="${sem}">${getSemesterLabel(year, sem)}</button>`;
+  });
+  semesterSelector.innerHTML = html;
+
+  // Attach click handler
+  semesterSelector.addEventListener("click", handleSemesterClick);
+}
+
+function handleSemesterClick(e) {
+  const pill = e.target.closest(".selector-pill");
+  if (!pill) return;
+
+  semesterSelector.querySelectorAll(".selector-pill").forEach(p => p.classList.remove("active"));
+  pill.classList.add("active");
+
+  activeSemester = pill.dataset.semester;
+  activeSubject = "all";
+
+  if (activeSemester === "all") {
+    subjectGroup.style.display = "none";
+  } else {
+    populateSubjectSelector(parseInt(activeYear), parseInt(activeSemester));
+    subjectGroup.style.display = "";
+    subjectGroup.classList.add("selector-animate");
+  }
+  updateBreadcrumb();
+  applyFilters();
+}
+
+function populateSubjectSelector(year, semester) {
+  if (!subjectSelector) return;
+
+  let html = `<button class="selector-pill active" data-subject="all">
+    <span class="pill-icon">📚</span><span>All Subjects</span>
+  </button>`;
+
+  for (const [key, config] of Object.entries(subjects)) {
+    if (config.year === year && config.semester === semester) {
+      html += `<button class="selector-pill" data-subject="${key}">
+        <span class="pill-icon">${config.icon}</span><span>${key}</span>
+      </button>`;
+    }
+  }
+  subjectSelector.innerHTML = html;
+
+  // Attach click handler
+  subjectSelector.addEventListener("click", handleSubjectClick);
+}
+
+function handleSubjectClick(e) {
+  const pill = e.target.closest(".selector-pill");
+  if (!pill) return;
+
+  subjectSelector.querySelectorAll(".selector-pill").forEach(p => p.classList.remove("active"));
+  pill.classList.add("active");
+
+  activeSubject = pill.dataset.subject;
+  updateBreadcrumb();
+  applyFilters();
+}
+
+function updateBreadcrumb() {
+  if (!filterBreadcrumb || !breadcrumbPath) return;
+
+  if (activeYear === "all") {
+    filterBreadcrumb.style.display = "none";
+    return;
+  }
+
+  filterBreadcrumb.style.display = "";
+  let path = getYearLabel(parseInt(activeYear));
+
+  if (activeSemester !== "all") {
+    path += ` → ${getSemesterLabel(parseInt(activeYear), parseInt(activeSemester))}`;
+  }
+
+  if (activeSubject !== "all" && subjects[activeSubject]) {
+    path += ` → ${subjects[activeSubject].icon} ${activeSubject}`;
+  }
+
+  breadcrumbPath.textContent = path;
+}
+
+// Reset button
+if (breadcrumbReset) {
+  breadcrumbReset.addEventListener("click", () => {
+    activeYear = "all";
+    activeSemester = "all";
+    activeSubject = "all";
+
+    if (yearSelector) {
+      yearSelector.querySelectorAll(".selector-pill").forEach(p => p.classList.remove("active"));
+      yearSelector.querySelector('[data-year="all"]').classList.add("active");
+    }
+    semesterGroup.style.display = "none";
+    subjectGroup.style.display = "none";
+    updateBreadcrumb();
+    applyFilters();
+  });
+}
+
+// Apply year/semester/subject filters to materials
+function applyFilters() {
+  if (!materialsList) return;
+  if (currentQuery) {
+    filterMaterials(currentQuery);
+    return;
+  }
+
+  if (activeYear === "all") {
+    displayMaterials(allMaterials);
+    return;
+  }
+
+  const year = parseInt(activeYear);
+  const filtered = {};
+
+  for (const [key, config] of Object.entries(subjects)) {
+    if (config.year !== year) continue;
+    if (activeSemester !== "all" && config.semester !== parseInt(activeSemester)) continue;
+    if (activeSubject !== "all" && key !== activeSubject) continue;
+
+    if (allMaterials[config.name]) {
+      filtered[config.name] = allMaterials[config.name];
+    }
+  }
+
+  if (Object.keys(filtered).length === 0) {
+    materialsList.innerHTML = `<p class="no-results">📭 No materials available for this selection yet. Stay tuned!</p>`;
+  } else {
+    displayMaterials(filtered);
+  }
+}
 
 // GitHub API URL
 function getGitHubAPIUrl(folder) {
@@ -220,31 +429,6 @@ async function loadMaterialsFromJsDelivr() {
   return grouped;
 }
 
-// Filter button functionality
-if (filterButtons.length > 0) {
-  filterButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      filterButtons.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      activeCategory = btn.dataset.category;
-      if (searchBar) searchBar.value = "";
-      if (clearBtn) clearBtn.style.display = "none";
-
-      if (activeCategory === "all") {
-        displayMaterials(allMaterials);
-      } else {
-        const filtered = {};
-        for (const subject in allMaterials) {
-          if (subject.includes(activeCategory) || subjects[activeCategory]?.name === subject) {
-            filtered[subject] = allMaterials[subject];
-          }
-        }
-        displayMaterials(filtered);
-      }
-    });
-  });
-}
-
 // Search functionality
 let searchDebounceId = null;
 if (searchBar) {
@@ -254,11 +438,6 @@ if (searchBar) {
 
     if (searchDebounceId) clearTimeout(searchDebounceId);
     searchDebounceId = setTimeout(() => {
-      if (query && filterButtons.length > 0) {
-        filterButtons.forEach(b => b.classList.remove("active"));
-        filterButtons[0].classList.add("active");
-        activeCategory = "all";
-      }
       filterMaterials(query);
     }, 200);
   });
@@ -272,26 +451,34 @@ if (clearBtn) {
   });
 }
 
+function getFilteredBase() {
+  // Get the currently filtered set based on year/semester/subject selectors
+  if (activeYear === "all") return allMaterials;
+
+  const year = parseInt(activeYear);
+  const filtered = {};
+  for (const [key, config] of Object.entries(subjects)) {
+    if (config.year !== year) continue;
+    if (activeSemester !== "all" && config.semester !== parseInt(activeSemester)) continue;
+    if (activeSubject !== "all" && key !== activeSubject) continue;
+    if (allMaterials[config.name]) {
+      filtered[config.name] = allMaterials[config.name];
+    }
+  }
+  return filtered;
+}
+
 function filterMaterials(query) {
   currentQuery = query;
   if (!query) {
-    if (activeCategory === "all") {
-      displayMaterials(allMaterials);
-    } else {
-      const filtered = {};
-      for (const subject in allMaterials) {
-        if (subject.includes(activeCategory)) {
-          filtered[subject] = allMaterials[subject];
-        }
-      }
-      displayMaterials(filtered);
-    }
+    applyFilters();
     return;
   }
 
+  const base = getFilteredBase();
   const filtered = {};
-  for (const subject in allMaterials) {
-    const matchingItems = allMaterials[subject].filter(item => {
+  for (const subject in base) {
+    const matchingItems = base[subject].filter(item => {
       const fileName = item.name.replace(/_/g, " ").toLowerCase();
       const subjectName = subject.toLowerCase();
       return fileName.includes(query) || subjectName.includes(query);
@@ -568,19 +755,54 @@ async function loadMaterials() {
 // Load materials when page loads
 if (materialsList) {
   loadMaterials().then(() => {
-    // Check for search query param after materials load
     const urlParams = new URLSearchParams(window.location.search);
-    const query = urlParams.get('q');
 
+    // Handle ?category=SUBJECT from quick access buttons on homepage
+    const category = urlParams.get('category');
+    if (category && subjects[category]) {
+      const config = subjects[category];
+      // Auto-select year → semester → subject
+      activeYear = String(config.year);
+      activeSemester = String(config.semester);
+      activeSubject = category;
+
+      // Update year selector UI
+      if (yearSelector) {
+        yearSelector.querySelectorAll('.selector-pill').forEach(p => p.classList.remove('active'));
+        const yearBtn = yearSelector.querySelector(`[data-year="${config.year}"]`);
+        if (yearBtn) yearBtn.classList.add('active');
+      }
+
+      // Show and populate semester selector
+      populateSemesterSelector(config.year);
+      if (semesterGroup) semesterGroup.style.display = '';
+      if (semesterSelector) {
+        semesterSelector.querySelectorAll('.selector-pill').forEach(p => p.classList.remove('active'));
+        const semBtn = semesterSelector.querySelector(`[data-semester="${config.semester}"]`);
+        if (semBtn) semBtn.classList.add('active');
+      }
+
+      // Show and populate subject selector
+      populateSubjectSelector(config.year, config.semester);
+      if (subjectGroup) subjectGroup.style.display = '';
+      if (subjectSelector) {
+        subjectSelector.querySelectorAll('.selector-pill').forEach(p => p.classList.remove('active'));
+        const subBtn = subjectSelector.querySelector(`[data-subject="${category}"]`);
+        if (subBtn) subBtn.classList.add('active');
+      }
+
+      updateBreadcrumb();
+      applyFilters();
+    }
+
+    // Handle ?q=search_term for search
+    const query = urlParams.get('q');
     if (query && searchBar) {
       searchBar.value = decodeURIComponent(query);
-      // Trigger input event to update clear button visibility
       const inputEvent = new Event('input');
       searchBar.dispatchEvent(inputEvent);
-      // Filter immediately
       filterMaterials(decodeURIComponent(query).toLowerCase().trim());
 
-      // Scroll to results
       const searchContainer = document.querySelector('.advanced-search-container');
       if (searchContainer) searchContainer.scrollIntoView({ behavior: 'smooth' });
     }

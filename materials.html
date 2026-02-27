@@ -132,54 +132,43 @@
       </div>
     </div>
 
-    <!-- Category Filter Pills -->
-    <div class="filter-pills-container">
-      <h3 class="filter-label">Filter by Subject:</h3>
-      <div class="filter-pills">
-        <button class="filter-pill active" data-category="all">
-          <span class="pill-icon">📚</span>
-          <span>All Subjects</span>
-        </button>
+    <!-- Category Filter Selectors -->
+    <div class="filter-selectors-container">
+      <div class="filter-selectors">
+        <!-- Year Selector -->
+        <div class="selector-group">
+          <label class="selector-label">📅 Select Year</label>
+          <div class="selector-pills" id="year-selector">
+            <button class="selector-pill active" data-year="all">All Years</button>
+            <button class="selector-pill" data-year="1">1st Year</button>
+            <button class="selector-pill" data-year="2">2nd Year</button>
+            <button class="selector-pill" data-year="3">3rd Year</button>
+            <button class="selector-pill" data-year="4">4th Year</button>
+          </div>
+        </div>
 
-        <!-- 1st Year Odd Semester -->
-        <button class="filter-pill" data-category="BEEC">
-          <span class="pill-icon">⚡</span>
-          <span>BEEC</span>
-        </button>
-        <button class="filter-pill" data-category="DM">
-          <span class="pill-icon">🔢</span>
-          <span>Discrete Math</span>
-        </button>
-        <button class="filter-pill" data-category="PSC">
-          <span class="pill-icon">💻</span>
-          <span>PSC</span>
-        </button>
-        <button class="filter-pill" data-category="DSD">
-          <span class="pill-icon">🔌</span>
-          <span>DSD</span>
-        </button>
+        <!-- Semester Selector -->
+        <div class="selector-group" id="semester-group" style="display: none;">
+          <label class="selector-label">📖 Select Semester</label>
+          <div class="selector-pills" id="semester-selector">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
 
-        <!-- 1st Year Even Semester -->
-        <button class="filter-pill" data-category="PP">
-          <span class="pill-icon">🐍</span>
-          <span>Python</span>
-        </button>
-        <button class="filter-pill" data-category="LACE">
-          <span class="pill-icon">📐</span>
-          <span>LACE</span>
-        </button>
-        <button class="filter-pill" data-category="DS">
-          <span class="pill-icon">🏗️</span>
-          <span>Data Structures</span>
-        </button>
-        <button class="filter-pill" data-category="FIS">
-          <span class="pill-icon">📡</span>
-          <span>FIS</span>
-        </button>
-        <button class="filter-pill" data-category="COA">
-          <span class="pill-icon">🖥️</span>
-          <span>COA</span>
-        </button>
+        <!-- Subject Selector -->
+        <div class="selector-group" id="subject-group" style="display: none;">
+          <label class="selector-label">📚 Select Subject</label>
+          <div class="selector-pills" id="subject-selector">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Filter Breadcrumb -->
+      <div class="filter-breadcrumb" id="filter-breadcrumb" style="display: none;">
+        <span class="breadcrumb-label">Showing:</span>
+        <span class="breadcrumb-path" id="breadcrumb-path"></span>
+        <button class="breadcrumb-reset" id="breadcrumb-reset" title="Reset filters">✕ Reset</button>
       </div>
     </div>
 
