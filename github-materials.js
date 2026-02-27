@@ -14,25 +14,61 @@ const GITHUB_TOKEN = ""; // Token removed - using public API (60 req/hour)
 
 // Subject configuration
 const subjects = {
+  // ── 1st Year Odd Semester ──
   "BEEC": {
     name: "Basic Electrical & Electronic Circuits (BEEC)",
     icon: "⚡",
-    folder: "BEEC"
+    folder: "BEEC",
+    semester: 1
   },
   "DM": {
     name: "Discrete Mathematics (DM)",
     icon: "🔢",
-    folder: "DM"
+    folder: "DM",
+    semester: 1
   },
   "PSC": {
     name: "Problem Solving Through C (PSC)",
     icon: "💻",
-    folder: "PSC"
+    folder: "PSC",
+    semester: 1
   },
   "DSD": {
     name: "Digital System Design (DSD)",
     icon: "🔌",
-    folder: "DSD"
+    folder: "DSD",
+    semester: 1
+  },
+  // ── 1st Year Even Semester ──
+  "PP": {
+    name: "Python Programming (PP)",
+    icon: "🐍",
+    folder: "PP",
+    semester: 2
+  },
+  "LACE": {
+    name: "Linear Algebra & Calculus for Engineers (LACE)",
+    icon: "📐",
+    folder: "LACE",
+    semester: 2
+  },
+  "DS": {
+    name: "Data Structures (DS)",
+    icon: "🏗️",
+    folder: "DS",
+    semester: 2
+  },
+  "FIS": {
+    name: "Fundamentals of IoT & Sensors (FIS)",
+    icon: "📡",
+    folder: "FIS",
+    semester: 2
+  },
+  "COA": {
+    name: "Computer Organization & Architecture (COA)",
+    icon: "🖥️",
+    folder: "COA",
+    semester: 2
   }
 };
 
