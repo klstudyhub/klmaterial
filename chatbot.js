@@ -6,8 +6,10 @@
 
   // ─── CONFIG ───────────────────────────────────────────
   const GEMINI_API_KEY = 'AIzaSyDHZrHZRhDhvzmCANQZ0NXrf0qLjv1r484'; // ← Get free key: https://aistudio.google.com/apikey
-  const MODEL = 'gemini-2.0-flash';
-  const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+  const MODELS = ['gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash'];
+  function getApiUrl(model) {
+    return `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+  }
 
   const SYSTEM_PROMPT = `You are KL Study Buddy, a friendly AI assistant on the KL Material Study Hub website.
 You help B.Tech CSE students with:
@@ -104,11 +106,15 @@ If asked about unrelated topics, politely redirect to academics.`;
     } catch (err) {
       removeTyping(typingId);
       console.error('Gemini API error:', err);
-      appendMsg('bot', '<i class="fa-solid fa-face-smile-wink"></i> Sorry, something went wrong. Please try again in a moment.');
+      if (err.isRateLimit) {
+        appendMsg('bot', '<i class="fa-solid fa-clock"></i> The AI is busy right now (rate limit reached). Please wait a minute and try again.');
+      } else {
+        appendMsg('bot', '<i class="fa-solid fa-face-smile-wink"></i> Sorry, something went wrong. Please try again in a moment.');
+      }
     }
   }
 
-  // ─── GEMINI API ───────────────────────────────────────
+  // ─── GEMINI API (with model fallback) ──────────────────
   async function callGemini(userMessage) {
     chatHistory.push({ role: 'user', parts: [{ text: userMessage }] });
 
@@ -117,26 +123,48 @@ If asked about unrelated topics, politely redirect to academics.`;
       chatHistory = chatHistory.slice(-20);
     }
     const recent = chatHistory;
-
-    const res = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
-        contents: recent,
-        generationConfig: { temperature: 0.7, topP: 0.9, maxOutputTokens: 512 }
-      })
+    const body = JSON.stringify({
+      system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+      contents: recent,
+      generationConfig: { temperature: 0.7, topP: 0.9, maxOutputTokens: 512 }
     });
 
-    if (!res.ok) {
-      const errData = await res.json().catch(() => ({}));
-      throw new Error(errData.error?.message || 'HTTP ' + res.status);
+    let lastError = null;
+
+    // Try each model in order; skip to next on rate limit (429)
+    for (const model of MODELS) {
+      try {
+        const res = await fetch(getApiUrl(model), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: body
+        });
+
+        if (res.status === 429) {
+          // Rate limited on this model, try next
+          lastError = new Error('Rate limit on ' + model);
+          lastError.isRateLimit = true;
+          continue;
+        }
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error?.message || 'HTTP ' + res.status);
+        }
+
+        const data = await res.json();
+        const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response received. Try again.';
+        chatHistory.push({ role: 'model', parts: [{ text: reply }] });
+        return reply;
+      } catch (err) {
+        lastError = err;
+        if (err.isRateLimit) continue; // try next model
+        throw err; // non-rate-limit error, stop
+      }
     }
 
-    const data = await res.json();
-    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response received. Try again.';
-    chatHistory.push({ role: 'model', parts: [{ text: reply }] });
-    return reply;
+    // All models rate limited
+    throw lastError;
   }
 
   // ─── UI HELPERS ───────────────────────────────────────
