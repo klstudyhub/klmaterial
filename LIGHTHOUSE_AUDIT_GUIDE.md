@@ -12,14 +12,14 @@
 
 ### Method 2: Google PageSpeed Insights
 1. Visit: https://pagespeed.web.dev/
-2. Enter URL: `https://praveenreddy8942-debug.github.io/klmaterial/`
+2. Enter URL: `https://klstudyhub.github.io/klmaterial/`
 3. Select **Mobile** or **Desktop**
 4. Click **Analyze**
 5. View detailed metrics and recommendations
 
 ### Method 3: WebPageTest
 1. Visit: https://www.webpagetest.org/
-2. Enter URL: `https://praveenreddy8942-debug.github.io/klmaterial/`
+2. Enter URL: `https://klstudyhub.github.io/klmaterial/`
 3. Select test location (e.g., Dulles, VA)
 4. Select connection speed (4G, 3G, Slow 3G)
 5. Click **Start Test**
@@ -293,14 +293,14 @@ Currently configured with ID: `G-NZ0SERPS7L`
 ```bash
 # Check for broken links
 npm install -g broken-link-checker
-blc https://praveenreddy8942-debug.github.io/klmaterial/ -ro
+blc https://klstudyhub.github.io/klmaterial/ -ro
 
 # Check for accessibility issues
 npm install -g axe-core
 # Then use in browser DevTools
 
 # Check performance with curl
-curl -w "Total time: %{time_total}s\n" -o /dev/null -s https://praveenreddy8942-debug.github.io/klmaterial/
+curl -w "Total time: %{time_total}s\n" -o /dev/null -s https://klstudyhub.github.io/klmaterial/
 ```
 
 ---

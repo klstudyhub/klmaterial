@@ -221,7 +221,7 @@ img { loading: lazy; decoding: async; aspect-ratio: auto; }
 ## 🧪 How to Test
 
 ### Quick Test (2 minutes)
-1. Open https://praveenreddy8942-debug.github.io/klmaterial/
+1. Open https://klstudyhub.github.io/klmaterial/
 2. Hard refresh: **Cmd+Shift+R** (Mac) or **Ctrl+Shift+R** (Windows)
 3. Resize browser (check fullscreen responsive)
 4. Check mobile in DevTools (F12 → Device Mode)
@@ -349,7 +349,7 @@ img { loading: lazy; decoding: async; aspect-ratio: auto; }
 
 Your site is fully optimized and deployed to production. All changes are live and ready for real users!
 
-**Live URL**: https://praveenreddy8942-debug.github.io/klmaterial/
+**Live URL**: https://klstudyhub.github.io/klmaterial/
 
 **Questions?** Refer to the detailed documentation files included in the repository.
 

@@ -67,11 +67,11 @@ e1e68ee - Add Lighthouse audit and QA documentation
 
 | Item | Status | URL |
 |------|--------|-----|
-| **Home Page** | ✅ Live | https://praveenreddy8942-debug.github.io/klmaterial/ |
-| **Materials** | ✅ Live | https://praveenreddy8942-debug.github.io/klmaterial/materials.html |
-| **Roadmap** | ✅ Live | https://praveenreddy8942-debug.github.io/klmaterial/roadmap.html |
-| **About** | ✅ Live | https://praveenreddy8942-debug.github.io/klmaterial/about.html |
-| **Contact** | ✅ Live | https://praveenreddy8942-debug.github.io/klmaterial/contact.html |
+| **Home Page** | ✅ Live | https://klstudyhub.github.io/klmaterial/ |
+| **Materials** | ✅ Live | https://klstudyhub.github.io/klmaterial/materials.html |
+| **Roadmap** | ✅ Live | https://klstudyhub.github.io/klmaterial/roadmap.html |
+| **About** | ✅ Live | https://klstudyhub.github.io/klmaterial/about.html |
+| **Contact** | ✅ Live | https://klstudyhub.github.io/klmaterial/contact.html |
 | **Service Worker** | ✅ Active | Offline support enabled |
 | **GitHub Pages** | ✅ Deployed | main branch |
 
@@ -198,7 +198,7 @@ e1e68ee - Add Lighthouse audit and QA documentation
 ## Quick Verification
 
 ### Test 1: Visual (30 seconds)
-1. Open https://praveenreddy8942-debug.github.io/klmaterial/
+1. Open https://klstudyhub.github.io/klmaterial/
 2. Hard refresh: Cmd+Shift+R (Mac) or Ctrl+Shift+R (Windows)
 3. Verify hero renders instantly (before stylesheets load)
 4. Resize browser and check fullscreen responsive design
@@ -246,14 +246,14 @@ e1e68ee - Add Lighthouse audit and QA documentation
 - **Full Summary**: `OPTIMIZATION_SUMMARY.md`
 
 ### GitHub
-- **Repository**: praveenreddy8942-debug/klmaterial
+- **Repository**: klstudyhub/klmaterial
 - **Branch**: main
 - **Latest Commit**: 814a384
 - **Status**: ✅ All changes pushed
 
 ### Live Application
-- **Home**: https://praveenreddy8942-debug.github.io/klmaterial/
-- **Materials**: https://praveenreddy8942-debug.github.io/klmaterial/materials.html
+- **Home**: https://klstudyhub.github.io/klmaterial/
+- **Materials**: https://klstudyhub.github.io/klmaterial/materials.html
 - **All Pages**: All fully responsive and optimized
 
 ---

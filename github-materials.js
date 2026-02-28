@@ -1,7 +1,7 @@
 // GitHub Materials Loader
 // No Firebase needed - files hosted directly on GitHub!
 
-const GITHUB_REPO = "praveenreddy8942-debug/klmaterial";
+const GITHUB_REPO = "klstudyhub/klmaterial";
 const GITHUB_BRANCH = "main";
 const MATERIALS_PATH = "materials";
 // media.githubusercontent.com properly serves Git LFS files

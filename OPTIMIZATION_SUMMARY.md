@@ -180,7 +180,7 @@ padding-right: clamp(16px, 4vw, 48px);
 - **Commit Hash**: e1e68ee
 - **Branch**: main
 - **Status**: ✅ Deployed to GitHub Pages
-- **Live URL**: https://praveenreddy8942-debug.github.io/klmaterial/
+- **Live URL**: https://klstudyhub.github.io/klmaterial/
 
 ### Recent Commits
 ```
@@ -270,7 +270,7 @@ e1e68ee - Add Lighthouse audit and QA documentation
 ## 🔍 How to Verify the Changes
 
 ### Method 1: Visual Inspection
-1. Open https://praveenreddy8942-debug.github.io/klmaterial/
+1. Open https://klstudyhub.github.io/klmaterial/
 2. Hard refresh (Cmd+Shift+R on Mac, Ctrl+Shift+R on Windows)
 3. Check fullscreen layout on desktop and mobile
 4. Verify no horizontal scrolling
@@ -372,7 +372,7 @@ This project demonstrates:
 **Last Updated**: February 13, 2025  
 **Status**: ✅ Production Ready  
 **Current Commit**: e1e68ee  
-**Live Application**: https://praveenreddy8942-debug.github.io/klmaterial/
+**Live Application**: https://klstudyhub.github.io/klmaterial/
 
 ---
 

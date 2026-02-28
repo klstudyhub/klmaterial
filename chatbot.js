@@ -138,7 +138,7 @@
     // Contact
     {
       keys: ['contact', 'reach', 'email', 'github', 'linkedin', 'social', 'whatsapp'],
-      reply: '📬 **Contact Praveen Reddy:**\n\n📧 Email — Available on the Contact page\n💻 GitHub — praveenreddy8942-debug\n💼 LinkedIn — Praveen Reddy\n📱 WhatsApp — Join our study group!\n📘 Facebook & 📸 Instagram also available\n\n👉 Visit the **Contact** page for all links!'
+      reply: '📬 **Contact Praveen Reddy:**\n\n📧 Email — Available on the Contact page\n💻 GitHub — klstudyhub\n💼 LinkedIn — Praveen Reddy\n📱 WhatsApp — Join our study group!\n📘 Facebook & 📸 Instagram also available\n\n👉 Visit the **Contact** page for all links!'
     },
 
     // Exam tips

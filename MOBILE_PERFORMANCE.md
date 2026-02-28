@@ -93,7 +93,7 @@ dist/assets/index-BdJzkhu4.js   237.60 kB │ gzip: 74.08 kB
 ```
 
 ## Testing
-Visit: https://praveenreddy8942-debug.github.io/klmaterial/
+Visit: https://klstudyhub.github.io/klmaterial/
 
 **Test on:**
 - iPhone (Safari)

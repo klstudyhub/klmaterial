@@ -2,7 +2,7 @@
 
 > **Free CSE study materials, career roadmaps & smart study assistant for B.Tech students at KL University.**
 
-🌐 **Live Site:** [praveenreddy8942-debug.github.io/klmaterial](https://praveenreddy8942-debug.github.io/klmaterial/)
+🌐 **Live Site:** [klstudyhub.github.io/klmaterial](https://klstudyhub.github.io/klmaterial/)
 
 ---
 
@@ -110,7 +110,7 @@ klmaterial/
 
 1. **Clone the repo:**
    ```bash
-   git clone https://github.com/praveenreddy8942-debug/klmaterial.git
+   git clone https://github.com/klstudyhub/klmaterial.git
    ```
 
 2. **Add materials:** Place PDF files in the appropriate `materials/<SUBJECT>/` folder.
@@ -127,7 +127,7 @@ Open an issue or fork the repo. Test on mobile viewport (375px–430px width) be
 
 ## 📬 Contact
 
-- **GitHub:** [@praveenreddy8942-debug](https://github.com/praveenreddy8942-debug)
+- **GitHub:** [@klstudyhub](https://github.com/klstudyhub)
 - **LinkedIn:** [Praveen Reddy](https://www.linkedin.com/in/praveen-reddy-37b0a6365)
 - **WhatsApp Study Group:** [Join here](https://chat.whatsapp.com/LWNBaMmNNuSH08ztjFg39B)
 

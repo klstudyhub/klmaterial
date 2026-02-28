@@ -167,7 +167,7 @@ Full `prefers-reduced-motion` support:
 
 ## 🌐 Live Preview
 
-**URL**: https://praveenreddy8942-debug.github.io/klmaterial/
+**URL**: https://klstudyhub.github.io/klmaterial/
 
 **Wait time**: 2-3 minutes for GitHub Actions deployment
 
