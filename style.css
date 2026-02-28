@@ -7787,12 +7787,7 @@ html[data-theme="light"] .aurora-beam-2 {
 }
 
 body {
-  opacity: 0;
   transition: opacity 0.4s ease;
-}
-
-body.page-loaded {
-  opacity: 1;
 }
 
 /* ===== Profile Glow Effect ===== */

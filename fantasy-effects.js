@@ -186,9 +186,6 @@ class PageTransition {
         this.overlay.className = 'page-transition-overlay';
         document.body.appendChild(this.overlay);
 
-        // Fade in on load
-        document.body.classList.add('page-loaded');
-
         // Intercept internal navigation
         document.querySelectorAll('a[href]').forEach(link => {
             const href = link.getAttribute('href');
