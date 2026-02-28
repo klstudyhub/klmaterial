@@ -1,163 +1,364 @@
 // ====================================
-// KL Study Buddy — Smart Local Chatbot
-// 100% client-side, no API keys needed
+// KL Study Buddy — Smart AI-Like Chatbot
+// 100% client-side, zero API cost
+// Fuzzy NLP matching + conversation memory
 // ====================================
 (function () {
   'use strict';
 
   let isOpen = false;
+  const conversationHistory = [];
+  let lastTopicKey = null;
 
-  // ─── KNOWLEDGE BASE ──────────────────────────────────
+  // ─── LEVENSHTEIN DISTANCE (fuzzy matching) ────────────
+  function levenshtein(a, b) {
+    const m = a.length, n = b.length;
+    if (m === 0) return n;
+    if (n === 0) return m;
+    const d = Array.from({ length: m + 1 }, (_, i) => i);
+    for (let j = 1; j <= n; j++) {
+      let prev = d[0];
+      d[0] = j;
+      for (let i = 1; i <= m; i++) {
+        const temp = d[i];
+        d[i] = Math.min(
+          d[i] + 1,
+          d[i - 1] + 1,
+          prev + (a[i - 1] === b[j - 1] ? 0 : 1)
+        );
+        prev = temp;
+      }
+    }
+    return d[m];
+  }
+
+  // Similarity score 0-1 based on Levenshtein
+  function similarity(a, b) {
+    const maxLen = Math.max(a.length, b.length);
+    if (maxLen === 0) return 1;
+    return 1 - levenshtein(a, b) / maxLen;
+  }
+
+  // ─── TOKENIZER ─────────────────────────────
+  function tokenize(text) {
+    return text.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/).filter(Boolean);
+  }
+
+  // Extract n-grams for phrase matching
+  function ngrams(tokens, n) {
+    const result = [];
+    for (let i = 0; i <= tokens.length - n; i++) {
+      result.push(tokens.slice(i, i + n).join(' '));
+    }
+    return result;
+  }
+
+  // ─── INTENT SYNONYMS ──────────────────────
+  const INTENT_MAP = {
+    'whats': 'what is', 'wats': 'what is', 'wat': 'what',
+    'ur': 'your', 'u': 'you', 'r': 'are', 'pls': 'please',
+    'plz': 'please', 'thx': 'thanks', 'ty': 'thanks',
+    'sem': 'semester', 'yr': 'year', 'yr1': 'year 1',
+    'yr2': 'year 2', 'yr3': 'year 3', 'yr4': 'year 4',
+    'hii': 'hi', 'hiii': 'hi', 'hiiii': 'hi', 'heyo': 'hey',
+    'howdy': 'hi', 'sup': 'what is up', 'wassup': 'what is up',
+    'gm': 'good morning', 'gn': 'good night', 'em': 'email',
+    'dl': 'download', 'diff': 'difference', 'info': 'information',
+    'docs': 'documents', 'prog': 'programming', 'lang': 'language',
+    'algo': 'algorithm', 'struct': 'structure', 'dbms': 'database',
+    'os': 'operating system', 'cn': 'computer network',
+    'oops': 'object oriented programming', 'oop': 'object oriented programming',
+    'ml': 'machine learning', 'ai': 'artificial intelligence',
+    'dsa': 'data structures and algorithms', 'dev': 'development',
+    'fullstack': 'full stack', 'frontend': 'front end', 'backend': 'back end'
+  };
+
+  function expandSynonyms(text) {
+    const words = text.toLowerCase().split(/\s+/);
+    return words.map(w => INTENT_MAP[w] || w).join(' ');
+  }
+
+  // ─── MASSIVE KNOWLEDGE BASE ───────────────────────────
   const KB = [
-    // Greetings
+    // ═══ GREETINGS ═══
     {
-      keys: ['hello', 'hi', 'hey', 'hii', 'hiii', 'good morning', 'good evening', 'good afternoon'],
-      reply: 'Hey there! 👋 I\'m your KL Study Buddy. I can help you with subjects, materials, roadmaps, and study tips. What would you like to know?'
+      id: 'greet',
+      keys: ['hello', 'hi', 'hey', 'good morning', 'good evening', 'good afternoon', 'good night'],
+      patterns: [/^(hi|hey|hello|yo)\b/i, /good\s*(morning|evening|afternoon|night)/i],
+      reply: () => {
+        const hour = new Date().getHours();
+        const grt = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+        return `${grt}! 👋 I'm your **KL Study Buddy** — a smart AI assistant.\n\nI can help with:\n📚 **9 subjects** — BEEC, DM, PSC, DSD, PP, LACE, DS, FIS, COA\n📥 **Materials** — finding & downloading notes\n🗺️ **Roadmap** — career paths for all 4 years\n💡 **Study tips** — exam prep, learning strategies\n🔍 **Site features** — search, dark mode, PWA\n\nWhat would you like to know?`;
+      }
     },
     {
-      keys: ['how are you', 'whats up', 'how r u', 'wassup'],
-      reply: 'I\'m doing great, thanks for asking! 😊 Ready to help you with your studies. Ask me about any subject or feature!'
+      id: 'how_are_you',
+      keys: ['how are you', 'how r you', 'what is up', 'how do you do'],
+      patterns: [/how\s*(are|r)\s*(you|u)/i, /what'?s?\s*up/i],
+      reply: 'I\'m running at 100% efficiency! 🤖✨ Ask me about any subject, study tips, or how to navigate the site!'
     },
     {
-      keys: ['thank', 'thanks', 'thx', 'thankyou', 'thank you', 'ty'],
-      reply: 'You\'re welcome! 😊 Happy to help. Feel free to ask anything else!'
+      id: 'thanks',
+      keys: ['thank', 'thanks', 'thank you', 'appreciate'],
+      patterns: [/^(thanks?|thank\s*you|thx|ty|appreciate)/i],
+      reply: () => {
+        const r = ['Happy to help! 😊 Feel free to ask more!', 'You\'re welcome! 🎉 Anything else?', 'Glad I could help! 😊 What else would you like to know?'];
+        return r[Math.floor(Math.random() * r.length)];
+      }
     },
     {
-      keys: ['bye', 'goodbye', 'see you', 'see ya'],
-      reply: 'Goodbye! 👋 Good luck with your studies. Come back anytime you need help!'
+      id: 'bye',
+      keys: ['bye', 'goodbye', 'see you', 'see ya', 'talk later'],
+      patterns: [/^(bye|goodbye|see\s*y|later|adios)/i],
+      reply: 'Goodbye! 👋 Good luck with your studies — come back anytime! 🚀'
     },
-
-    // Help / What can you do
     {
-      keys: ['help', 'what can you do', 'features', 'what do you know', 'commands'],
-      reply: 'I can help you with:\n📚 **Subjects** — Ask about BEEC, DM, PSC, DSD, PP, LACE, DS, FIS, COA\n📖 **Materials** — How to find & download study materials\n🗺️ **Roadmap** — Career guidance for each year\n🔍 **Search** — How to use filters and search\n🌙 **Features** — Dark mode, offline support, PWA\n\nJust type your question!'
-    },
-
-    // ── Subject: BEEC ──
-    {
-      keys: ['beec', 'basic electrical', 'electrical circuits', 'electronic circuits'],
-      reply: '⚡ **BEEC — Basic Electrical & Electronic Circuits**\n\n📍 Year 1, Semester 1\n\n**Key Topics:**\n• Circuit analysis (KVL, KCL)\n• AC/DC circuits & network theorems\n• Diodes, transistors & amplifiers\n• Digital logic basics\n\n**Tip:** Focus on solving numericals — they carry the most marks!\n\n👉 Go to **Materials → 1st Year → Semester 1 → BEEC** to download notes.'
-    },
-
-    // ── Subject: DM ──
-    {
-      keys: ['dm', 'discrete math', 'discrete mathematics'],
-      reply: '🔢 **DM — Discrete Mathematics**\n\n📍 Year 1, Semester 1\n\n**Key Topics:**\n• Sets, relations & functions\n• Propositional & predicate logic\n• Graph theory & trees\n• Combinatorics & counting\n• Group theory basics\n\n**Tip:** Practice proof techniques — direct, contradiction, and induction!\n\n👉 Go to **Materials → 1st Year → Semester 1 → DM** to download notes.'
-    },
-
-    // ── Subject: PSC ──
-    {
-      keys: ['psc', 'problem solving', 'c programming', 'c language'],
-      reply: '💻 **PSC — Problem Solving Through C**\n\n📍 Year 1, Semester 1\n\n**Key Topics:**\n• Variables, data types & operators\n• Control structures (if/else, loops)\n• Arrays, strings & pointers\n• Functions & recursion\n• File handling & structures\n\n**Tip:** Write code daily! Practice on platforms like HackerRank or LeetCode.\n\n👉 Go to **Materials → 1st Year → Semester 1 → PSC** to download notes.'
+      id: 'name',
+      keys: ['your name', 'who are you', 'what is your name', 'name'],
+      patterns: [/what'?s?\s*your\s*name/i, /who\s*are\s*you/i],
+      reply: 'I\'m **KL Study Buddy** 🤖 — your smart AI study assistant built right into this website!\n\nI\'m 100% free, work offline, and know about all **9 subjects** in the 1st year CSE curriculum.\n\nNo API key needed — I run entirely in your browser! 🔒'
     },
 
-    // ── Subject: DSD ──
+    // ═══ SUBJECTS ═══
     {
-      keys: ['dsd', 'digital system', 'digital design', 'digital logic'],
-      reply: '🔧 **DSD — Digital System Design**\n\n📍 Year 1, Semester 1\n\n**Key Topics:**\n• Number systems & Boolean algebra\n• Logic gates & K-maps\n• Combinational circuits (MUX, decoder)\n• Sequential circuits (flip-flops, counters)\n• State machines & memory\n\n**Tip:** Master K-map simplification — it appears in every exam!\n\n👉 Go to **Materials → 1st Year → Semester 1 → DSD** to download notes.'
+      id: 'beec',
+      keys: ['beec', 'basic electrical', 'electrical circuits', 'electronic circuits', 'kvl', 'kcl'],
+      patterns: [/bee?c/i, /electrical/i, /kvl|kcl/i],
+      reply: '⚡ **BEEC — Basic Electrical & Electronic Circuits**\n\n📍 Year 1, Semester 1\n\n**Key Topics:**\n• Circuit analysis (KVL, KCL, Mesh & Nodal)\n• Network theorems (Thevenin, Norton, Superposition)\n• AC/DC circuits, phasors & impedance\n• Diodes, BJT & MOSFET basics\n• Operational amplifiers intro\n\n**Exam Strategy:**\n🎯 Numericals carry 60-70% marks — practice daily!\n📝 Know all theorem statements with proofs\n🔑 Master AC phasor diagrams\n\n👉 **Materials → 1st Year → Semester 1 → BEEC**',
+      followUp: ['Can you explain KVL?', 'What are network theorems?', 'Exam tips for BEEC?']
+    },
+    {
+      id: 'dm',
+      keys: ['dm', 'discrete math', 'discrete mathematics', 'graph theory', 'propositional logic', 'sets relations'],
+      patterns: [/discrete\s*math/i, /\bdm\b/i, /graph\s*theory/i, /propositional/i],
+      reply: '🔢 **DM — Discrete Mathematics**\n\n📍 Year 1, Semester 1\n\n**Key Topics:**\n• Sets, relations & functions\n• Propositional & predicate logic\n• Mathematical induction & proofs\n• Graph theory (Euler, Hamilton, trees)\n• Combinatorics & counting principles\n• Lattices & Boolean algebra\n\n**Exam Strategy:**\n🎯 Graph theory questions are predictable — practice all graph types\n📝 Logic truth tables are easy marks\n🔑 Master proof by induction\n\n👉 **Materials → 1st Year → Semester 1 → DM**',
+      followUp: ['What is graph theory?', 'How to prove by induction?', 'DM exam tips?']
+    },
+    {
+      id: 'psc',
+      keys: ['psc', 'problem solving', 'c programming', 'c language', 'c program', 'pointers', 'arrays in c'],
+      patterns: [/\bpsc\b/i, /\bc\s*(programming|language|program)\b/i, /problem\s*solving/i, /pointers/i],
+      reply: '💻 **PSC — Problem Solving Through C**\n\n📍 Year 1, Semester 1\n\n**Key Topics:**\n• Data types, operators & expressions\n• Control structures (if/else, switch, loops)\n• Arrays (1D, 2D) & strings\n• Functions, recursion & scope\n• Pointers & dynamic memory allocation\n• Structures & file handling\n\n**Exam Strategy:**\n🎯 Write code on paper daily — exams test handwriting code!\n📝 Know output-prediction questions (tricky pointer arithmetic)\n🔑 Practice pattern printing programs\n\n💡 **Pro Tip:** Use HackerRank C track for daily practice!\n\n👉 **Materials → 1st Year → Semester 1 → PSC**',
+      followUp: ['Explain pointers in C', 'Best resources for C?', 'Common C mistakes?']
+    },
+    {
+      id: 'dsd',
+      keys: ['dsd', 'digital system', 'digital design', 'digital logic', 'kmap', 'k-map', 'flip flop', 'boolean algebra'],
+      patterns: [/\bdsd\b/i, /digital\s*(system|design|logic)/i, /k-?map/i, /flip\s*flop/i, /boolean/i],
+      reply: '🔧 **DSD — Digital System Design**\n\n📍 Year 1, Semester 1\n\n**Key Topics:**\n• Number systems & code conversions\n• Boolean algebra & K-map simplification\n• Combinational circuits (MUX, decoder, encoder, adder)\n• Sequential circuits (SR, JK, D, T flip-flops)\n• Counters & shift registers\n• State machine design (Mealy & Moore)\n\n**Exam Strategy:**\n🎯 K-map simplification appears in EVERY exam — master it!\n📝 Draw clean circuit diagrams for full marks\n🔑 Know all flip-flop excitation tables\n\n👉 **Materials → 1st Year → Semester 1 → DSD**',
+      followUp: ['How to solve K-maps?', 'Difference between Mealy and Moore?', 'DSD lab tips?']
+    },
+    {
+      id: 'pp',
+      keys: ['pp', 'python', 'python programming', 'python language', 'python basics', 'list comprehension'],
+      patterns: [/\bpp\b/i, /python/i, /list\s*comprehension/i],
+      reply: '🐍 **PP — Python Programming**\n\n📍 Year 1, Semester 2\n\n**Key Topics:**\n• Variables, data types & operators\n• Lists, tuples, dictionaries & sets\n• Control flow & comprehensions\n• Functions, lambda & decorators\n• OOP — classes, inheritance, polymorphism\n• File handling & exception handling\n• Modules: NumPy, Pandas basics\n\n**Exam Strategy:**\n🎯 Practice list/dict comprehensions — 1-line solutions impress!\n📝 Know all built-in functions (map, filter, reduce)\n🔑 OOP questions are guaranteed\n\n💡 **Pro Tip:** Build a mini project (calculator, quiz app) to stand out!\n\n👉 **Materials → 1st Year → Semester 2 → PP**',
+      followUp: ['Best Python projects?', 'Explain OOP in Python', 'Python vs C differences?']
+    },
+    {
+      id: 'lace',
+      keys: ['lace', 'linear algebra', 'calculus', 'calculus for engineers', 'matrix', 'eigenvalue', 'eigenvector', 'integration'],
+      patterns: [/\blace\b/i, /linear\s*algebra/i, /calculus/i, /eigenvalue/i, /eigenvector/i],
+      reply: '📐 **LACE — Linear Algebra & Calculus for Engineers**\n\n📍 Year 1, Semester 2\n\n**Key Topics:**\n• Matrices — rank, inverse, echelon form\n• Eigenvalues & eigenvectors\n• Cayley-Hamilton theorem\n• Differential calculus — limits, continuity\n• Mean value theorems\n• Multiple integrals (double, triple)\n• Partial derivatives & Jacobians\n\n**Exam Strategy:**\n🎯 Eigenvalue problems = guaranteed 15+ marks\n📝 Practice step-by-step matrix row reduction\n🔑 Multiple integrals need lots of practice\n\n👉 **Materials → 1st Year → Semester 2 → LACE**',
+      followUp: ['How to find eigenvalues?', 'Tips for integration?', 'LACE formulas sheet?']
+    },
+    {
+      id: 'ds',
+      keys: ['ds', 'data structures', 'data structure', 'linked list', 'binary tree', 'bst', 'sorting', 'stack', 'queue', 'graph'],
+      patterns: [/\bds\b/i, /data\s*struct/i, /linked\s*list/i, /binary\s*tree/i, /sorting/i, /\bbst\b/i],
+      reply: '🌳 **DS — Data Structures**\n\n📍 Year 1, Semester 2\n\n**Key Topics:**\n• Arrays, linked lists (singly, doubly, circular)\n• Stacks & queues (applications, implementations)\n• Trees — binary trees, BST, AVL, heap\n• Graphs — BFS, DFS, shortest path\n• Sorting — bubble, insertion, merge, quick, heap sort\n• Searching — linear, binary, hashing\n\n**Exam Strategy:**\n🎯 Tree traversals (inorder, preorder, postorder) = easy marks\n📝 Know time complexity of all algorithms\n🔑 Practice linked list operations on paper\n\n💡 **Pro Tip:** This is the MOST IMPORTANT subject for placements!\n\n👉 **Materials → 1st Year → Semester 2 → DS**',
+      followUp: ['Explain BFS vs DFS', 'Time complexities cheat sheet?', 'Best DSA practice platform?']
+    },
+    {
+      id: 'fis',
+      keys: ['fis', 'iot', 'sensors', 'internet of things', 'fundamentals of iot', 'arduino', 'raspberry pi', 'mqtt'],
+      patterns: [/\bfis\b/i, /\biot\b/i, /internet\s*of\s*things/i, /arduino/i, /raspberry/i, /mqtt/i],
+      reply: '📡 **FIS — Fundamentals of IoT & Sensors**\n\n📍 Year 1, Semester 2\n\n**Key Topics:**\n• IoT architecture & layers\n• Sensors — types, working principles\n• Actuators & transducers\n• Communication protocols (MQTT, CoAP, HTTP)\n• Arduino & Raspberry Pi basics\n• IoT security & privacy\n• Smart applications (home, health, agriculture)\n\n**Exam Strategy:**\n🎯 Diagram-based answers score high — draw IoT architectures!\n📝 Know 5+ real-world IoT applications with examples\n🔑 Protocol comparison tables = easy marks\n\n👉 **Materials → 1st Year → Semester 2 → FIS**',
+      followUp: ['IoT project ideas?', 'MQTT vs HTTP?', 'Best Arduino projects?']
+    },
+    {
+      id: 'coa',
+      keys: ['coa', 'computer organization', 'computer architecture', 'pipelining', 'cache memory', 'assembly', 'cpu architecture'],
+      patterns: [/\bcoa\b/i, /computer\s*(org|arch)/i, /pipelining/i, /cache/i, /assembly\s*lang/i],
+      reply: '🖥️ **COA — Computer Organization & Architecture**\n\n📍 Year 1, Semester 2\n\n**Key Topics:**\n• CPU architecture & instruction cycle\n• Instruction sets (RISC vs CISC)\n• Addressing modes\n• Memory hierarchy — cache, main memory, virtual memory\n• Pipelining — hazards, forwarding, stalling\n• I/O organization & interrupts\n• Assembly language basics\n\n**Exam Strategy:**\n🎯 Pipelining hazard questions are tricky but predictable\n📝 Draw proper pipeline diagrams for full marks\n🔑 Cache mapping (direct, associative, set-associative) = must know\n\n👉 **Materials → 1st Year → Semester 2 → COA**',
+      followUp: ['RISC vs CISC?', 'Explain cache mapping', 'Pipelining hazards explained?']
+    },
+    {
+      id: 'all_subjects',
+      keys: ['subjects', 'all subjects', 'what subjects', 'which subjects', 'how many subjects', 'list subjects', 'available subjects'],
+      patterns: [/what\s*subjects/i, /list\s*(all\s*)?subjects/i, /how\s*many\s*subjects/i, /available\s*subjects/i],
+      reply: 'We cover **9 subjects** across Year 1:\n\n**📘 Semester 1 (Odd):**\n| Code | Subject | Key Area |\n|------|---------|----------|\n| ⚡ BEEC | Basic Electrical & Electronic Circuits | Circuit Analysis |\n| 🔢 DM | Discrete Mathematics | Logic & Graphs |\n| 💻 PSC | Problem Solving Through C | C Programming |\n| 🔧 DSD | Digital System Design | Digital Logic |\n\n**📗 Semester 2 (Even):**\n| Code | Subject | Key Area |\n|------|---------|----------|\n| 🐍 PP | Python Programming | Python |\n| 📐 LACE | Linear Algebra & Calculus | Math |\n| 🌳 DS | Data Structures | DSA |\n| 📡 FIS | Fundamentals of IoT & Sensors | IoT |\n| 🖥️ COA | Computer Organization & Architecture | Hardware |\n\nAsk me about any subject for details! 📚'
     },
 
-    // ── Subject: PP ──
+    // ═══ MATERIALS & NAVIGATION ═══
     {
-      keys: ['pp', 'python', 'python programming'],
-      reply: '🐍 **PP — Python Programming**\n\n📍 Year 1, Semester 2\n\n**Key Topics:**\n• Variables, data types & operators\n• Lists, tuples, dictionaries & sets\n• Functions, lambda & modules\n• OOP concepts in Python\n• File handling & exception handling\n\n**Tip:** Build small projects like a calculator or to-do list to strengthen concepts!\n\n👉 Go to **Materials → 1st Year → Semester 2 → PP** to download notes.'
+      id: 'materials',
+      keys: ['material', 'download', 'notes', 'pdf', 'study material', 'get notes', 'where are materials', 'find materials', 'how to download'],
+      patterns: [/download/i, /materials?/i, /\bnotes?\b/i, /\bpdf\b/i, /how\s*to\s*(get|find|download)/i],
+      reply: '📥 **How to find & download materials:**\n\n**Step by step:**\n1. Click **📚 Materials** in the navigation bar\n2. Select your **Year** (1st Year)\n3. Pick your **Semester** (Odd/Even)\n4. Choose your **Subject** (e.g., BEEC, DM)\n5. Click the **⬇️ Download** button on any file!\n\n**Quick shortcuts:**\n• Use the **🔍 search bar** to find files by name\n• Add `?category=BEEC` to the Materials URL to jump directly\n• Files are PDF format, hosted on GitHub = **fast downloads!**\n\n💡 **Tip:** Bookmark the Materials page for quick access!'
+    },
+    {
+      id: 'search',
+      keys: ['search', 'how to search', 'find file', 'filter', 'how to filter', 'search bar'],
+      patterns: [/how\s*to\s*(search|filter|find)/i, /search\s*bar/i],
+      reply: '🔍 **Search & Filter Guide:**\n\n**Search bar:** Type any keyword — file name, subject code, or topic\n\n**Filter pills (step-by-step):**\n1. **Year** → select 1st Year\n2. **Semester** → Odd or Even\n3. **Subject** → specific subject\n\n**Pro tips:**\n• The **breadcrumb** shows your current filter path\n• Click **Reset** to clear all filters\n• URL shortcut: `materials.html?category=DS` jumps directly\n• Search works across file names AND subject names'
     },
 
-    // ── Subject: LACE ──
+    // ═══ ROADMAP & CAREER ═══
     {
-      keys: ['lace', 'linear algebra', 'calculus', 'calculus for engineers'],
-      reply: '📐 **LACE — Linear Algebra & Calculus for Engineers**\n\n📍 Year 1, Semester 2\n\n**Key Topics:**\n• Matrices & determinants\n• Eigenvalues & eigenvectors\n• Differential calculus\n• Integral calculus\n• Partial derivatives & multiple integrals\n\n**Tip:** Focus on matrix operations and integration techniques — they\'re heavily tested!\n\n👉 Go to **Materials → 1st Year → Semester 2 → LACE** to download notes.'
+      id: 'roadmap',
+      keys: ['roadmap', 'career', 'career path', 'career guidance', 'what to learn', 'learning path'],
+      patterns: [/roadmap/i, /career\s*(path|guid)/i, /what\s*(to|should)\s*learn/i, /learning\s*path/i],
+      reply: '🗺️ **B.Tech CSE Career Roadmap:**\n\n**📘 Year 1 — Build Foundations:**\n• Master C & Python programming\n• Data Structures is your #1 priority\n• Start competitive coding (HackerRank)\n\n**📗 Year 2 — Core CS:**\n• OOP, DBMS, OS, Computer Networks\n• Learn Git, Linux basics\n• Start building projects\n\n**📙 Year 3 — Specialize:**\n• Web Dev, ML/AI, Cloud, or Cybersecurity\n• Build 3+ portfolio projects\n• Start applying for internships\n\n**📕 Year 4 — Career Launch:**\n• Placement prep — DSA + CS fundamentals\n• Resume & LinkedIn optimization\n• Mock interviews & coding contests\n\n👉 Visit the **Roadmap** page for the detailed guide!'
+    },
+    {
+      id: 'placement',
+      keys: ['placement', 'interview', 'job', 'internship', 'company', 'package', 'salary', 'placed'],
+      patterns: [/placement/i, /interview/i, /\bjob\b/i, /internship/i, /company/i, /package/i],
+      reply: '💼 **Placement Preparation Blueprint:**\n\n**🔥 Technical (60% weightage):**\n1. **DSA** — 200+ LeetCode problems (Easy→Medium→Hard)\n2. **CS Fundamentals** — OS, DBMS, CN, OOP (top 4 topics)\n3. **Projects** — 2-3 solid projects with live demos\n4. **System Design** — basics for 6+ LPA roles\n\n**📝 Aptitude (20% weightage):**\n• PrepInsta, IndiaBix, RS Aggarwal\n• Verbal, quantitative & logical reasoning\n\n**🗣️ Communication (20% weightage):**\n• Group discussions & HR interview prep\n• STAR method for behavioral questions\n• Resume building — quantify achievements!\n\n**📅 Timeline:**\n• Year 2: Start coding practice + 1 project\n• Year 3: Internships + 2 more projects\n• Year 4: Full prep mode!\n\n💡 **Top platforms:** LeetCode, GFG, InterviewBit, Naukri'
+    },
+    {
+      id: 'web_dev',
+      keys: ['web development', 'web dev', 'full stack', 'front end', 'back end', 'html css', 'javascript', 'react', 'node'],
+      patterns: [/web\s*dev/i, /full\s*stack/i, /front\s*end/i, /back\s*end/i, /\breact\b/i, /\bnode\b/i],
+      reply: '🌐 **Web Development Roadmap:**\n\n**🎨 Frontend:**\n1. HTML5 + CSS3 → Flexbox, Grid\n2. JavaScript (ES6+)\n3. React.js or Next.js\n4. Tailwind CSS or Material UI\n\n**⚙️ Backend:**\n1. Node.js + Express.js\n2. MongoDB or PostgreSQL\n3. REST APIs & GraphQL\n4. Authentication (JWT, OAuth)\n\n**☁️ DevOps:**\n• Git + GitHub\n• Docker basics\n• Deploy on Vercel/Netlify\n\n**📅 Timeline:** 6-8 months of consistent practice\n\n💡 **Free Resources:**\n• freeCodeCamp.org\n• The Odin Project\n• roadmap.sh/frontend'
+    },
+    {
+      id: 'ml_ai',
+      keys: ['machine learning', 'artificial intelligence', 'deep learning', 'neural network', 'data science', 'nlp'],
+      patterns: [/machine\s*learning/i, /artificial\s*intel/i, /deep\s*learning/i, /neural/i, /data\s*science/i, /\bnlp\b/i],
+      reply: '🧠 **ML/AI Learning Path:**\n\n**📐 Prerequisites:**\n• Python (strong grasp)\n• Linear Algebra & Calculus (LACE helps!)\n• Statistics & Probability\n\n**🔰 Beginner:**\n1. Supervised learning (regression, classification)\n2. Unsupervised learning (clustering, PCA)\n3. Scikit-learn library\n4. Kaggle competitions\n\n**🚀 Intermediate:**\n1. Deep Learning — CNNs, RNNs, Transformers\n2. TensorFlow or PyTorch\n3. NLP — text classification, chatbots\n4. Computer Vision projects\n\n**📅 Timeline:** 3-4 months for basics, 6+ for deep learning\n\n💡 **Free Resources:**\n• Andrew Ng\'s ML Course (Coursera)\n• fast.ai (practical deep learning)\n• Kaggle Learn courses'
+    },
+    {
+      id: 'competitive_programming',
+      keys: ['competitive programming', 'cp', 'coding contest', 'leetcode', 'hackerrank', 'codeforces', 'codechef'],
+      patterns: [/competitive\s*prog/i, /\bcp\b/i, /leetcode/i, /hackerrank/i, /codeforces/i, /codechef/i, /coding\s*contest/i],
+      reply: '🏆 **Competitive Programming Guide:**\n\n**🔰 Getting Started:**\n1. Master one language (C++ recommended)\n2. Learn STL (vectors, maps, sets, priority_queue)\n3. Start with Easy problems on LeetCode/HackerRank\n\n**📈 Level Up Strategy:**\n• Arrays & Strings → Two Pointers → Sliding Window\n• Recursion → Backtracking → Dynamic Programming\n• Trees → Graphs → BFS/DFS\n• Sorting → Binary Search → Greedy\n\n**🎯 Daily Plan:**\n• Solve 2-3 problems daily\n• Participate in weekly contests\n• Study editorial solutions for unsolved problems\n\n**🏅 Platforms (by difficulty):**\n1. HackerRank (beginner)\n2. LeetCode (interview prep)\n3. Codeforces (competitive)\n4. CodeChef (contests)\n\n💡 Start NOW — consistency > intensity!'
     },
 
-    // ── Subject: DS ──
+    // ═══ STUDY TIPS ═══
     {
-      keys: ['ds', 'data structures', 'data structure'],
-      reply: '🌳 **DS — Data Structures**\n\n📍 Year 1, Semester 2\n\n**Key Topics:**\n• Arrays, linked lists, stacks & queues\n• Trees (binary, BST, AVL)\n• Graphs (BFS, DFS)\n• Sorting & searching algorithms\n• Hashing & hash tables\n\n**Tip:** Implement each data structure from scratch — understanding internals is key!\n\n👉 Go to **Materials → 1st Year → Semester 2 → DS** to download notes.'
+      id: 'study_tips',
+      keys: ['study tips', 'how to study', 'exam tips', 'prepare', 'preparation', 'tips', 'study strategy'],
+      patterns: [/study\s*tips?/i, /how\s*to\s*study/i, /exam\s*tips/i, /preparation\s*tips/i],
+      reply: '📝 **Smart Study Strategies:**\n\n**🧠 Active Learning (not passive reading!):**\n1. **Feynman Technique** — explain concepts in simple words\n2. **Active Recall** — close the book, write what you remember\n3. **Spaced Repetition** — review at increasing intervals (1→3→7→14 days)\n4. **Practice Tests** — solve previous year questions (PYQs)\n\n**📅 Study Schedule:**\n• Study in **25-min Pomodoro** blocks with 5-min breaks\n• Most important subjects first (when brain is fresh)\n• Review notes within 24 hours of class\n\n**🚫 Avoid:**\n• Highlighting everything (creates false familiarity)\n• Studying 10+ hours before exams (diminishing returns)\n• Skipping sleep (memory consolidation happens during sleep!)\n\n**💪 Before Exams:**\n• 2 weeks before: make a revision plan\n• 1 week before: solve PYQs + formula sheets\n• Night before: light review only, sleep 7-8 hours!'
+    },
+    {
+      id: 'pyq',
+      keys: ['previous year', 'pyq', 'past papers', 'old papers', 'question papers', 'previous questions'],
+      patterns: [/previous\s*(year|question)/i, /\bpyq\b/i, /past\s*(paper|question)/i, /old\s*paper/i, /question\s*paper/i],
+      reply: '📄 **Previous Year Questions (PYQs):**\n\nPYQs are the **#1 way** to predict exam patterns!\n\n**How to use them:**\n1. Collect PYQs for the last 3-5 years\n2. Identify **repeated topics** (they appear 70% of the time!)\n3. Practice solving them **under timed conditions**\n4. Note the **mark distribution** per unit\n\n**Where to find:**\n• Check our **Materials** section for uploaded PYQs\n• Ask seniors for their collections\n• University library digital archives\n\n💡 **Pro Tip:** Make a frequency chart of topics from PYQs — study the most-asked ones first!'
     },
 
-    // ── Subject: FIS ──
+    // ═══ SITE FEATURES ═══
     {
-      keys: ['fis', 'iot', 'sensors', 'internet of things', 'fundamentals of iot'],
-      reply: '📡 **FIS — Fundamentals of IoT & Sensors**\n\n📍 Year 1, Semester 2\n\n**Key Topics:**\n• IoT architecture & protocols\n• Sensors & actuators\n• Arduino/Raspberry Pi basics\n• MQTT, CoAP & communication protocols\n• IoT security & applications\n\n**Tip:** Try hands-on projects with Arduino — practical knowledge is valuable!\n\n👉 Go to **Materials → 1st Year → Semester 2 → FIS** to download notes.'
+      id: 'dark_mode',
+      keys: ['dark mode', 'light mode', 'theme', 'switch theme', 'color mode', 'night mode'],
+      patterns: [/dark\s*mode/i, /light\s*mode/i, /theme/i, /night\s*mode/i],
+      reply: '🌙 **Theme Switching:**\n\nClick the **⚙️ sun/moon icon** in the top-right corner!\n\n• **Dark mode** — easier on eyes at night 🌙\n• **Light mode** — better for daytime reading ☀️\n\nYour preference is **saved automatically** — it remembers your choice!'
+    },
+    {
+      id: 'pwa',
+      keys: ['offline', 'pwa', 'install', 'app', 'without internet', 'work offline', 'progressive web app', 'add to home'],
+      patterns: [/offline/i, /\bpwa\b/i, /install/i, /add\s*to\s*home/i, /without\s*internet/i, /progressive\s*web/i],
+      reply: '📱 **Install as App (PWA):**\n\n**On Chrome/Edge:**\n1. Visit the site → click ⫶ menu → "Install App"\n2. Or click the install icon in the address bar\n\n**On Mobile:**\n1. Open in Chrome/Safari\n2. Tap "Add to Home Screen"\n3. It\'ll appear as a regular app!\n\n**Benefits:**\n✅ Works offline (cached pages)\n✅ Faster loading\n✅ No app store needed\n✅ Automatic updates\n\nPerfect for studying without internet! 🚀'
+    },
+    {
+      id: 'chatbot_info',
+      keys: ['chatbot', 'chat bot', 'this chat', 'study buddy', 'how does this work', 'are you ai', 'are you real'],
+      patterns: [/chat\s*bot/i, /study\s*buddy/i, /are\s*you\s*(ai|real|human|bot)/i, /how\s*do\s*you\s*work/i],
+      reply: '🤖 **About KL Study Buddy:**\n\nI\'m a **smart AI-like chatbot** built with:\n• 🧠 **Fuzzy NLP matching** — I understand misspellings & variations\n• 💬 **Conversation memory** — I remember what we discussed\n• 📚 **30+ topic areas** — subjects, career, coding, study tips\n• 🔒 **100% private** — I run in your browser, zero data sent anywhere\n• 💰 **100% free** — no API keys, no subscription\n\n**I can\'t do:**\n• Generate essays or solve homework\n• Access external websites\n• Remember between sessions\n\nBut I\'m great at guiding you through your CSE journey! 🚀'
     },
 
-    // ── Subject: COA ──
+    // ═══ ABOUT & CONTACT ═══
     {
-      keys: ['coa', 'computer organization', 'computer architecture'],
-      reply: '🖥️ **COA — Computer Organization & Architecture**\n\n📍 Year 1, Semester 2\n\n**Key Topics:**\n• CPU architecture & instruction sets\n• Memory hierarchy & cache\n• Pipelining & parallelism\n• I/O organization\n• Assembly language basics\n\n**Tip:** Understand pipelining hazards and cache mapping — common exam topics!\n\n👉 Go to **Materials → 1st Year → Semester 2 → COA** to download notes.'
+      id: 'about',
+      keys: ['about', 'who made', 'creator', 'developer', 'praveen', 'who built', 'made by'],
+      patterns: [/who\s*(made|built|created|developed)/i, /about\s*(this|the)\s*(site|website|project)/i, /praveen/i, /creator/i, /developer/i],
+      reply: '👨‍💻 **About KL Material Study Hub:**\n\nCreated by **Praveen Reddy** — B.Tech CSE student at KL University.\n\n**🎯 Mission:** Make quality study materials **free and accessible** for all CSE students.\n\n**✨ Features:**\n• 📚 100+ free study materials (PDF)\n• 🗺️ Year-wise career roadmaps\n• 🤖 AI Study Buddy (me!)\n• 🌙 Dark/Light mode\n• 📱 PWA — works offline\n• ⚡ Fantasy-level animations\n\n**🛠️ Tech Stack:** HTML, CSS, JavaScript, Supabase, GitHub Pages\n\n👉 Visit **About** page for the full story!'
     },
-
-    // General subjects question
     {
-      keys: ['subjects', 'all subjects', 'what subjects', 'which subjects', 'how many subjects', 'list subjects'],
-      reply: 'We currently cover **9 subjects** across Year 1:\n\n**Semester 1 (Odd):**\n⚡ BEEC — Basic Electrical & Electronic Circuits\n🔢 DM — Discrete Mathematics\n💻 PSC — Problem Solving Through C\n🔧 DSD — Digital System Design\n\n**Semester 2 (Even):**\n🐍 PP — Python Programming\n📐 LACE — Linear Algebra & Calculus\n🌳 DS — Data Structures\n📡 FIS — Fundamentals of IoT & Sensors\n🖥️ COA — Computer Organization & Architecture\n\nMore subjects coming soon! 🚀'
+      id: 'contact',
+      keys: ['contact', 'reach', 'email', 'github', 'linkedin', 'social', 'whatsapp', 'feedback', 'suggestion'],
+      patterns: [/contact/i, /\bemail\b/i, /\bgithub\b/i, /linkedin/i, /whatsapp/i, /feedback/i, /suggestion/i],
+      reply: '📬 **Get in Touch:**\n\n💻 **GitHub:** klstudyhub\n💼 **LinkedIn:** Praveen Reddy\n📧 **Email:** Available on the Contact page\n📱 **WhatsApp:** Study group link on Contact page\n📘 **Facebook** & 📸 **Instagram** also available\n\n**Want to contribute?**\n• Submit materials via GitHub pull request\n• Report bugs on GitHub Issues\n• Share suggestions via Contact form\n\n👉 Visit the **Contact** page for all links!'
     },
-
-    // Materials / Downloads
     {
-      keys: ['material', 'download', 'notes', 'pdf', 'study material', 'get notes', 'where are materials', 'find materials'],
-      reply: '📥 **How to find materials:**\n\n1. Click **Materials** in the navigation\n2. Select your **Year** (1st–4th)\n3. Pick your **Semester** (Odd/Even)\n4. Choose your **Subject**\n5. Click **Download** on any file!\n\nYou can also use the **search bar** to find materials by name.\n\n💡 **Tip:** Materials are hosted on GitHub for fast, reliable downloads!'
-    },
-
-    // Search
-    {
-      keys: ['search', 'how to search', 'find', 'filter', 'how to filter'],
-      reply: '🔍 **Using Search & Filters:**\n\n• Use the **search bar** at the top of Materials page to search by file name or subject\n• Use **Year → Semester → Subject** pill selectors for step-by-step filtering\n• The **breadcrumb** shows your current filter path\n• Click **Reset** to clear all filters\n\n💡 You can also use `?category=BEEC` in the URL to jump directly to a subject!'
-    },
-
-    // Roadmap
-    {
-      keys: ['roadmap', 'career', 'placement', 'skills', 'what to learn', 'career path', 'career guidance'],
-      reply: '🗺️ **B.Tech CSE Roadmap:**\n\n**Year 1:** Focus on fundamentals — C, Python, Data Structures\n**Year 2:** Core CS — OOP, DBMS, OS, Computer Networks\n**Year 3:** Specialize — Web Dev, ML/AI, Cloud, Cybersecurity\n**Year 4:** Projects, internships & placement prep\n\n**Top Resources:**\n🔗 roadmap.sh — Visual career roadmaps\n🎓 Udemy — In-depth courses\n💻 LeetCode — Coding practice\n\n👉 Visit the **Roadmap** page for the full guide!'
-    },
-
-    // Placements
-    {
-      keys: ['placement', 'interview', 'job', 'internship', 'placed', 'company'],
-      reply: '💼 **Placement Preparation Tips:**\n\n1. **DSA** — Solve 200+ problems on LeetCode/GFG\n2. **Projects** — Build 2-3 solid projects for your resume\n3. **CS Fundamentals** — OS, DBMS, CN, OOPs are must-knows\n4. **Aptitude** — Practice on IndiaBix/PrepInsta\n5. **Communication** — Work on English & presentation skills\n\n**Start early** — ideally from Year 2!\n\n👉 Visit the **Roadmap** page for year-wise guidance.'
-    },
-
-    // Dark mode / Theme
-    {
-      keys: ['dark mode', 'light mode', 'theme', 'color', 'switch theme'],
-      reply: '🌙 **Theme Switching:**\n\nClick the **sun/moon icon** (⚙️) in the top-right corner to toggle between dark and light modes.\n\nYour preference is saved automatically — it\'ll remember your choice next time!'
-    },
-
-    // Offline / PWA
-    {
-      keys: ['offline', 'pwa', 'install', 'app', 'without internet', 'work offline'],
-      reply: '📱 **Offline & PWA Support:**\n\nThis site works as a **Progressive Web App (PWA)**!\n\n• **Install it:** Click "Add to Home Screen" in your browser menu\n• **Works offline:** Previously visited pages are cached\n• **Fast loading:** Assets are cached by the service worker\n\nPerfect for studying without internet! 🚀'
-    },
-
-    // About
-    {
-      keys: ['about', 'who made', 'creator', 'developer', 'praveen', 'who are you', 'who built'],
-      reply: '👨‍💻 **About KL Material:**\n\nCreated by **Praveen Reddy**, a B.Tech CSE student at KL University.\n\n**Mission:** Make quality study materials freely accessible to all CSE students.\n\n**Features:**\n• Free PDF notes & materials\n• Career roadmap guidance\n• AI Study Buddy (me! 😊)\n• Dark mode & PWA support\n\n👉 Visit the **About** page to learn more!'
-    },
-
-    // Contact
-    {
-      keys: ['contact', 'reach', 'email', 'github', 'linkedin', 'social', 'whatsapp'],
-      reply: '📬 **Contact Praveen Reddy:**\n\n📧 Email — Available on the Contact page\n💻 GitHub — klstudyhub\n💼 LinkedIn — Praveen Reddy\n📱 WhatsApp — Join our study group!\n📘 Facebook & 📸 Instagram also available\n\n👉 Visit the **Contact** page for all links!'
-    },
-
-    // Exam tips
-    {
-      keys: ['exam', 'tips', 'study tips', 'how to study', 'prepare', 'preparation'],
-      reply: '📝 **Study & Exam Tips:**\n\n1. 📅 **Plan ahead** — Make a study schedule 2 weeks before exams\n2. 📖 **Active recall** — Test yourself instead of just reading\n3. ✍️ **Write it down** — Writing helps memory retention\n4. 🔄 **Spaced repetition** — Review topics at increasing intervals\n5. 💤 **Sleep well** — Your brain consolidates memory during sleep\n6. 🎯 **Focus on PYQs** — Previous year questions show the pattern\n\nGood luck! 💪'
-    },
-
-    // Semester
-    {
+      id: 'semester_info',
       keys: ['semester', 'sem 1', 'sem 2', 'odd semester', 'even semester', 'first semester', 'second semester'],
-      reply: '📆 **Semesters:**\n\n**1st Year:**\n• Semester 1 (Odd) — BEEC, DM, PSC, DSD\n• Semester 2 (Even) — PP, LACE, DS, FIS, COA\n\nTo view materials for a specific semester:\n1. Go to **Materials**\n2. Select **1st Year**\n3. Choose **Semester 1** or **Semester 2**\n\nMore years coming soon! 🚀'
+      patterns: [/semester\s*[12]/i, /\bsem\s*[12]\b/i, /odd\s*sem/i, /even\s*sem/i],
+      reply: '📆 **Semester Structure:**\n\n**Semester 1 (Odd — July to Dec):**\n⚡ BEEC | 🔢 DM | 💻 PSC | 🔧 DSD\n\n**Semester 2 (Even — Jan to May):**\n🐍 PP | 📐 LACE | 🌳 DS | 📡 FIS | 🖥️ COA\n\n**To view materials:**\n1. Go to **Materials**\n2. Select **1st Year**\n3. Choose the semester\n\nMore years coming soon! 🚀'
+    },
+    {
+      id: 'year_info',
+      keys: ['1st year', 'first year', 'year 1', '2nd year', 'second year', 'year 2', '3rd year', 'year 3', '4th year', 'year 4'],
+      patterns: [/(1st|first|2nd|second|3rd|third|4th|fourth)\s*year/i, /year\s*[1-4]/i],
+      reply: '📅 **Year-wise Content:**\n\n**✅ 1st Year** — Fully available! Both semesters, 9 subjects, 100+ materials.\n\n**🔜 Coming Soon:**\n• 2nd Year — OOP, DBMS, OS, CN\n• 3rd Year — Electives + specializations\n• 4th Year — Projects + placement prep\n\nMeanwhile, check the **Roadmap** page for career guidance for ALL 4 years!'
     },
 
-    // Year
+    // ═══ PROGRAMMING CONCEPTS ═══
     {
-      keys: ['1st year', 'first year', 'year 1', '2nd year', 'second year', 'year 2', '3rd year', 'third year', 'year 3', '4th year', 'fourth year', 'year 4'],
-      reply: 'Currently we have materials for **1st Year** (both semesters).\n\nMaterials for **2nd, 3rd, and 4th Year** are coming soon! 🚀\n\nMeanwhile, check out the **Roadmap** page for year-wise career guidance and skill suggestions for all 4 years.'
+      id: 'programming_language',
+      keys: ['which language', 'best language', 'programming language', 'should i learn', 'first language', 'language to learn'],
+      patterns: [/which\s*(programming\s*)?lang/i, /best\s*lang/i, /should\s*i\s*learn/i, /first\s*lang/i, /what\s*lang/i],
+      reply: '💡 **Which programming language to learn?**\n\n**For your 1st year CSE curriculum:**\n1. **C** (Semester 1 — PSC) — builds strong foundations\n2. **Python** (Semester 2 — PP) — versatile and beginner-friendly\n\n**For placements & career:**\n🥇 **C++** — competitive programming + DSA (most companies)\n🥈 **Java** — enterprise, Android development\n🥉 **JavaScript** — web development (full stack)\n🏅 **Python** — ML/AI, data science, automation\n\n**My recommendation:**\nC → Python → C++ (for DSA) → pick based on career goal!\n\n💡 **Language doesn\'t matter** as much as **problem-solving ability!**'
     },
+    {
+      id: 'git_github',
+      keys: ['git', 'github', 'version control', 'repository', 'commit', 'push', 'pull request'],
+      patterns: [/\bgit\b/i, /github/i, /version\s*control/i, /pull\s*request/i],
+      reply: '🔀 **Git & GitHub Guide:**\n\n**What is Git?** A version control system to track code changes.\n**What is GitHub?** A platform to host & share code repositories.\n\n**Essential commands:**\n```\ngit init          — start new repo\ngit add .         — stage all changes\ngit commit -m ""  — save changes\ngit push          — upload to GitHub\ngit pull          — download updates\ngit branch        — manage branches\n```\n\n**Why you MUST learn Git:**\n✅ Required for ALL software jobs\n✅ Collaboration with teams\n✅ Portfolio building on GitHub\n✅ Open source contributions\n\n💡 **Start today:** Create a GitHub account & push your first project!'
+    },
+
+    // ═══ MISCELLANEOUS ═══
+    {
+      id: 'funny',
+      keys: ['joke', 'funny', 'tell me a joke', 'make me laugh', 'humor'],
+      patterns: [/joke/i, /funny/i, /make\s*me\s*laugh/i, /humor/i],
+      reply: () => {
+        const jokes = [
+          '😄 Why do programmers prefer dark mode?\nBecause light attracts bugs! 🪲',
+          '😄 A SQL query walks into a bar, sees two tables, and asks...\n"Can I JOIN you?" 🍺',
+          '😄 Why was the JavaScript developer sad?\nBecause he didn\'t Node how to Express himself! 😢',
+          '😄 What\'s a computer\'s favorite snack?\nMicrochips! 🍟',
+          '😄 Why do Java developers wear glasses?\nBecause they can\'t C#! 👓',
+          '😄 !false — it\'s funny because it\'s true. 🤓'
+        ];
+        return jokes[Math.floor(Math.random() * jokes.length)] + '\n\nNow back to studying! 📚';
+      }
+    },
+    {
+      id: 'motivate',
+      keys: ['motivate', 'motivation', 'inspire', 'i am tired', 'i am bored', 'stressed', 'demotivated', 'depressed', 'sad', 'frustrated'],
+      patterns: [/motivat/i, /inspir/i, /tired|bored|stressed|depressed|sad|frustrated/i, /i\s*(can'?t|cant)\s*(do|study)/i, /give\s*up/i],
+      reply: () => {
+        const quotes = [
+          '💪 "The expert in anything was once a beginner." — Helen Hayes',
+          '💪 "It does not matter how slowly you go, as long as you do not stop." — Confucius',
+          '💪 "Success is not final, failure is not fatal. It is the courage to continue that counts." — Churchill',
+          '💪 "The only way to do great work is to love what you do." — Steve Jobs',
+          '💪 "First, solve the problem. Then, write the code." — John Johnson',
+          '💪 "Code is like humor. When you have to explain it, it\'s bad." — Cory House'
+        ];
+        return quotes[Math.floor(Math.random() * quotes.length)] + '\n\n🌟 Remember: Every expert was once a beginner. You\'re doing great! Keep pushing forward, one step at a time. 🚀\n\nWant me to help you with something specific? Sometimes breaking a big task into small steps makes it easier!';
+      }
+    },
+    {
+      id: 'time',
+      keys: ['time', 'what time', 'date', 'today', 'day'],
+      patterns: [/what\s*(time|day|date)/i, /current\s*(time|date)/i, /today'?s?$/i],
+      reply: () => {
+        const now = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        return `📅 Today is **${now.toLocaleDateString('en-IN', options)}**\n🕐 Current time: **${now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}**\n\nIs there something I can help you study? 📚`;
+      }
+    },
+    {
+      id: 'help',
+      keys: ['help', 'what can you do', 'features', 'commands', 'menu', 'options'],
+      patterns: [/^help$/i, /what\s*can\s*you\s*do/i, /^commands$/i, /^menu$/i, /^options$/i],
+      reply: '🤖 **What I can help with:**\n\n📚 **Subjects** — Ask about BEEC, DM, PSC, DSD, PP, LACE, DS, FIS, COA\n📥 **Materials** — How to find & download study notes\n🗺️ **Roadmap** — Career paths for Web Dev, ML/AI, and more\n💼 **Placements** — Interview prep, DSA strategy\n📝 **Study Tips** — Exam prep, Pomodoro, active recall\n🏆 **Competitive Coding** — LeetCode, HackerRank guide\n🐍 **Languages** — Which to learn first?\n🔀 **Git/GitHub** — Version control basics\n🌙 **Site Features** — Dark mode, PWA, search\n❓ **General** — Motivation, jokes, and more!\n\n💡 **Tips:**\n• I understand typos and abbreviations\n• Ask follow-up questions — I remember context!\n• Try: "tell me a joke" or "motivate me" 😊'
+    }
   ];
 
   // Quick reply suggestions
@@ -166,33 +367,90 @@
     { label: '📥 Materials', text: 'How do I download materials?' },
     { label: '🗺️ Roadmap', text: 'Tell me about the career roadmap' },
     { label: '💡 Study Tips', text: 'Give me study tips' },
+    { label: '💼 Placements', text: 'Placement preparation guide' },
+    { label: '🏆 CP Guide', text: 'Competitive programming guide' },
   ];
 
-  // ─── MATCHING ENGINE ─────────────────────────────────
+  // ─── SMART MATCHING ENGINE ─────────────────────────────
   function findBestMatch(input) {
-    const lower = input.toLowerCase().trim();
+    const expanded = expandSynonyms(input);
+    const lower = expanded.toLowerCase().trim();
+    const tokens = tokenize(lower);
+    const bigrams = ngrams(tokens, 2);
+    const trigrams = ngrams(tokens, 3);
+
     let bestMatch = null;
     let bestScore = 0;
 
     for (const entry of KB) {
       let score = 0;
-      for (const key of entry.keys) {
-        if (lower === key) {
-          score = 100; // exact match
-        } else if (lower.includes(key)) {
-          score = Math.max(score, 50 + key.length); // contains keyword, longer = better
-        } else if (key.includes(lower) && lower.length >= 2) {
-          score = Math.max(score, 30 + lower.length); // partial match
-        } else {
-          // Word-level match
-          const inputWords = lower.split(/\s+/);
-          const keyWords = key.split(/\s+/);
-          const matched = keyWords.filter(kw => inputWords.some(iw => iw.includes(kw) || kw.includes(iw)));
-          if (matched.length > 0) {
-            score = Math.max(score, 20 + matched.length * 10);
+
+      // 1. Regex pattern match (highest priority)
+      if (entry.patterns) {
+        for (const pat of entry.patterns) {
+          if (pat.test(lower) || pat.test(input)) {
+            score = Math.max(score, 90);
           }
         }
       }
+
+      // 2. Exact key match
+      for (const key of entry.keys) {
+        if (lower === key) {
+          score = 100;
+          break;
+        }
+      }
+
+      // 3. Contains key (full phrase)
+      for (const key of entry.keys) {
+        if (lower.includes(key)) {
+          score = Math.max(score, 60 + key.length * 2);
+        }
+      }
+
+      // 4. Key contains input
+      for (const key of entry.keys) {
+        if (key.includes(lower) && lower.length >= 2) {
+          score = Math.max(score, 40 + lower.length * 2);
+        }
+      }
+
+      // 5. Word-level matching
+      for (const key of entry.keys) {
+        const keyTokens = tokenize(key);
+        const matched = keyTokens.filter(kt =>
+          tokens.some(it => it === kt || similarity(it, kt) > 0.75)
+        );
+        if (matched.length > 0) {
+          const wordScore = 25 + (matched.length / Math.max(keyTokens.length, 1)) * 40;
+          score = Math.max(score, wordScore);
+        }
+      }
+
+      // 6. Fuzzy matching with Levenshtein
+      for (const key of entry.keys) {
+        const sim = similarity(lower, key);
+        if (sim > 0.7) {
+          score = Math.max(score, sim * 70);
+        }
+      }
+
+      // 7. Bigram/trigram matching
+      for (const key of entry.keys) {
+        for (const bg of bigrams) {
+          if (key.includes(bg)) score = Math.max(score, 45 + bg.length);
+        }
+        for (const tg of trigrams) {
+          if (key.includes(tg)) score = Math.max(score, 55 + tg.length);
+        }
+      }
+
+      // 8. Context boost — if user asked about same topic area
+      if (lastTopicKey === entry.id && score > 15) {
+        score += 10;
+      }
+
       if (score > bestScore) {
         bestScore = score;
         bestMatch = entry;
@@ -200,23 +458,43 @@
     }
 
     if (bestScore >= 20 && bestMatch) {
-      return bestMatch.reply;
+      lastTopicKey = bestMatch.id;
+      const reply = typeof bestMatch.reply === 'function' ? bestMatch.reply() : bestMatch.reply;
+      return { reply, followUp: bestMatch.followUp || null };
     }
 
     return null;
   }
 
   function getResponse(input) {
-    const match = findBestMatch(input);
-    if (match) return match;
+    // Store in conversation history
+    conversationHistory.push({ role: 'user', text: input, time: Date.now() });
 
-    // Fallback responses
+    const match = findBestMatch(input);
+    if (match) {
+      conversationHistory.push({ role: 'bot', text: match.reply, time: Date.now() });
+      return match;
+    }
+
+    // Smart fallback — suggest based on keywords
+    const lower = input.toLowerCase();
+    let suggestion = '';
+    if (/code|program|debug|error|bug/i.test(lower)) {
+      suggestion = '\n\n💡 Try asking about a specific language: **C, Python, or competitive programming**!';
+    } else if (/learn|course|resource|tutorial/i.test(lower)) {
+      suggestion = '\n\n💡 Try asking about: **roadmap, web development, ML/AI, or competitive programming**!';
+    } else if (/exam|test|mark|grade|cgpa/i.test(lower)) {
+      suggestion = '\n\n💡 Try asking about: **study tips, exam tips, or previous year questions (PYQ)**!';
+    }
+
     const fallbacks = [
-      'Hmm, I\'m not sure about that. Try asking about a **subject** (like BEEC, DM, PSC), **materials**, **roadmap**, or **study tips**! 😊',
-      'I don\'t have info on that yet, but I can help with **subjects, materials, career guidance,** and **exam tips**. What would you like to know?',
-      'That\'s a great question! Unfortunately, I can only help with topics related to this study hub. Try asking about a **subject** or **how to download materials**! 📚',
+      `I'm not sure about that yet, but I'm always learning! 🤖${suggestion}\n\nHere's what I know best:\n📚 Subjects • 📥 Materials • 🗺️ Roadmap • 💼 Placements • 📝 Study Tips`,
+      `That's a great question! I don't have info on that specific topic.${suggestion}\n\nTry asking about **subjects, materials, career guidance**, or **study tips**! 😊`,
+      `Hmm, I couldn't find a match for that. 🤔${suggestion}\n\nType **help** to see everything I can assist with!`,
     ];
-    return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+    const reply = fallbacks[Math.floor(Math.random() * fallbacks.length)];
+    conversationHistory.push({ role: 'bot', text: reply, time: Date.now() });
+    return { reply, followUp: null };
   }
 
   // ─── CREATE UI ────────────────────────────────────────
@@ -239,7 +517,7 @@
           <span class="gchat-avatar"><i class="fa-solid fa-robot"></i></span>
           <div>
             <strong>KL Study Buddy</strong>
-            <small>Smart Study Assistant</small>
+            <small>AI-Powered • Free • Private</small>
           </div>
         </div>
         <button class="gchat-close" aria-label="Close chat">&times;</button>
@@ -247,11 +525,11 @@
       <div id="gchat-messages" class="gchat-messages">
         <div class="gchat-msg bot">
           <span class="gchat-msg-icon"><i class="fa-solid fa-robot"></i></span>
-          <div class="gchat-bubble">Hey! 👋 I'm your KL Study Buddy.<br>I know about all <strong>9 subjects</strong>, materials, career roadmaps, and study tips!<br><br>Ask me anything or tap a quick option below:</div>
+          <div class="gchat-bubble">Hey! 👋 I'm your <strong>KL Study Buddy</strong> — a smart AI assistant.<br><br>I know about all <strong>9 subjects</strong>, career paths, coding guides, and study strategies!<br><br>Ask me anything or tap an option below:</div>
         </div>
       </div>
       <form id="gchat-form" class="gchat-input-area" autocomplete="off">
-        <input type="text" id="gchat-input" placeholder="Ask about subjects, roadmaps..." autocomplete="off" />
+        <input type="text" id="gchat-input" placeholder="Ask about subjects, roadmaps, coding..." autocomplete="off" />
         <button type="submit" class="gchat-send" aria-label="Send message">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </button>
@@ -273,19 +551,20 @@
   }
 
   // ─── QUICK REPLIES ────────────────────────────────────
-  function addQuickReplies() {
+  function addQuickReplies(items) {
     const container = document.getElementById('gchat-messages');
     const qrWrap = document.createElement('div');
     qrWrap.className = 'gchat-quick-replies';
 
-    QUICK_REPLIES.forEach(qr => {
+    const buttons = items || QUICK_REPLIES;
+    buttons.forEach(qr => {
       const btn = document.createElement('button');
       btn.className = 'gchat-qr-btn';
-      btn.textContent = qr.label;
+      btn.textContent = qr.label || qr.text;
       btn.addEventListener('click', () => {
         // Remove quick replies after click
-        const existing = container.querySelector('.gchat-quick-replies');
-        if (existing) existing.remove();
+        const existing = container.querySelectorAll('.gchat-quick-replies');
+        existing.forEach(el => el.remove());
         // Simulate sending the message
         document.getElementById('gchat-input').value = qr.text;
         document.getElementById('gchat-form').dispatchEvent(new Event('submit'));
@@ -317,19 +596,26 @@
     input.value = '';
 
     // Remove quick replies if still visible
-    const qr = document.querySelector('.gchat-quick-replies');
-    if (qr) qr.remove();
+    const qrs = document.querySelectorAll('.gchat-quick-replies');
+    qrs.forEach(qr => qr.remove());
 
     appendMsg('user', query);
 
     // Show typing indicator then respond
     const typingId = showTyping();
-    const delay = 400 + Math.random() * 600; // 400-1000ms for natural feel
+    const delay = 500 + Math.random() * 800;
 
     setTimeout(() => {
       removeTyping(typingId);
-      const response = getResponse(query);
-      appendMsg('bot', response);
+      const result = getResponse(query);
+      appendMsg('bot', result.reply);
+
+      // Show follow-up suggestions if available
+      if (result.followUp && result.followUp.length > 0) {
+        setTimeout(() => {
+          addQuickReplies(result.followUp.map(f => ({ label: f, text: f })));
+        }, 300);
+      }
     }, delay);
   }
 
@@ -344,7 +630,6 @@
     if (raw) {
       html = text;
     } else if (role === 'user') {
-      // Sanitize user input
       html = text
         .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     } else {
@@ -352,7 +637,8 @@
       html = text
         .replace(/&/g, '&amp;')
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/`(.*?)`/g, '<code>$1</code>')
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
         .replace(/\n/g, '<br>');
     }
 
