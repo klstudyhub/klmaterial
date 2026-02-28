@@ -2716,6 +2716,45 @@ footer {
   40% { transform: scale(1); opacity: 1; }
 }
 
+/* Quick Reply Buttons */
+.gchat-quick-replies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 12px;
+}
+
+.gchat-qr-btn {
+  background: rgba(0, 212, 255, 0.15);
+  border: 1px solid rgba(0, 212, 255, 0.4);
+  color: #00d4ff;
+  border-radius: 16px;
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: auto;
+  white-space: nowrap;
+}
+
+.gchat-qr-btn:hover {
+  background: rgba(0, 212, 255, 0.3);
+  border-color: #00d4ff;
+  transform: translateY(-1px);
+}
+
+html[data-theme="light"] .gchat-qr-btn {
+  background: rgba(0, 119, 255, 0.1);
+  border-color: rgba(0, 119, 255, 0.3);
+  color: #0066dd;
+}
+
+html[data-theme="light"] .gchat-qr-btn:hover {
+  background: rgba(0, 119, 255, 0.2);
+  border-color: #0066dd;
+}
+
 /* Input Area */
 .gchat-input-area {
   display: flex;
