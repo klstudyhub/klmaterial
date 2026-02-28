@@ -325,6 +325,118 @@ class CustomCursor {
   }
 }
 
+// 7. Hero Typing Effect
+class TypeWriter {
+  constructor(el, phrases, opts = {}) {
+    this.el = el;
+    this.phrases = phrases;
+    this.typeSpeed = opts.typeSpeed || 60;
+    this.deleteSpeed = opts.deleteSpeed || 35;
+    this.pauseAfterType = opts.pauseAfterType || 2000;
+    this.pauseAfterDelete = opts.pauseAfterDelete || 400;
+    this.index = 0;
+    this.charIndex = 0;
+    this.isDeleting = false;
+    if (this.el) this.tick();
+  }
+
+  tick() {
+    const current = this.phrases[this.index];
+    if (this.isDeleting) {
+      this.charIndex--;
+      this.el.textContent = current.substring(0, this.charIndex);
+      if (this.charIndex === 0) {
+        this.isDeleting = false;
+        this.index = (this.index + 1) % this.phrases.length;
+        setTimeout(() => this.tick(), this.pauseAfterDelete);
+        return;
+      }
+      setTimeout(() => this.tick(), this.deleteSpeed);
+    } else {
+      this.charIndex++;
+      this.el.textContent = current.substring(0, this.charIndex);
+      if (this.charIndex === current.length) {
+        this.isDeleting = true;
+        setTimeout(() => this.tick(), this.pauseAfterType);
+        return;
+      }
+      setTimeout(() => this.tick(), this.typeSpeed);
+    }
+  }
+}
+
+// 8. PWA Install Prompt
+class PWAInstallPrompt {
+  constructor() {
+    this.deferredPrompt = null;
+    this.banner = null;
+    this.init();
+  }
+
+  init() {
+    // Track visit count
+    const visits = parseInt(localStorage.getItem('klm-visits') || '0', 10) + 1;
+    localStorage.setItem('klm-visits', visits.toString());
+
+    // Listen for beforeinstallprompt
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      this.deferredPrompt = e;
+      // Show banner on 2nd visit or later
+      if (visits >= 2 && !localStorage.getItem('klm-pwa-dismissed')) {
+        setTimeout(() => this.showBanner(), 3000);
+      }
+    });
+  }
+
+  showBanner() {
+    this.banner = document.createElement('div');
+    this.banner.className = 'pwa-install-banner';
+    this.banner.innerHTML = `
+      <span class="pwa-text"><i class="fa-solid fa-mobile-screen"></i> Install KL Material for offline access</span>
+      <button class="pwa-install-btn" id="pwa-install-btn">Install</button>
+      <button class="pwa-dismiss-btn" id="pwa-dismiss-btn" aria-label="Dismiss">✕</button>
+    `;
+    document.body.appendChild(this.banner);
+
+    // Slide in
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        this.banner.classList.add('visible');
+      });
+    });
+
+    // Install button
+    this.banner.querySelector('#pwa-install-btn').addEventListener('click', async () => {
+      if (this.deferredPrompt) {
+        this.deferredPrompt.prompt();
+        const result = await this.deferredPrompt.userChoice;
+        if (result.outcome === 'accepted') {
+          localStorage.setItem('klm-pwa-dismissed', 'true');
+        }
+        this.deferredPrompt = null;
+      }
+      this.hideBanner();
+    });
+
+    // Dismiss button
+    this.banner.querySelector('#pwa-dismiss-btn').addEventListener('click', () => {
+      localStorage.setItem('klm-pwa-dismissed', 'true');
+      this.hideBanner();
+    });
+
+    // Auto-hide after 10s
+    setTimeout(() => this.hideBanner(), 10000);
+  }
+
+  hideBanner() {
+    if (this.banner) {
+      this.banner.classList.remove('visible');
+      setTimeout(() => this.banner.remove(), 500);
+    }
+  }
+}
+
 // Initialize all features when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   // Theme Manager
@@ -343,6 +455,20 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.innerWidth >= 768) {
     new CustomCursor();
   }
+
+  // Hero Typing Effect (homepage only)
+  const typedEl = document.getElementById('typed-text');
+  if (typedEl) {
+    new TypeWriter(typedEl, [
+      'Study smarter, not harder',
+      'Your CSE journey starts here',
+      '100+ materials, always free',
+      'Built for KL University students'
+    ]);
+  }
+
+  // PWA Install Prompt
+  new PWAInstallPrompt();
 });
 
 // Smooth scroll for anchor links

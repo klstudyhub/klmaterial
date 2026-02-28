@@ -122,7 +122,7 @@ nav a {
   -webkit-touch-callout: none;
 }
 
-/* Animated Background Grid */
+/* Gradient Mesh Background */
 body::after {
   content: '';
   position: fixed;
@@ -131,22 +131,28 @@ body::after {
   width: 100%;
   height: 100%;
   min-height: 100vh;
-  background-image:
-    linear-gradient(45deg, rgba(0, 212, 255, 0.03) 25%, transparent 25%),
-    linear-gradient(-45deg, rgba(0, 212, 255, 0.03) 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, rgba(0, 212, 255, 0.03) 75%),
-    linear-gradient(-45deg, transparent 75%, rgba(0, 212, 255, 0.03) 75%);
-  background-size: 60px 60px;
-  background-position: 0 0, 0 30px, 30px -30px, -30px 0px;
-  animation: gridMove 12s linear infinite;
-  /* Faster grid movement */
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(0, 212, 255, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(0, 119, 255, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 60% 80%, rgba(0, 255, 136, 0.04) 0%, transparent 50%),
+    conic-gradient(from 45deg at 50% 50%, rgba(0, 212, 255, 0.02) 0deg, transparent 60deg, rgba(0, 119, 255, 0.02) 120deg, transparent 180deg, rgba(0, 212, 255, 0.02) 240deg, transparent 300deg, rgba(0, 119, 255, 0.02) 360deg);
   z-index: -1;
-  opacity: 0.4;
+  opacity: 1;
   pointer-events: none;
+  animation: meshShift 20s ease-in-out infinite alternate;
   /* iOS Safari fixes */
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
-  will-change: transform;
+}
+
+@keyframes meshShift {
+  0% {
+    background-position: 0% 0%, 100% 0%, 50% 100%, center;
+  }
+
+  100% {
+    background-position: 100% 100%, 0% 100%, 50% 0%, center;
+  }
 }
 
 @keyframes backgroundPulse {
@@ -2348,36 +2354,40 @@ html[data-theme="light"] .footer-bottom {
 
 .category-btn {
   padding: 30px 20px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 2px solid rgba(0, 212, 255, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  border: 2px solid color-mix(in srgb, var(--accent, #00d4ff) 30%, transparent);
+  border-top: 3px solid var(--accent, #00d4ff);
   border-radius: 15px;
   text-decoration: none;
   text-align: center;
-  transition: all 0.3s ease;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12px;
   color: var(--text-primary);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .category-btn:hover {
-  border-color: var(--accent-color, #00d4ff);
-  background: linear-gradient(135deg,
-      rgba(var(--rgb-accent, 0, 212, 255), 0.1),
-      rgba(var(--rgb-accent, 0, 119, 255), 0.1));
+  border-color: var(--accent, #00d4ff);
+  background: color-mix(in srgb, var(--accent, #00d4ff) 12%, transparent);
   transform: translateY(-10px);
-  box-shadow: 0 15px 40px rgba(0, 212, 255, 0.2);
+  box-shadow: 0 15px 40px color-mix(in srgb, var(--accent, #00d4ff) 25%, transparent);
 }
 
 .cat-icon {
   font-size: 2rem;
   display: block;
   transition: transform 0.3s ease;
+  color: var(--accent, #00d4ff);
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--accent, #00d4ff) 40%, transparent));
 }
 
 .category-btn:hover .cat-icon {
   transform: scale(1.2) rotate(10deg);
+  filter: drop-shadow(0 0 14px color-mix(in srgb, var(--accent, #00d4ff) 60%, transparent));
 }
 
 .cat-name {
@@ -6118,9 +6128,31 @@ main.materials-container {
 
   /* Tap feedback */
   .bottom-nav-item:active {
-    transform: scale(0.9);
+    animation: navBounce 0.4s ease;
     color: #00d4ff !important;
     -webkit-text-fill-color: #00d4ff !important;
+  }
+
+  @keyframes navBounce {
+    0% {
+      transform: scale(1);
+    }
+
+    30% {
+      transform: scale(0.85);
+    }
+
+    50% {
+      transform: scale(1.08);
+    }
+
+    70% {
+      transform: scale(0.95);
+    }
+
+    100% {
+      transform: scale(1);
+    }
   }
 
   /* Add padding to body bottom so content isn't hidden behind the nav */
@@ -7297,4 +7329,270 @@ html[data-theme="light"] .category-btn::before {
 .advanced-card p,
 .contact-card-modern p {
   max-width: 55ch;
+}
+
+/* ====================================
+   ADVANCED VISUAL UPGRADES
+==================================== */
+
+/* ===== Glassmorphism Upgrade ===== */
+.advanced-card {
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(0, 212, 255, 0.15) !important;
+}
+
+.stat-item {
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 212, 255, 0.12);
+}
+
+.cta-advanced {
+  background: linear-gradient(135deg,
+      rgba(0, 212, 255, 0.1),
+      rgba(0, 119, 255, 0.1)) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 212, 255, 0.2) !important;
+}
+
+html[data-theme="light"] .advanced-card {
+  background: rgba(255, 255, 255, 0.65) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(0, 119, 255, 0.12) !important;
+}
+
+html[data-theme="light"] .stat-item {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 119, 255, 0.1);
+}
+
+/* ===== Animated Gradient Borders on Feature Cards ===== */
+@property --gradient-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.advanced-card::after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  right: -1px;
+  bottom: -1px;
+  border-radius: inherit;
+  background: conic-gradient(from var(--gradient-angle),
+      rgba(0, 212, 255, 0.3),
+      rgba(0, 119, 255, 0.15),
+      rgba(0, 255, 136, 0.1),
+      rgba(0, 119, 255, 0.15),
+      rgba(0, 212, 255, 0.3));
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  animation: borderRotate 4s linear infinite;
+}
+
+.advanced-card:hover::after {
+  opacity: 1;
+}
+
+@keyframes borderRotate {
+  0% {
+    --gradient-angle: 0deg;
+  }
+
+  100% {
+    --gradient-angle: 360deg;
+  }
+}
+
+html[data-theme="light"] .advanced-card::after {
+  background: conic-gradient(from var(--gradient-angle),
+      rgba(0, 119, 255, 0.25),
+      rgba(0, 180, 216, 0.15),
+      rgba(100, 200, 255, 0.1),
+      rgba(0, 180, 216, 0.15),
+      rgba(0, 119, 255, 0.25));
+}
+
+/* ===== Light Mode Gradient Mesh ===== */
+html[data-theme="light"] body::after {
+  background:
+    radial-gradient(ellipse at 20% 30%, rgba(0, 119, 255, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 75% 70%, rgba(0, 180, 216, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 10%, rgba(100, 200, 255, 0.04) 0%, transparent 40%),
+    conic-gradient(from 120deg at 40% 60%, rgba(0, 119, 255, 0.015) 0deg, transparent 90deg, rgba(0, 180, 216, 0.015) 180deg, transparent 270deg);
+  opacity: 1;
+}
+
+/* ===== Light Mode Category Button Colors ===== */
+html[data-theme="light"] .category-btn {
+  background: rgba(255, 255, 255, 0.7);
+  border: 2px solid color-mix(in srgb, var(--accent, #0077ff) 25%, transparent);
+  border-top: 3px solid var(--accent, #0077ff);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+html[data-theme="light"] .category-btn:hover {
+  background: color-mix(in srgb, var(--accent, #0077ff) 10%, white);
+  border-color: var(--accent, #0077ff);
+  box-shadow: 0 12px 35px color-mix(in srgb, var(--accent, #0077ff) 20%, transparent);
+}
+
+html[data-theme="light"] .cat-icon {
+  color: var(--accent, #0077ff);
+  filter: none;
+}
+
+/* ===== Hero Typing Effect Styles ===== */
+.typed-wrapper {
+  min-height: 1.8em;
+  margin-bottom: 10px;
+}
+
+.typed-text {
+  font-size: 1.1rem;
+  font-weight: 500;
+  background: linear-gradient(90deg, #00d4ff, #00ff88);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.5px;
+}
+
+.typed-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.2em;
+  background: #00d4ff;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: cursorBlink 0.8s step-end infinite;
+}
+
+@keyframes cursorBlink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+html[data-theme="light"] .typed-text {
+  background: linear-gradient(90deg, #0077ff, #00b4d8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+html[data-theme="light"] .typed-cursor {
+  background: #0077ff;
+}
+
+/* ===== PWA Install Banner ===== */
+.pwa-install-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(135deg, #001d3d, #003566);
+  border-top: 2px solid rgba(0, 212, 255, 0.3);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  z-index: 9999;
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.pwa-install-banner.visible {
+  transform: translateY(0);
+}
+
+.pwa-install-banner .pwa-text {
+  color: #cce7ff;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.pwa-install-banner .pwa-text i {
+  margin-right: 8px;
+  color: #00d4ff;
+}
+
+.pwa-install-btn {
+  padding: 8px 20px;
+  background: linear-gradient(135deg, #00d4ff, #0077ff);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  white-space: nowrap;
+}
+
+.pwa-install-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+}
+
+.pwa-dismiss-btn {
+  background: none;
+  border: none;
+  color: #6b8faa;
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: color 0.2s ease;
+  line-height: 1;
+}
+
+.pwa-dismiss-btn:hover {
+  color: #00d4ff;
+}
+
+html[data-theme="light"] .pwa-install-banner {
+  background: linear-gradient(135deg, #f0f6ff, #e8f0fe);
+  border-top-color: rgba(0, 119, 255, 0.2);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+}
+
+html[data-theme="light"] .pwa-install-banner .pwa-text {
+  color: #1a365d;
+}
+
+html[data-theme="light"] .pwa-install-banner .pwa-text i {
+  color: #0077ff;
+}
+
+@media (max-width: 768px) {
+  .pwa-install-banner {
+    bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+    padding: 12px 16px;
+    gap: 10px;
+  }
+
+  .pwa-install-banner .pwa-text {
+    font-size: 0.85rem;
+  }
 }
