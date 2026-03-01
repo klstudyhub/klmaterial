@@ -60,8 +60,8 @@ function createSnowfall(container, count) {
     el.style.left = Math.random() * 100 + '%';
     el.style.fontSize = (0.8 + Math.random() * 0.6) + 'em';
     el.style.opacity = 0.4 + Math.random() * 0.6;
-    el.style.animationDuration = (8 + Math.random() * 14) + 's';
-    el.style.animationDelay = (Math.random() * 5) + 's';
+    el.style.setProperty('animation-duration', (8 + Math.random() * 14) + 's', 'important');
+    el.style.setProperty('animation-delay', (Math.random() * 5) + 's', 'important');
     el.style.animationTimingFunction = 'linear';
     container.appendChild(el);
   }
@@ -104,8 +104,8 @@ function createSpringBlossoms(container, count) {
 
     petal.style.left = startX + '%';
     petal.style.opacity = 0.5 + Math.random() * 0.5;
-    petal.style.animationDuration = duration + 's';
-    petal.style.animationDelay = delay + 's';
+    petal.style.setProperty('animation-duration', duration + 's', 'important');
+    petal.style.setProperty('animation-delay', delay + 's', 'important');
     petal.style.setProperty('--drift', drift + 'px');
     petal.style.setProperty('--spin', (180 + Math.random() * 360) + 'deg');
 
@@ -119,8 +119,8 @@ function createSpringBlossoms(container, count) {
     sparkle.className = 'spring-sparkle';
     sparkle.style.left = Math.random() * 100 + '%';
     sparkle.style.top = (20 + Math.random() * 60) + '%';
-    sparkle.style.animationDuration = (2 + Math.random() * 3) + 's';
-    sparkle.style.animationDelay = (Math.random() * 8) + 's';
+    sparkle.style.setProperty('animation-duration', (2 + Math.random() * 3) + 's', 'important');
+    sparkle.style.setProperty('animation-delay', (Math.random() * 8) + 's', 'important');
     container.appendChild(sparkle);
   }
 }
@@ -136,8 +136,8 @@ function createFireflies(container, count) {
     firefly.style.top = (20 + Math.random() * 50) + '%';
     firefly.style.width = (2 + Math.random() * 3) + 'px';
     firefly.style.height = firefly.style.width;
-    firefly.style.animationDuration = (3 + Math.random() * 6) + 's';
-    firefly.style.animationDelay = (Math.random() * 10) + 's';
+    firefly.style.setProperty('animation-duration', (3 + Math.random() * 6) + 's', 'important');
+    firefly.style.setProperty('animation-delay', (Math.random() * 10) + 's', 'important');
     firefly.style.animationTimingFunction = 'ease-in-out';
     const hue = 45 + Math.random() * 15;
     firefly.style.filter = `hue-rotate(${hue}deg)`;
@@ -157,8 +157,8 @@ function createLeaves(container, count) {
     leaf.style.left = Math.random() * 100 + '%';
     leaf.style.fontSize = (1.2 + Math.random() * 0.5) + 'em';
     leaf.style.opacity = 0.6 + Math.random() * 0.4;
-    leaf.style.animationDuration = (7 + Math.random() * 13) + 's';
-    leaf.style.animationDelay = (Math.random() * 6) + 's';
+    leaf.style.setProperty('animation-duration', (7 + Math.random() * 13) + 's', 'important');
+    leaf.style.setProperty('animation-delay', (Math.random() * 6) + 's', 'important');
     leaf.style.animationTimingFunction = 'ease-in-out';
     container.appendChild(leaf);
   }

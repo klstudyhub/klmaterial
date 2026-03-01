@@ -5488,6 +5488,18 @@ main.materials-container {
     transition-duration: 0.2s !important;
   }
 
+  /* CRITICAL FIX: Preserve seasonal animation durations on mobile.
+     The blanket 2s override above kills the 8-20s drift animations,
+     making petals/snow/leaves rush across the screen. */
+  .spring-petal,
+  .spring-petal-dot,
+  .spring-sparkle,
+  .snowflake,
+  .leaf,
+  .firefly {
+    animation-duration: unset !important;
+  }
+
   /* Smooth fade-in animations */
   .fade-in,
   .fadeInUp {
