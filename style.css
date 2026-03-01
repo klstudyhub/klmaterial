@@ -2680,45 +2680,74 @@ html[data-theme="light"] .footer-bottom {
   }
 }
 
-/* Spring Petals - Gentle Swirling Motion */
-.petal {
+/* Spring Petals - Cherry Blossom Drift */
+.spring-petal {
   position: absolute;
-  top: -10px;
+  top: -20px;
   font-size: 1.3em;
-  animation: petalFloat ease-in-out infinite;
+  animation: springDrift ease-in-out infinite;
   opacity: 0.9;
-  filter: drop-shadow(0 0 4px rgba(255, 192, 203, 0.5));
+  filter: drop-shadow(0 0 6px rgba(255, 182, 193, 0.6));
+  will-change: transform, opacity;
 }
 
-@keyframes petalFloat {
+.spring-petal-dot {
+  border-radius: 50% 0 50% 50%;
+  font-size: 0 !important;
+}
+
+@keyframes springDrift {
   0% {
-    transform: translateY(0) rotate(0deg) translateX(0) scale(1);
+    transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+    opacity: 0;
+  }
+
+  5% {
     opacity: 1;
   }
 
-  20% {
-    transform: translateY(20vh) rotate(45deg) translateX(-20px) scale(1.1);
+  25% {
+    transform: translateY(25vh) translateX(calc(var(--drift) * 0.4)) rotate(calc(var(--spin) * 0.3)) scale(1.1);
     opacity: 0.95;
   }
 
-  40% {
-    transform: translateY(40vh) rotate(90deg) translateX(25px) scale(0.9);
-    opacity: 0.92;
+  50% {
+    transform: translateY(50vh) translateX(calc(var(--drift) * -0.2)) rotate(calc(var(--spin) * 0.6)) scale(0.9);
+    opacity: 0.9;
   }
 
-  60% {
-    transform: translateY(60vh) rotate(180deg) translateX(-15px) scale(1.05);
-    opacity: 0.88;
-  }
-
-  80% {
-    transform: translateY(80vh) rotate(270deg) translateX(20px) scale(0.95);
-    opacity: 0.85;
+  75% {
+    transform: translateY(75vh) translateX(calc(var(--drift) * 0.6)) rotate(calc(var(--spin) * 0.85)) scale(1.05);
+    opacity: 0.7;
   }
 
   100% {
-    transform: translateY(100vh) rotate(360deg) translateX(0) scale(0.9);
+    transform: translateY(105vh) translateX(var(--drift)) rotate(var(--spin)) scale(0.85);
     opacity: 0;
+  }
+}
+
+/* Spring Sparkles */
+.spring-sparkle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #fff;
+  border-radius: 50%;
+  animation: springSparkle ease-in-out infinite;
+  opacity: 0;
+  box-shadow: 0 0 6px rgba(255, 192, 203, 0.8), 0 0 12px rgba(255, 182, 193, 0.4);
+}
+
+@keyframes springSparkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+    box-shadow: 0 0 10px rgba(255, 192, 203, 1), 0 0 20px rgba(255, 105, 180, 0.5);
   }
 }
 

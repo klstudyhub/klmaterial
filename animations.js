@@ -1,6 +1,6 @@
 /**
- * Advanced Seasonal Animations System
- * Creates sophisticated particle effects for each season
+ * Seasonal Animations System — Spring 2026
+ * Beautiful cherry blossom & spring petal effects
  * Optimized for performance across all devices
  */
 
@@ -27,9 +27,9 @@ function createSeasonalAnimation() {
   const season = getSeason();
   container.innerHTML = '';
 
-  // Reduce particle count on low-performance devices or when particle canvas is also running
+  // Reduce particle count on low-performance devices
   const particleCanvasActive = !!document.getElementById('particleCanvas');
-  const basePerfMultiplier = isLowPerformanceDevice() ? 0.5 : 1;
+  const basePerfMultiplier = isLowPerformanceDevice() ? 0.4 : 1;
   const perfMultiplier = particleCanvasActive ? basePerfMultiplier * 0.5 : basePerfMultiplier;
 
   switch (season) {
@@ -37,7 +37,7 @@ function createSeasonalAnimation() {
       createSnowfall(container, Math.floor(50 * perfMultiplier));
       break;
     case 'spring':
-      createPetals(container, Math.floor(40 * perfMultiplier));
+      createSpringBlossoms(container, Math.floor(35 * perfMultiplier));
       break;
     case 'summer':
       createFireflies(container, Math.floor(25 * perfMultiplier));
@@ -49,135 +49,137 @@ function createSeasonalAnimation() {
 }
 
 /**
- * Winter: Advanced Snowfall with varied particles
+ * Winter: Snowfall
  */
 function createSnowfall(container, count) {
   const snowflakes = ['❄', '❅', '❆', '✻', '✼'];
-
   for (let i = 0; i < count; i++) {
-    const snowflake = document.createElement('div');
-    snowflake.className = 'snowflake';
-    snowflake.textContent = snowflakes[Math.floor(Math.random() * snowflakes.length)];
-
-    const randomLeft = Math.random() * 100;
-    const randomSize = 0.8 + Math.random() * 0.6; // 0.8 - 1.4
-    const duration = 8 + Math.random() * 14; // 8-22 seconds
-    const delay = Math.random() * 5; // Random start delay
-
-    snowflake.style.left = randomLeft + '%';
-    snowflake.style.fontSize = (1 * randomSize) + 'em';
-    snowflake.style.opacity = 0.4 + Math.random() * 0.6; // 0.4-1.0
-    snowflake.style.animationDuration = duration + 's';
-    snowflake.style.animationDelay = delay + 's';
-    snowflake.style.animationTimingFunction = 'linear';
-
-    container.appendChild(snowflake);
+    const el = document.createElement('div');
+    el.className = 'snowflake';
+    el.textContent = snowflakes[Math.floor(Math.random() * snowflakes.length)];
+    el.style.left = Math.random() * 100 + '%';
+    el.style.fontSize = (0.8 + Math.random() * 0.6) + 'em';
+    el.style.opacity = 0.4 + Math.random() * 0.6;
+    el.style.animationDuration = (8 + Math.random() * 14) + 's';
+    el.style.animationDelay = (Math.random() * 5) + 's';
+    el.style.animationTimingFunction = 'linear';
+    container.appendChild(el);
   }
 }
 
 /**
- * Spring: Graceful falling petals with swirling motion
+ * Spring: Cherry blossoms & petals — gentle drifting with soft glow
  */
-function createPetals(container, count) {
-  const petals = ['🌸', '🌺', '🌼', '🌻', '💐', '🌷'];
+function createSpringBlossoms(container, count) {
+  const petals = ['🌸', '💮', '🏵️', '✿', '❀'];
+  const colors = [
+    'rgba(255, 182, 193, 0.7)',  // light pink
+    'rgba(255, 105, 180, 0.6)',  // hot pink
+    'rgba(255, 192, 203, 0.8)',  // pink
+    'rgba(255, 228, 225, 0.7)',  // misty rose
+    'rgba(255, 160, 200, 0.6)',  // medium pink
+  ];
 
   for (let i = 0; i < count; i++) {
     const petal = document.createElement('div');
-    petal.className = 'petal';
-    petal.textContent = petals[Math.floor(Math.random() * petals.length)];
+    petal.className = 'spring-petal';
 
-    const randomLeft = Math.random() * 100;
-    const duration = 6 + Math.random() * 10; // 6-16 seconds
-    const delay = Math.random() * 8;
+    // Alternate between emoji petals and CSS-drawn petals
+    if (Math.random() > 0.4) {
+      petal.textContent = petals[Math.floor(Math.random() * petals.length)];
+      petal.style.fontSize = (1 + Math.random() * 0.8) + 'em';
+    } else {
+      // CSS-drawn petal (circle)
+      petal.classList.add('spring-petal-dot');
+      const size = 6 + Math.random() * 10;
+      petal.style.width = size + 'px';
+      petal.style.height = size + 'px';
+      petal.style.background = colors[Math.floor(Math.random() * colors.length)];
+    }
 
-    petal.style.left = randomLeft + '%';
-    petal.style.fontSize = (1.1 + Math.random() * 0.4) + 'em';
+    const startX = Math.random() * 110 - 5; // -5% to 105%
+    const duration = 8 + Math.random() * 12;  // 8–20s
+    const delay = Math.random() * 10;
+    const drift = -60 + Math.random() * 120;  // horizontal drift range
+
+    petal.style.left = startX + '%';
     petal.style.opacity = 0.5 + Math.random() * 0.5;
     petal.style.animationDuration = duration + 's';
     petal.style.animationDelay = delay + 's';
-    petal.style.animationTimingFunction = 'ease-in-out';
+    petal.style.setProperty('--drift', drift + 'px');
+    petal.style.setProperty('--spin', (180 + Math.random() * 360) + 'deg');
 
     container.appendChild(petal);
+  }
+
+  // Add a few floating sparkles
+  const sparkleCount = Math.floor(count * 0.3);
+  for (let i = 0; i < sparkleCount; i++) {
+    const sparkle = document.createElement('div');
+    sparkle.className = 'spring-sparkle';
+    sparkle.style.left = Math.random() * 100 + '%';
+    sparkle.style.top = (20 + Math.random() * 60) + '%';
+    sparkle.style.animationDuration = (2 + Math.random() * 3) + 's';
+    sparkle.style.animationDelay = (Math.random() * 8) + 's';
+    container.appendChild(sparkle);
   }
 }
 
 /**
- * Summer: Glowing fireflies with complex motion patterns
+ * Summer: Glowing fireflies
  */
 function createFireflies(container, count) {
   for (let i = 0; i < count; i++) {
     const firefly = document.createElement('div');
     firefly.className = 'firefly';
-
-    const randomLeft = Math.random() * 100;
-    const randomStartHeight = Math.random() * 50 + 20; // Start 20-70% down
-    const duration = 3 + Math.random() * 6; // 3-9 seconds
-    const delay = Math.random() * 10;
-
-    firefly.style.left = randomLeft + '%';
-    firefly.style.top = randomStartHeight + '%';
-    firefly.style.width = (2 + Math.random() * 3) + 'px'; // 2-5px
+    firefly.style.left = Math.random() * 100 + '%';
+    firefly.style.top = (20 + Math.random() * 50) + '%';
+    firefly.style.width = (2 + Math.random() * 3) + 'px';
     firefly.style.height = firefly.style.width;
-    firefly.style.animationDuration = duration + 's';
-    firefly.style.animationDelay = delay + 's';
+    firefly.style.animationDuration = (3 + Math.random() * 6) + 's';
+    firefly.style.animationDelay = (Math.random() * 10) + 's';
     firefly.style.animationTimingFunction = 'ease-in-out';
-
-    // Add color variation
-    const hue = 45 + Math.random() * 15; // Gold to orange hues
+    const hue = 45 + Math.random() * 15;
     firefly.style.filter = `hue-rotate(${hue}deg)`;
-
     container.appendChild(firefly);
   }
 }
 
 /**
- * Autumn: Leaves with complex swaying and rotation
+ * Autumn: Falling leaves
  */
 function createLeaves(container, count) {
   const leaves = ['🍂', '🍁', '🍃', '🌿', '🌾'];
-
   for (let i = 0; i < count; i++) {
     const leaf = document.createElement('div');
     leaf.className = 'leaf';
     leaf.textContent = leaves[Math.floor(Math.random() * leaves.length)];
-
-    const randomLeft = Math.random() * 100;
-    const duration = 7 + Math.random() * 13; // 7-20 seconds (complex motion)
-    const delay = Math.random() * 6;
-
-    leaf.style.left = randomLeft + '%';
+    leaf.style.left = Math.random() * 100 + '%';
     leaf.style.fontSize = (1.2 + Math.random() * 0.5) + 'em';
     leaf.style.opacity = 0.6 + Math.random() * 0.4;
-    leaf.style.animationDuration = duration + 's';
-    leaf.style.animationDelay = delay + 's';
+    leaf.style.animationDuration = (7 + Math.random() * 13) + 's';
+    leaf.style.animationDelay = (Math.random() * 6) + 's';
     leaf.style.animationTimingFunction = 'ease-in-out';
-
     container.appendChild(leaf);
   }
 }
 
 // Initialize on page load
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    createSeasonalAnimation();
-  });
+  document.addEventListener('DOMContentLoaded', createSeasonalAnimation);
 } else {
   createSeasonalAnimation();
 }
 
-// Reinitialize animations on window resize (debounced) — only on significant width change
+// Reinitialize on significant width change (debounced)
 let resizeTimeout;
 let lastWidth = window.innerWidth;
 window.addEventListener('resize', () => {
   clearTimeout(resizeTimeout);
   resizeTimeout = setTimeout(() => {
     const newWidth = window.innerWidth;
-    // Only rebuild if width changed significantly (orientation change or desktop resize)
     if (Math.abs(newWidth - lastWidth) < 100) return;
     lastWidth = newWidth;
-    const container = document.getElementById('seasonalAnimation');
-    if (container) {
-      createSeasonalAnimation();
-    }
+    createSeasonalAnimation();
   }, 500);
 });
