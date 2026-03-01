@@ -190,6 +190,7 @@ class PageTransition {
         document.querySelectorAll('a[href]').forEach(link => {
             const href = link.getAttribute('href');
             if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+            if (link.getAttribute('target') === '_blank' || link.hasAttribute('download')) return;
 
             link.addEventListener('click', (e) => {
                 e.preventDefault();

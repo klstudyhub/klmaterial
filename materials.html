@@ -26,12 +26,12 @@
   <meta property="og:image" content="https://klstudyhub.github.io/klmaterial/profile.jpg" />
 
   <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image" />
-  <meta property="twitter:url" content="https://klstudyhub.github.io/klmaterial/materials.html" />
-  <meta property="twitter:title" content="Study Materials | CSE Resources" />
-  <meta property="twitter:description"
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://klstudyhub.github.io/klmaterial/materials.html" />
+  <meta name="twitter:title" content="Study Materials | CSE Resources" />
+  <meta name="twitter:description"
     content="Download CSE study materials, notes, and question papers for BEEC, DM, PSC, and DSD." />
-  <meta property="twitter:image" content="https://klstudyhub.github.io/klmaterial/profile.jpg" />
+  <meta name="twitter:image" content="https://klstudyhub.github.io/klmaterial/profile.jpg" />
 
 
 
@@ -95,6 +95,8 @@
 </head>
 
 <body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
   <header>
     <nav aria-label="Primary" role="navigation" class="nav-liquid">
       <button class="hamburger" aria-label="Toggle Menu" aria-expanded="false" aria-controls="mobile-nav">
@@ -115,7 +117,7 @@
     </nav>
   </header>
 
-  <main class="materials-container">
+  <main id="main-content" class="materials-container">
     <div class="materials-hero">
       <div class="hero-content">
         <h1 class="materials-title"><i class="fa-solid fa-graduation-cap"></i> CSE Study Materials</h1>
@@ -132,8 +134,9 @@
     <div class="advanced-search-container">
       <div class="search-wrapper">
         <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+        <label for="search-bar" class="sr-only">Search materials</label>
         <input type="text" id="search-bar" class="advanced-search-input"
-          placeholder="Search by material name, subject, or topic..." autocomplete="off" />
+          placeholder="Search by material name, subject, or topic..." autocomplete="off" aria-label="Search materials" />
         <button id="clear-search" class="clear-search-btn" style="display: none;">
           <span><i class="fa-solid fa-xmark"></i></span>
         </button>
