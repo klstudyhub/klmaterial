@@ -5634,7 +5634,27 @@ main.materials-container {
 
   /* Slower transitions for generic cards on mobile */
   .card {
-    transition: transform 1s ease, box-shadow 1s ease !important;
+    transition: transform 0.4s ease, box-shadow 0.4s ease, opacity 0.4s ease !important;
+  }
+
+  /* CRITICAL FIX: Prevent feature cards from overlapping on mobile.
+     The staggered entrance translateY(40px) pushes cards into each other
+     when combined with slow mobile transition. Use smaller offset + fast transition. */
+  .advanced-card,
+  .stat-item {
+    transform: translateY(15px) scale(0.98) !important;
+    transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease !important;
+  }
+
+  .advanced-card.revealed,
+  .stat-item.revealed {
+    transform: translateY(0) scale(1) !important;
+    opacity: 1 !important;
+  }
+
+  /* CRITICAL FIX: Page transition overlay must be fast on mobile. */
+  .page-transition-overlay {
+    transition-duration: 0.15s !important;
   }
 
   .materials-hero {
@@ -7851,7 +7871,7 @@ html[data-theme="light"] .aurora-beam-2 {
   z-index: 99999;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.15s ease;
 }
 
 .page-transition-overlay.active {

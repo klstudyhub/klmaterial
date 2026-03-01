@@ -197,7 +197,7 @@ class PageTransition {
                 this.overlay.classList.add('active');
                 setTimeout(() => {
                     window.location.href = href;
-                }, 400);
+                }, 100);
             });
         });
     }
