@@ -635,10 +635,12 @@
     } else {
       // Bot responses: render markdown-like formatting
       html = text
-        .replace(/&/g, '&amp;')
+        .replace(/```([\s\S]*?)```/g, (_, code) =>
+          '<pre><code>' + code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</code></pre>')
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/`([^`]+)`/g, '<code>$1</code>')
-        .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
+        .replace(/`([^`]+)`/g, (_, code) =>
+          '<code>' + code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</code>')
+        .replace(/&/g, '&amp;')
         .replace(/\n/g, '<br>');
     }
 
