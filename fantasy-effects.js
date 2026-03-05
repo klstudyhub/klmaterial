@@ -102,9 +102,22 @@ class SparkleTrail {
         this.sparkles = [];
         this.maxSparkles = 20;
         this.lastSpawn = 0;
+        this._paused = false;
+        this._rafId = null;
 
         document.addEventListener('mousemove', (e) => this.spawn(e));
         this.animate();
+
+        // Pause when tab is hidden
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                this._paused = true;
+                if (this._rafId) cancelAnimationFrame(this._rafId);
+            } else {
+                this._paused = false;
+                this.animate();
+            }
+        });
     }
 
     spawn(e) {
@@ -138,6 +151,8 @@ class SparkleTrail {
     }
 
     animate() {
+        if (this._paused) return;
+
         const now = Date.now();
         this.sparkles = this.sparkles.filter(s => {
             const age = now - s.created;
@@ -150,7 +165,7 @@ class SparkleTrail {
             s.el.style.transform = `translate(-50%, -50%) scale(${1 - progress * 0.5}) translateY(${-progress * 30}px)`;
             return true;
         });
-        requestAnimationFrame(() => this.animate());
+        this._rafId = requestAnimationFrame(() => this.animate());
     }
 }
 

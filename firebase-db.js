@@ -40,35 +40,26 @@ function getDocId(folder, fileName) {
   return (folder + '_' + fileName).replace(/[\/\\.#$\[\]]/g, '_');
 }
 
-// ─── Upsert Helper ──────────────────────────────────
+// ─── Upsert Helper (atomic – avoids read-then-write race condition) ──
 async function upsertMaterial(docId, folder, fileName, updates) {
-  const { data: existing } = await supabase
+  const row = {
+    doc_id: docId,
+    folder: folder,
+    file_name: fileName,
+    downloads: 0,
+    rating: 0,
+    rating_count: 0,
+    views: 0,
+    last_downloaded: null,
+    ...updates
+  };
+  const { data, error } = await supabase
     .from('materials')
+    .upsert(row, { onConflict: 'doc_id' })
     .select('id, downloads, rating, rating_count, views')
-    .eq('doc_id', docId)
-    .maybeSingle();
-
-  if (existing) {
-    await supabase
-      .from('materials')
-      .update(updates)
-      .eq('doc_id', docId);
-    return existing;
-  } else {
-    const row = {
-      doc_id: docId,
-      folder: folder,
-      file_name: fileName,
-      downloads: 0,
-      rating: 0,
-      rating_count: 0,
-      views: 0,
-      last_downloaded: null,
-      ...updates
-    };
-    await supabase.from('materials').insert(row);
-    return null;
-  }
+    .single();
+  if (error) throw error;
+  return data;
 }
 
 // ─── Track Download ─────────────────────────────────
@@ -77,19 +68,23 @@ async function trackDownload(folder, fileName) {
   const docId = getDocId(folder, fileName);
 
   try {
-    const existing = await upsertMaterial(docId, folder, fileName, {
-      downloads: 1,
-      last_downloaded: new Date().toISOString()
-    });
-    if (existing) {
-      await supabase
-        .from('materials')
-        .update({
-          downloads: (existing.downloads || 0) + 1,
-          last_downloaded: new Date().toISOString()
-        })
-        .eq('doc_id', docId);
-    }
+    // Fetch current count, then increment atomically
+    const { data: existing } = await supabase
+      .from('materials')
+      .select('downloads')
+      .eq('doc_id', docId)
+      .maybeSingle();
+
+    const newCount = (existing?.downloads || 0) + 1;
+    await supabase
+      .from('materials')
+      .upsert({
+        doc_id: docId,
+        folder: folder,
+        file_name: fileName,
+        downloads: newCount,
+        last_downloaded: new Date().toISOString()
+      }, { onConflict: 'doc_id' });
   } catch (error) {
     console.error('[supabase-db] Track download error:', error);
   }
@@ -101,13 +96,21 @@ async function trackView(folder, fileName) {
   const docId = getDocId(folder, fileName);
 
   try {
-    const existing = await upsertMaterial(docId, folder, fileName, { views: 1 });
-    if (existing) {
-      await supabase
-        .from('materials')
-        .update({ views: (existing.views || 0) + 1 })
-        .eq('doc_id', docId);
-    }
+    const { data: existing } = await supabase
+      .from('materials')
+      .select('views')
+      .eq('doc_id', docId)
+      .maybeSingle();
+
+    const newViews = (existing?.views || 0) + 1;
+    await supabase
+      .from('materials')
+      .upsert({
+        doc_id: docId,
+        folder: folder,
+        file_name: fileName,
+        views: newViews
+      }, { onConflict: 'doc_id' });
   } catch (error) {
     // Silently fail — views are non-critical
   }

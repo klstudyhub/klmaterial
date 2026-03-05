@@ -65,6 +65,8 @@ class ParticleSystem {
     this.canvas = null;
     this.ctx = null;
     this.particles = [];
+    this._rafId = null;
+    this._paused = false;
     // Reduce particle count on mobile/low-end devices
     const isLowEnd = window.innerWidth < 600 || (navigator.deviceMemory && navigator.deviceMemory < 4);
     this.particleCount = isLowEnd ? 15 : 50;
@@ -108,6 +110,8 @@ class ParticleSystem {
   }
 
   animate() {
+    if (this._paused) return;
+
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     // Build spatial grid for efficient neighbor lookup (avoids O(n²))
@@ -184,7 +188,7 @@ class ParticleSystem {
       }
     });
 
-    requestAnimationFrame(() => this.animate());
+    this._rafId = requestAnimationFrame(() => this.animate());
   }
 
   attachEventListeners() {
@@ -198,6 +202,17 @@ class ParticleSystem {
     window.addEventListener('mouseleave', () => {
       this.mouse.x = null;
       this.mouse.y = null;
+    });
+
+    // Pause animation when tab is hidden to save CPU/battery
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        this._paused = true;
+        if (this._rafId) cancelAnimationFrame(this._rafId);
+      } else {
+        this._paused = false;
+        this.animate();
+      }
     });
   }
 }
@@ -241,6 +256,7 @@ class ScrollReveal {
 // 5. Scroll Progress Indicator
 class ScrollProgress {
   constructor() {
+    this._ticking = false;
     this.createProgressBar();
     this.updateProgress();
     this.attachEventListeners();
@@ -256,16 +272,22 @@ class ScrollProgress {
   updateProgress() {
     const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
     const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    const scrolled = (winScroll / height) * 100;
+    const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
 
     const progressBar = document.getElementById('scrollProgress');
     if (progressBar) {
       progressBar.style.width = scrolled + '%';
     }
+    this._ticking = false;
   }
 
   attachEventListeners() {
-    window.addEventListener('scroll', () => this.updateProgress());
+    window.addEventListener('scroll', () => {
+      if (!this._ticking) {
+        this._ticking = true;
+        requestAnimationFrame(() => this.updateProgress());
+      }
+    });
   }
 }
 
@@ -309,18 +331,19 @@ class CustomCursor {
       this.cursorDot.style.top = e.clientY + 'px';
     });
 
-    // Add hover effect on interactive elements
-    const interactiveElements = document.querySelectorAll('a, button, .card, input, textarea');
-    interactiveElements.forEach(el => {
-      el.addEventListener('mouseenter', () => {
+    // Use event delegation for hover — works on dynamically added elements (chatbot, material cards)
+    document.addEventListener('mouseover', (e) => {
+      if (e.target.closest('a, button, .card, input, textarea, .material-card, .gchat-qr-btn, .selector-pill')) {
         this.cursor.classList.add('cursor-hover');
         this.cursorDot.classList.add('cursor-hover');
-      });
+      }
+    });
 
-      el.addEventListener('mouseleave', () => {
+    document.addEventListener('mouseout', (e) => {
+      if (e.target.closest('a, button, .card, input, textarea, .material-card, .gchat-qr-btn, .selector-pill')) {
         this.cursor.classList.remove('cursor-hover');
         this.cursorDot.classList.remove('cursor-hover');
-      });
+      }
     });
   }
 }

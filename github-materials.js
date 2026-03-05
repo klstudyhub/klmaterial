@@ -110,6 +110,7 @@ let activeSemester = "all";
 let activeSubject = "all";
 let currentQuery = "";
 let materialsMetadata = new Map();
+let viewedFiles = new Set();
 
 // ─── Cascading Selectors ───
 
@@ -576,8 +577,9 @@ function displayMaterials(grouped) {
         </div>
       `;
 
-      // Track view
-      if (fdb && fdb.isReady) {
+      // Track view (only once per file per session)
+      if (fdb && fdb.isReady && !viewedFiles.has(docId)) {
+        viewedFiles.add(docId);
         fdb.trackView(file.folder, file.name);
       }
 

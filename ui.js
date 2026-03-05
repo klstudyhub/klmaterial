@@ -85,11 +85,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const backToTopBtn = document.getElementById('backToTop');
 
     if (backToTopBtn) {
+        let _backToTopTicking = false;
         window.addEventListener('scroll', () => {
-            if (window.pageYOffset > 300) {
-                backToTopBtn.classList.add('show');
-            } else {
-                backToTopBtn.classList.remove('show');
+            if (!_backToTopTicking) {
+                _backToTopTicking = true;
+                requestAnimationFrame(() => {
+                    if (window.scrollY > 300) {
+                        backToTopBtn.classList.add('show');
+                    } else {
+                        backToTopBtn.classList.remove('show');
+                    }
+                    _backToTopTicking = false;
+                });
             }
         });
 
