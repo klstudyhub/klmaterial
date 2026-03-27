@@ -10,6 +10,7 @@
   if (document.body.classList.contains('no-timer')) return;
 
   const STORAGE_KEY = 'klm-timer-state';
+  const APP_BASE_PATH = `${window.location.pathname.replace(/[^/]*$/, '').replace(/\/$/, '') || ''}/`;
 
   // ── Config ──────────────────────────────────────────────
   const MODES = {
@@ -265,7 +266,7 @@
       const msg = state.mode === 'study'
         ? `⏰ Study session done! Take a ${state.session % 4 === 0 ? 'long ' : ''}break.`
         : '📚 Break over — back to studying!';
-      new Notification('KL Material Study Timer', { body: msg, icon: '/klmaterial/icon.svg' });
+      new Notification('KL Material Study Timer', { body: msg, icon: `${APP_BASE_PATH}icon.svg` });
     }
     // Auto-switch mode
     if (state.mode === 'study') {
