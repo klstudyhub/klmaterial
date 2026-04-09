@@ -17,7 +17,7 @@
 @media(max-width: 900px) { .filter-bar { grid-template-columns: 1fr 1fr; } }
 @media(max-width: 600px) { .filter-bar { grid-template-columns: 1fr; } .filter-bar #searchSubject { grid-column: 1; } }
 .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
-.sub-card { padding: 32px; display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+.sub-card { padding: 32px; display: flex; flex-direction: column; gap: 16px; align-items: flex-start; position: relative; overflow: hidden; }
 .sub-card .pill { background: rgba(255,255,255,0.15); color: white; margin-bottom: 8px; }
 .sub-card h3 { font-size: 1.4rem; font-weight: 600; }
 .sub-card p { color: var(--text-secondary); flex-grow: 1; font-size: 0.95rem; line-height: 1.5; }
@@ -48,7 +48,7 @@
                 <a href="about.html" class="nav-link">About</a>
                 <a href="contact.html" class="nav-link">Contact</a>
             </div>
-            <button  class="mobile-btn" id="mobBtn" hamburger>
+            <button class="mobile-btn" id="mobBtn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nLinks">
                 <span class="bar"></span>
                 <span class="bar"></span>
                 <span class="bar"></span>
@@ -137,7 +137,7 @@
         <div style="font-weight:600;font-size:18px">KL Material</div>
         <p style="color:var(--text-secondary);margin-top:8px">always free, always accessible</p>
         <div class="footer-links">
-            <a href="materials.html">Materials</a><a href="roadmap.html">Roadmap</a><a href="cgpa.html">CGPA Calc</a><a href="about.html">About</a><a href="contact.html">Contact</a><a href="#">Privacy</a>
+            <a href="materials.html">Materials</a><a href="roadmap.html">Roadmap</a><a href="cgpa.html">CGPA Calc</a><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy</a>
         </div>
         <div style="color:var(--text-muted);font-size:13px">&copy; 2026 Praveen Reddy &middot; Made with ❤️ for KL University students</div>
     </footer>

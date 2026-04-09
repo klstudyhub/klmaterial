@@ -1,62 +1,7 @@
 /* Extracted Components CSS */
 
-/* Floating Action Button */
-#gemini-chat-fab {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #00d4ff, #0077ff);
-  border: none;
-  cursor: pointer;
-  z-index: 99998;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 20px rgba(0, 212, 255, 0.4);
-  animation: pulseGlow 2s infinite ease-in-out;
-  transition: transform 0.3s ease, opacity 0.3s ease;
-}
+/* Floating Action Button — primary definition is in the KL Glass section below */
 
-#gemini-chat-fab:hover {
-  transform: scale(1.1);
-}
-
-#gemini-chat-fab.hidden {
-  transform: scale(0);
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Chat Window */
-#gemini-chat-window {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  width: 380px;
-  height: 520px;
-  background: linear-gradient(180deg, #001d3d 0%, #000814 100%);
-  border: 1px solid rgba(0, 212, 255, 0.25);
-  border-radius: 16px;
-  z-index: 99999;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 212, 255, 0.15);
-  transform: scale(0) translateY(20px);
-  transform-origin: bottom right;
-  opacity: 0;
-  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
-  pointer-events: none;
-}
-
-#gemini-chat-window.open {
-  transform: scale(1) translateY(0);
-  opacity: 1;
-  pointer-events: auto;
-}
 
 /* Header */
 .gchat-header {
@@ -354,9 +299,8 @@ html[data-theme="light"] .gchat-qr-btn:hover {
   --border-color: rgba(0, 119, 255, 0.2);
 }
 
-/* Dark Theme Background */
-html[data-theme="dark"] body::before,
-body::before {
+/* Dark Theme Background — scoped only so it doesn't override kl-liquid-glass.css blob mesh */
+html[data-theme="dark"] body::before {
   content: '';
   position: fixed;
   top: 0;
@@ -440,14 +384,15 @@ html[data-theme="light"] nav a.active {
   box-shadow: 0 0 15px rgba(0, 119, 255, 0.2);
 }
 
-html[data-theme="light"] header {
+/* Light Mode - Page Headers (target specific class to avoid affecting .page-header) */
+html[data-theme="light"] .materials-hero {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 248, 255, 0.9));
   border-color: rgba(0, 119, 255, 0.3);
   box-shadow: 0 10px 30px rgba(0, 119, 255, 0.15),
     0 0 20px rgba(0, 119, 255, 0.05);
 }
 
-html[data-theme="light"] header:hover {
+html[data-theme="light"] .materials-hero:hover {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 248, 255, 0.95));
   border-color: rgba(0, 119, 255, 0.4);
   box-shadow: 0 15px 40px rgba(0, 119, 255, 0.2),

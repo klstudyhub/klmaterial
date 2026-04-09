@@ -106,7 +106,7 @@ body::before {
   transition: opacity 0.4s ease;
 }
 
-.glass:hover {
+.glass:not(.glass-card):hover {
   background: var(--apple-bg-hover);
   border-color: var(--apple-border-hover);
   box-shadow: var(--apple-specular), var(--apple-shadow-hover);
