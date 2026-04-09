@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="KL Material Flashcard Tool — create, review, and master your study cards. Flip-card interface with score tracking for KL University CSE students.">
+<title>Flashcards — KL Material</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── Flashcard Page ──────────────────────────────────── */
+
+/* Deck selector */
+.deck-row {
+  display: flex; align-items: center; gap: 14px;
+  flex-wrap: wrap;
+}
+.deck-select-wrap { flex: 1; min-width: 180px; }
+
+/* Create card form */
+.create-card { padding: 28px 32px; }
+.create-card h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; }
+.create-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 14px; align-items: start;
+}
+.fc-textarea {
+  width: 100%; min-height: 80px; resize: vertical;
+  padding: 12px 14px; border-radius: 14px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #fff; font-family: inherit; font-size: 0.9rem;
+  line-height: 1.5; outline: none; box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+.fc-textarea:focus { border-color: rgba(32,96,255,0.5); }
+.fc-textarea::placeholder { color: rgba(255,255,255,0.25); }
+.fc-add-btn {
+  padding: 12px 22px; border-radius: 12px;
+  background: linear-gradient(135deg, #2060ff, #8020ff);
+  color: #fff; border: none; font-family: inherit;
+  font-weight: 600; font-size: 0.9rem; cursor: pointer;
+  transition: all 0.25s; box-shadow: 0 4px 16px rgba(32,96,255,0.3);
+  align-self: flex-end; white-space: nowrap;
+}
+.fc-add-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(32,96,255,0.5); }
+
+/* Review area */
+.review-card-wrap { perspective: 1200px; }
+.review-header {
+  display: flex; justify-content: space-between;
+  align-items: center; flex-wrap: wrap; gap: 12px;
+  margin-bottom: 20px;
+}
+.fc-progress { font-size: 0.85rem; color: var(--text-secondary); font-weight: 500; }
+.fc-score-row { display: flex; gap: 12px; align-items: center; font-size: 0.82rem; }
+.fc-score { font-weight: 700; }
+.fc-correct { color: #30d158; }
+.fc-wrong   { color: #ff3b30; }
+
+/* The 3D flip card */
+.fc-scene {
+  width: 100%; height: 260px;
+  perspective: 1200px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+.fc-card {
+  width: 100%; height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.55s cubic-bezier(0.34,1.2,0.64,1);
+}
+.fc-card.flipped { transform: rotateY(180deg); }
+.fc-front, .fc-back {
+  position: absolute; inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 24px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 36px; text-align: center;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+.fc-back {
+  transform: rotateY(180deg);
+  background: rgba(32,96,255,0.08);
+  border-color: rgba(32,96,255,0.25);
+}
+.fc-face-label {
+  position: absolute; top: 16px; left: 20px;
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 1px;
+  text-transform: uppercase; color: rgba(255,255,255,0.3);
+}
+.fc-text {
+  font-size: 1.25rem; font-weight: 500; line-height: 1.5;
+  color: var(--text-primary);
+}
+.fc-flip-hint {
+  position: absolute; bottom: 16px;
+  font-size: 0.72rem; color: rgba(255,255,255,0.25);
+}
+
+/* Navigation controls */
+.fc-controls {
+  display: flex; justify-content: center; gap: 14px;
+  flex-wrap: wrap; margin-bottom: 24px;
+}
+.fc-ctrl-btn {
+  padding: 10px 24px; border-radius: 99px;
+  font-family: inherit; font-size: 0.88rem; font-weight: 600;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.07);
+  cursor: pointer; transition: all 0.25s; color: var(--text-primary);
+}
+.fc-ctrl-btn:hover { background: rgba(255,255,255,0.14); transform: translateY(-1px); }
+.fc-ctrl-btn.correct { border-color: rgba(48,209,88,0.4); color: #30d158; background: rgba(48,209,88,0.08); }
+.fc-ctrl-btn.correct:hover { background: rgba(48,209,88,0.18); }
+.fc-ctrl-btn.wrong { border-color: rgba(255,59,48,0.4); color: #ff5555; background: rgba(255,59,48,0.08); }
+.fc-ctrl-btn.wrong:hover { background: rgba(255,59,48,0.16); }
+.fc-ctrl-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+
+/* Card list */
+.card-list-header {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 16px;
+}
+.card-list { display: flex; flex-direction: column; gap: 10px; max-height: 340px; overflow-y: auto; padding-right: 4px; }
+.card-list::-webkit-scrollbar { width: 4px; }
+.card-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 99px; }
+.card-item {
+  display: grid; grid-template-columns: 1fr 1fr auto;
+  gap: 12px; align-items: center;
+  padding: 14px 16px; border-radius: 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  font-size: 0.85rem;
+}
+.card-item-q { color: var(--text-primary); font-weight: 500; }
+.card-item-a { color: var(--text-secondary); }
+.card-del-btn {
+  background: none; border: none; color: rgba(255,80,80,0.5);
+  cursor: pointer; font-size: 1.1rem; transition: color 0.2s;
+  padding: 4px;
+}
+.card-del-btn:hover { color: #ff5555; }
+
+/* Empty state */
+.fc-empty {
+  text-align: center; padding: 56px 20px;
+  color: var(--text-muted);
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.fc-empty-icon { font-size: 48px; opacity: 0.4; }
+
+/* Actions */
+.fc-action-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.fc-action-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 18px; border-radius: 99px;
+  font-family: inherit; font-size: 0.85rem; font-weight: 600;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.07);
+  cursor: pointer; transition: all 0.25s; color: var(--text-primary);
+}
+.fc-action-btn:hover { background: rgba(255,255,255,0.14); transform: translateY(-1px); }
+.fc-action-btn.danger { border-color: rgba(255,59,48,0.35); color: #ff5555; }
+.fc-action-btn.danger:hover { background: rgba(255,59,48,0.1); }
+
+@media (max-width: 700px) {
+  .create-row { grid-template-columns: 1fr; }
+  .card-item { grid-template-columns: 1fr; }
+  .card-item-a, .card-del-btn { display: none; }
+}
+</style>
+    <link rel="stylesheet" href="shared.css">
+    <link rel="stylesheet" href="kl-liquid-glass.css">
+    <link rel="stylesheet" href="glass-components.css">
+</head>
+<body>
+<div class="bg-layer">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
+</div>
+<div class="main-wrapper">
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">KL Material</a>
+            <div class="nav-links" id="nLinks">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="materials.html" class="nav-link">Materials</a>
+                <a href="roadmap.html" class="nav-link">Roadmap</a>
+                <a href="cgpa.html" class="nav-link">CGPA Calc</a>
+                <a href="attendance.html" class="nav-link">Attendance</a>
+                <a href="timetable.html" class="nav-link">Timetable</a>
+                <a href="flashcards.html" class="nav-link">Flashcards</a>
+                <a href="marks.html" class="nav-link">Marks</a>
+                <a href="formulas.html" class="nav-link">Formulas</a>
+                <a href="about.html" class="nav-link">About</a>
+            </div>
+            <button class="mobile-btn" id="mobBtn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nLinks">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
+    </nav>
+
+    <header class="page-header stagger" style="animation-delay:0.1s">
+        <h1 class="page-title">Flashcard Study Tool</h1>
+        <p class="page-subtitle">Create, flip, and master your study cards before exams.</p>
+    </header>
+
+    <main class="container">
+
+        <!-- Deck Selector -->
+        <div class="glass glass-card stagger" style="padding:22px 28px;animation-delay:0.15s">
+            <div class="deck-row">
+                <div style="font-size:0.9rem;font-weight:600;color:var(--text-secondary);white-space:nowrap">📦 Deck:</div>
+                <div class="deck-select-wrap">
+                    <select id="deckSelect" class="glass-input" onchange="switchDeck()">
+                        <option value="General">General</option>
+                        <option value="Data Structures">Data Structures</option>
+                        <option value="Discrete Math">Discrete Math</option>
+                        <option value="COA">COA</option>
+                        <option value="Python">Python</option>
+                        <option value="BEEC">BEEC</option>
+                    </select>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center">
+                    <input type="text" id="newDeckInput" class="glass-input" placeholder="New deck name…" style="width:160px" onkeydown="if(event.key==='Enter')addDeck()">
+                    <button class="fc-add-btn" style="padding:10px 16px" onclick="addDeck()">+ Deck</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Card -->
+        <div class="glass glass-card create-card stagger" style="animation-delay:0.2s">
+            <h2>✏️ Add a Card</h2>
+            <div class="create-row">
+                <div>
+                    <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:6px;padding-left:4px">Question / Front</div>
+                    <textarea id="fcQuestion" class="fc-textarea" placeholder="e.g. What is a Binary Search Tree?"></textarea>
+                </div>
+                <div>
+                    <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:6px;padding-left:4px">Answer / Back</div>
+                    <textarea id="fcAnswer" class="fc-textarea" placeholder="e.g. A BST is a tree where each node's left children are less and right children are greater."></textarea>
+                </div>
+                <button class="fc-add-btn" onclick="addCard()">+ Add<br>Card</button>
+            </div>
+        </div>
+
+        <!-- Review Section -->
+        <div class="glass glass-card stagger" style="padding:32px;animation-delay:0.25s" id="reviewSection">
+            <div class="review-header">
+                <div>
+                    <div style="font-size:1.1rem;font-weight:600">🔄 Review Mode</div>
+                    <div class="fc-progress" id="fcProgress">—</div>
+                </div>
+                <div class="fc-score-row">
+                    <span>✅ <span class="fc-score fc-correct" id="fcCorrectCount">0</span></span>
+                    <span>❌ <span class="fc-score fc-wrong" id="fcWrongCount">0</span></span>
+                    <div class="fc-action-row">
+                        <button class="fc-action-btn" onclick="shuffleDeck()" title="Shuffle cards">🔀 Shuffle</button>
+                        <button class="fc-action-btn" onclick="resetSession()" title="Restart session">↺ Restart</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flip Card -->
+            <div class="fc-scene" onclick="flipCard()" id="fcScene">
+                <div class="fc-card" id="fcCard">
+                    <div class="fc-front">
+                        <div class="fc-face-label">Question</div>
+                        <div class="fc-text" id="fcFrontText">Add cards to start reviewing!</div>
+                        <div class="fc-flip-hint">Click to reveal answer →</div>
+                    </div>
+                    <div class="fc-back">
+                        <div class="fc-face-label">Answer</div>
+                        <div class="fc-text" id="fcBackText">—</div>
+                        <div class="fc-flip-hint">← Click to go back</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="fc-controls">
+                <button class="fc-ctrl-btn" id="fcPrevBtn" onclick="prevCard()">← Prev</button>
+                <button class="fc-ctrl-btn wrong" id="fcWrongBtn" onclick="markCard(false)" disabled>✗ Got it Wrong</button>
+                <button class="fc-ctrl-btn correct" id="fcCorrectBtn" onclick="markCard(true)" disabled>✓ Got it Right</button>
+                <button class="fc-ctrl-btn" id="fcNextBtn" onclick="nextCard()">Next →</button>
+            </div>
+        </div>
+
+        <!-- Card List -->
+        <div class="glass glass-card stagger" style="padding:28px 32px;animation-delay:0.3s">
+            <div class="card-list-header">
+                <div style="font-size:1.05rem;font-weight:600">📋 Cards in Deck (<span id="cardCountLabel">0</span>)</div>
+                <button class="fc-action-btn danger" onclick="clearDeck()">🗑 Clear Deck</button>
+            </div>
+            <div class="card-list" id="cardList"></div>
+        </div>
+
+    </main>
+
+    <footer class="glass footer stagger" style="animation-delay:0.4s">
+        <div style="font-weight:600;font-size:18px">KL Material</div>
+        <p style="color:var(--text-secondary);margin-top:8px">always free, always accessible</p>
+        <div class="footer-links">
+            <a href="materials.html">Materials</a>
+            <a href="roadmap.html">Roadmap</a>
+            <a href="cgpa.html">CGPA Calc</a>
+            <a href="attendance.html">Attendance</a>
+            <a href="about.html">About</a>
+            <a href="privacy.html">Privacy</a>
+        </div>
+        <div style="color:var(--text-muted);font-size:13px">&copy; 2026 Praveen Reddy &middot; Made with ❤️ for KL University students</div>
+    </footer>
+    <button class="glass scroll-top" id="sTop" onclick="window.scrollTo(0,0)">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"></polyline></svg>
+    </button>
+</div>
+
+<script>
+// ── Flashcard Logic ───────────────────────────────────────
+const FC_KEY     = 'klm-flashcards-v1';
+const DECK_KEY   = 'klm-fc-decks-v1';
+
+let decks      = {};   // { deckName: [{ q, a }] }
+let deckNames  = [];
+let curDeck    = 'General';
+let curIdx     = 0;
+let isFlipped  = false;
+let sessions   = {};   // { deckName: { correct, wrong, marked: Set of idx } }
+
+// ── Persistence ───────────────────────────────────────────
+function loadData() {
+    try {
+        decks     = JSON.parse(localStorage.getItem(FC_KEY) || '{}');
+        deckNames = JSON.parse(localStorage.getItem(DECK_KEY) || '[]');
+    } catch(e) {}
+    // Ensure defaults exist
+    const defaults = ['General','Data Structures','Discrete Math','COA','Python','BEEC'];
+    defaults.forEach(d => {
+        if (!decks[d]) decks[d] = [];
+        if (!deckNames.includes(d)) deckNames.push(d);
+    });
+    sessions = {};
+}
+function saveData() {
+    try {
+        localStorage.setItem(FC_KEY, JSON.stringify(decks));
+        localStorage.setItem(DECK_KEY, JSON.stringify(deckNames));
+    } catch(e) {}
+}
+
+// ── Deck management ───────────────────────────────────────
+function buildDeckSelect() {
+    const sel = document.getElementById('deckSelect');
+    sel.innerHTML = deckNames.map(d =>
+        `<option value="${escHtml(d)}"${d === curDeck ? ' selected' : ''}>${escHtml(d)}</option>`
+    ).join('');
+}
+
+function switchDeck() {
+    curDeck = document.getElementById('deckSelect').value;
+    curIdx = 0; isFlipped = false;
+    renderReview(); renderList();
+}
+
+function addDeck() {
+    const inp = document.getElementById('newDeckInput');
+    const name = inp.value.trim();
+    if (!name || deckNames.includes(name)) { inp.focus(); return; }
+    deckNames.push(name);
+    decks[name] = [];
+    saveData();
+    buildDeckSelect();
+    curDeck = name;
+    document.getElementById('deckSelect').value = name;
+    inp.value = '';
+    renderReview(); renderList();
+    showToast(`Deck "${name}" created!`);
+}
+
+// ── Card management ───────────────────────────────────────
+function addCard() {
+    const q = document.getElementById('fcQuestion').value.trim();
+    const a = document.getElementById('fcAnswer').value.trim();
+    if (!q) { document.getElementById('fcQuestion').focus(); return; }
+    if (!a) { document.getElementById('fcAnswer').focus(); return; }
+    if (!decks[curDeck]) decks[curDeck] = [];
+    decks[curDeck].push({ q, a });
+    saveData();
+    document.getElementById('fcQuestion').value = '';
+    document.getElementById('fcAnswer').value = '';
+    curIdx = decks[curDeck].length - 1;
+    isFlipped = false;
+    renderReview(); renderList();
+    showToast('Card added! 🃏');
+}
+
+function deleteCard(idx) {
+    if (!decks[curDeck] || idx < 0 || idx >= decks[curDeck].length) return;
+    decks[curDeck].splice(idx, 1);
+    if (curIdx >= decks[curDeck].length) curIdx = Math.max(0, decks[curDeck].length - 1);
+    saveData();
+    renderReview(); renderList();
+}
+
+function clearDeck() {
+    if (!decks[curDeck] || decks[curDeck].length === 0) return;
+    if (!confirm(`Clear all cards in "${curDeck}"?`)) return;
+    decks[curDeck] = [];
+    curIdx = 0; isFlipped = false;
+    saveData(); renderReview(); renderList();
+}
+
+// ── Review ────────────────────────────────────────────────
+function getSession() {
+    if (!sessions[curDeck]) sessions[curDeck] = { correct: 0, wrong: 0 };
+    return sessions[curDeck];
+}
+
+function renderReview() {
+    const cards = decks[curDeck] || [];
+    const prog  = document.getElementById('fcProgress');
+    const front = document.getElementById('fcFrontText');
+    const back  = document.getElementById('fcBackText');
+    const fcCard = document.getElementById('fcCard');
+    const sess  = getSession();
+
+    document.getElementById('fcCorrectCount').textContent = sess.correct;
+    document.getElementById('fcWrongCount').textContent   = sess.wrong;
+
+    const prevBtn    = document.getElementById('fcPrevBtn');
+    const nextBtn    = document.getElementById('fcNextBtn');
+    const correctBtn = document.getElementById('fcCorrectBtn');
+    const wrongBtn   = document.getElementById('fcWrongBtn');
+
+    if (cards.length === 0) {
+        prog.textContent = 'No cards yet — add some above!';
+        front.textContent = 'Add cards to start reviewing!';
+        back.textContent  = '—';
+        [correctBtn, wrongBtn, prevBtn, nextBtn].forEach(b => b.disabled = true);
+        document.getElementById('cardCountLabel').textContent = '0';
+        return;
+    }
+
+    prog.textContent = `Card ${curIdx + 1} of ${cards.length}`;
+    front.textContent = cards[curIdx].q;
+    back.textContent  = cards[curIdx].a;
+    document.getElementById('cardCountLabel').textContent = cards.length;
+
+    // Reset flip state visually
+    if (!isFlipped) fcCard.classList.remove('flipped');
+    else            fcCard.classList.add('flipped');
+
+    correctBtn.disabled = !isFlipped;
+    wrongBtn.disabled   = !isFlipped;
+    prevBtn.disabled    = curIdx === 0;
+    nextBtn.disabled    = curIdx === cards.length - 1;
+}
+
+function flipCard() {
+    const cards = decks[curDeck] || [];
+    if (cards.length === 0) return;
+    isFlipped = !isFlipped;
+    document.getElementById('fcCard').classList.toggle('flipped', isFlipped);
+    document.getElementById('fcCorrectBtn').disabled = !isFlipped;
+    document.getElementById('fcWrongBtn').disabled   = !isFlipped;
+}
+
+function nextCard() {
+    const cards = decks[curDeck] || [];
+    if (curIdx < cards.length - 1) { curIdx++; isFlipped = false; renderReview(); }
+}
+function prevCard() {
+    if (curIdx > 0) { curIdx--; isFlipped = false; renderReview(); }
+}
+
+function markCard(correct) {
+    const sess = getSession();
+    if (correct) sess.correct++;
+    else         sess.wrong++;
+    document.getElementById('fcCorrectCount').textContent = sess.correct;
+    document.getElementById('fcWrongCount').textContent   = sess.wrong;
+
+    const cards = decks[curDeck] || [];
+    if (curIdx < cards.length - 1) {
+        curIdx++; isFlipped = false; renderReview();
+    } else {
+        showToast(`💪 Deck complete! ✅ ${sess.correct} correct, ❌ ${sess.wrong} missed`);
+    }
+}
+
+function shuffleDeck() {
+    const cards = decks[curDeck] || [];
+    if (cards.length < 2) return;
+    for (let i = cards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cards[i], cards[j]] = [cards[j], cards[i]];
+    }
+    decks[curDeck] = cards;
+    saveData();
+    curIdx = 0; isFlipped = false;
+    renderReview(); renderList();
+    showToast('Deck shuffled! 🔀');
+}
+
+function resetSession() {
+    sessions[curDeck] = { correct: 0, wrong: 0 };
+    curIdx = 0; isFlipped = false;
+    renderReview();
+    showToast('Session reset ↺');
+}
+
+// ── Card List ─────────────────────────────────────────────
+function renderList() {
+    const cards = decks[curDeck] || [];
+    const list  = document.getElementById('cardList');
+    if (cards.length === 0) {
+        list.innerHTML = `<div class="fc-empty"><div class="fc-empty-icon">🃏</div><div>No cards in this deck yet.<br>Add some above to get started!</div></div>`;
+        return;
+    }
+    list.innerHTML = cards.map((c, i) => `
+        <div class="card-item">
+            <div class="card-item-q">${escHtml(c.q)}</div>
+            <div class="card-item-a">${escHtml(c.a)}</div>
+            <button class="card-del-btn" onclick="deleteCard(${i})" title="Delete card">🗑</button>
+        </div>`
+    ).join('');
+}
+
+// ── Keyboard shortcuts ────────────────────────────────────
+document.addEventListener('keydown', e => {
+    if (['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) return;
+    if (e.key === ' ' || e.key === 'f' || e.key === 'F') { e.preventDefault(); flipCard(); }
+    if (e.key === 'ArrowRight' || e.key === 'n' || e.key === 'N') nextCard();
+    if (e.key === 'ArrowLeft'  || e.key === 'p' || e.key === 'P') prevCard();
+    if (e.key === 'g' || e.key === 'G') { if (isFlipped) markCard(true); }
+    if (e.key === 'b' || e.key === 'B') { if (isFlipped) markCard(false); }
+});
+
+// ── Helpers ───────────────────────────────────────────────
+function escHtml(s) {
+    return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function showToast(msg) {
+    let t = document.getElementById('klToast');
+    if (!t) { t = document.createElement('div'); t.id='klToast'; t.className='glass toast-msg'; document.body.appendChild(t); }
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── Init ──────────────────────────────────────────────────
+loadData();
+buildDeckSelect();
+renderReview();
+renderList();
+</script>
+
+<script src="ui.js"></script>
+<script src="advanced-features.js"></script>
+<script src="chatbot.js"></script>
+<script src="quick-notes.js"></script>
+<script src="exam-countdown.js"></script>
+<script src="todo-widget.js"></script>
+<script src="shortcuts.js"></script>
+<script src="nav-dropdown.js"></script>
+<script src="streak-widget.js"></script>
+<script src="theme-toggle.js"></script>
+</body>
+</html>

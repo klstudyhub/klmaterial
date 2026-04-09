@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="KL University Marks Calculator — compute internal marks, predict required end-sem score, and see your final grade instantly.">
+<title>Marks Calculator — KL Material</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── Marks Calculator ────────────────────────────── */
+
+/* Info banner */
+.marks-info-row {
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 16px;
+}
+.info-pill {
+  padding: 18px 20px; text-align: center; border-radius: 16px;
+}
+.info-pill-val { font-size: 1.6rem; font-weight: 700; letter-spacing: -1px; }
+.info-pill-label { font-size: 0.78rem; color: var(--text-secondary); margin-top: 4px; }
+
+/* Subject form */
+.marks-form { padding: 28px 32px; }
+.marks-form h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 20px; }
+
+.marks-section-title {
+  font-size: 0.78rem; font-weight: 700; letter-spacing: 0.8px;
+  text-transform: uppercase; color: var(--text-muted);
+  margin: 20px 0 10px;
+}
+.marks-row {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+  margin-bottom: 14px;
+}
+.marks-row-2 { grid-template-columns: 1fr 1fr; }
+.marks-row-4 { grid-template-columns: repeat(4, 1fr); }
+.marks-label {
+  display: flex; flex-direction: column; gap: 5px;
+}
+.marks-label span {
+  font-size: 0.78rem; color: var(--text-secondary); padding-left: 4px;
+}
+.marks-label input { width: 100%; box-sizing: border-box; }
+
+/* Result panel */
+.result-panel {
+  padding: 36px; display: flex;
+  flex-direction: column; align-items: center; gap: 14px;
+  text-align: center;
+}
+.marks-big { font-size: 3.6rem; font-weight: 700; letter-spacing: -2px; line-height: 1; }
+.marks-breakdown {
+  display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;
+  font-size: 0.88rem; color: var(--text-secondary);
+}
+.marks-breakdown span { font-weight: 600; color: var(--text-primary); }
+
+/* Prediction section */
+.predict-section { padding: 28px 32px; }
+.predict-section h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; }
+.predict-inner {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: end;
+}
+.predict-result {
+  padding: 16px 20px; border-radius: 14px;
+  text-align: center; font-size: 0.9rem; font-weight: 600;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--text-muted);
+}
+
+/* Grade table */
+.grade-table-card { padding: 24px 28px; }
+.grade-table-card h2 { font-size: 1.05rem; font-weight: 600; margin-bottom: 16px; }
+.gt-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+.gt-table th {
+  font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.5px; color: var(--text-muted);
+  padding: 8px 12px; text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.gt-table td {
+  padding: 10px 12px; font-size: 0.88rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.gt-table tr:last-child td { border-bottom: none; }
+.gt-grade-badge {
+  display: inline-block; padding: 3px 12px;
+  border-radius: 99px; font-weight: 700; font-size: 0.78rem;
+}
+
+@media (max-width: 700px) {
+  .marks-info-row { grid-template-columns: repeat(2, 1fr); }
+  .marks-row { grid-template-columns: 1fr 1fr; }
+  .marks-row-4 { grid-template-columns: 1fr 1fr; }
+  .predict-inner { grid-template-columns: 1fr; }
+}
+</style>
+    <link rel="stylesheet" href="shared.css">
+    <link rel="stylesheet" href="kl-liquid-glass.css">
+    <link rel="stylesheet" href="glass-components.css">
+</head>
+<body>
+<div class="bg-layer">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
+</div>
+<div class="main-wrapper">
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">KL Material</a>
+            <div class="nav-links" id="nLinks">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="materials.html" class="nav-link">Materials</a>
+                <a href="roadmap.html" class="nav-link">Roadmap</a>
+                <a href="cgpa.html" class="nav-link">CGPA Calc</a>
+                <a href="attendance.html" class="nav-link">Attendance</a>
+                <a href="timetable.html" class="nav-link">Timetable</a>
+                <a href="flashcards.html" class="nav-link">Flashcards</a>
+                <a href="marks.html" class="nav-link">Marks</a>
+                <a href="formulas.html" class="nav-link">Formulas</a>
+                <a href="about.html" class="nav-link">About</a>
+            </div>
+            <button class="mobile-btn" id="mobBtn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nLinks">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
+    </nav>
+
+    <header class="page-header stagger" style="animation-delay:0.1s">
+        <h1 class="page-title">Marks Calculator</h1>
+        <p class="page-subtitle">KL University internal marks + end-semester predictor.</p>
+    </header>
+
+    <main class="container">
+
+        <!-- KL Marks Structure Info -->
+        <div class="marks-info-row stagger" style="animation-delay:0.15s">
+            <div class="glass glass-card info-pill">
+                <div class="info-pill-val" style="color:#2060ff">30</div>
+                <div class="info-pill-label">Internal Marks</div>
+            </div>
+            <div class="glass glass-card info-pill">
+                <div class="info-pill-val" style="color:#8020ff">70</div>
+                <div class="info-pill-label">End Sem Marks</div>
+            </div>
+            <div class="glass glass-card info-pill">
+                <div class="info-pill-val" style="color:#ff9f0a">100</div>
+                <div class="info-pill-label">Total Marks</div>
+            </div>
+            <div class="glass glass-card info-pill">
+                <div class="info-pill-val" style="color:#30d158">40</div>
+                <div class="info-pill-label">Min to Pass</div>
+            </div>
+        </div>
+
+        <!-- Input Form -->
+        <div class="glass glass-card marks-form stagger" style="animation-delay:0.2s">
+            <h2>📝 Enter Your Marks</h2>
+
+            <div class="marks-section-title">Mid-1 Exam (out of 30 → best 15 counted)</div>
+            <div class="marks-row">
+                <div class="marks-label">
+                    <span>Mid-1 Attempt 1</span>
+                    <input type="number" id="mid1a1" class="glass-input" placeholder="e.g. 22" min="0" max="30" oninput="calculate()">
+                </div>
+                <div class="marks-label">
+                    <span>Mid-1 Attempt 2</span>
+                    <input type="number" id="mid1a2" class="glass-input" placeholder="e.g. 25" min="0" max="30" oninput="calculate()">
+                </div>
+                <div class="marks-label">
+                    <span>Mid-1 Score (auto)</span>
+                    <input type="number" id="mid1Score" class="glass-input" placeholder="best of 2 ÷ 2" readonly style="opacity:0.7;cursor:not-allowed">
+                </div>
+            </div>
+
+            <div class="marks-section-title">Mid-2 Exam (out of 30 → best 15 counted)</div>
+            <div class="marks-row">
+                <div class="marks-label">
+                    <span>Mid-2 Attempt 1</span>
+                    <input type="number" id="mid2a1" class="glass-input" placeholder="e.g. 24" min="0" max="30" oninput="calculate()">
+                </div>
+                <div class="marks-label">
+                    <span>Mid-2 Attempt 2</span>
+                    <input type="number" id="mid2a2" class="glass-input" placeholder="e.g. 27" min="0" max="30" oninput="calculate()">
+                </div>
+                <div class="marks-label">
+                    <span>Mid-2 Score (auto)</span>
+                    <input type="number" id="mid2Score" class="glass-input" placeholder="best of 2 ÷ 2" readonly style="opacity:0.7;cursor:not-allowed">
+                </div>
+            </div>
+
+            <div class="marks-section-title">Internal Activities / Assignments (out of 5)</div>
+            <div class="marks-row marks-row-2">
+                <div class="marks-label">
+                    <span>Activity / Assignment Marks</span>
+                    <input type="number" id="actMarks" class="glass-input" placeholder="0 – 5" min="0" max="5" oninput="calculate()">
+                </div>
+                <div class="marks-label">
+                    <span>Attendance Bonus (0–5 bonus to final)</span>
+                    <input type="number" id="attBonus" class="glass-input" placeholder="0 – 5" min="0" max="5" oninput="calculate()">
+                </div>
+            </div>
+        </div>
+
+        <!-- Result -->
+        <div class="glass glass-card result-panel stagger" style="animation-delay:0.25s" id="resultPanel">
+            <div style="font-size:0.95rem;font-weight:600;color:var(--text-secondary)">Your Internal Marks</div>
+            <div class="marks-big" id="internalDisplay" style="background:linear-gradient(135deg,#fff,#aab);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">—</div>
+            <div style="color:var(--text-muted);font-size:0.9rem">out of 30</div>
+            <div class="marks-breakdown" id="breakdownDisplay"></div>
+            <div id="gradeHintDisplay" style="font-size:0.88rem;color:var(--text-secondary)"></div>
+            <button class="btn btn-primary" style="margin-top:8px" onclick="copyMarks()">📋 Copy Result</button>
+        </div>
+
+        <!-- End-Sem Predictor -->
+        <div class="glass glass-card predict-section stagger" style="animation-delay:0.3s">
+            <h2>🎯 End-Sem Score Predictor</h2>
+            <p style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:18px">How much do you need in the End Semester exam to hit your desired final grade?</p>
+            <div class="predict-inner">
+                <div class="marks-label">
+                    <span style="font-size:0.82rem;color:var(--text-secondary);padding-left:4px">Target Grade</span>
+                    <select id="targetGrade" class="glass-input" onchange="predictEndSem()">
+                        <option value="">Select target grade</option>
+                        <option value="90">O (90–100) → 10 pts</option>
+                        <option value="80">A+ (80–89) → 9 pts</option>
+                        <option value="70">A (70–79) → 8 pts</option>
+                        <option value="60">B+ (60–69) → 7 pts</option>
+                        <option value="50">B (50–59) → 6 pts</option>
+                        <option value="40">C / Pass (40–49) → 5 pts</option>
+                    </select>
+                </div>
+                <div id="predictResult" class="predict-result">Select a target grade above</div>
+            </div>
+        </div>
+
+        <!-- KL Grade Table -->
+        <div class="glass glass-card grade-table-card stagger" style="animation-delay:0.35s">
+            <h2>📊 KL University Grade Reference</h2>
+            <table class="gt-table">
+                <thead>
+                    <tr>
+                        <th>Total %</th>
+                        <th>Grade</th>
+                        <th>Grade Points</th>
+                        <th>Result</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>90 – 100</td><td><span class="gt-grade-badge" style="background:rgba(48,209,88,0.15);color:#30d158;border:1px solid rgba(48,209,88,0.3)">O</span></td><td>10</td><td style="color:#30d158">Outstanding</td></tr>
+                    <tr><td>80 – 89</td><td><span class="gt-grade-badge" style="background:rgba(0,229,160,0.12);color:#00e5a0;border:1px solid rgba(0,229,160,0.3)">A+</span></td><td>9</td><td style="color:#00e5a0">Excellent</td></tr>
+                    <tr><td>70 – 79</td><td><span class="gt-grade-badge" style="background:rgba(32,96,255,0.12);color:#80aaff;border:1px solid rgba(32,96,255,0.3)">A</span></td><td>8</td><td style="color:#80aaff">Very Good</td></tr>
+                    <tr><td>60 – 69</td><td><span class="gt-grade-badge" style="background:rgba(128,32,255,0.12);color:#c080ff;border:1px solid rgba(128,32,255,0.3)">B+</span></td><td>7</td><td style="color:#c080ff">Good</td></tr>
+                    <tr><td>50 – 59</td><td><span class="gt-grade-badge" style="background:rgba(255,159,10,0.12);color:#ffcc55;border:1px solid rgba(255,159,10,0.3)">B</span></td><td>6</td><td style="color:#ffcc55">Above Average</td></tr>
+                    <tr><td>40 – 49</td><td><span class="gt-grade-badge" style="background:rgba(255,85,32,0.12);color:#ff8855;border:1px solid rgba(255,85,32,0.3)">C</span></td><td>5</td><td style="color:#ff8855">Average</td></tr>
+                    <tr><td>Below 40</td><td><span class="gt-grade-badge" style="background:rgba(255,59,48,0.12);color:#ff5555;border:1px solid rgba(255,59,48,0.3)">F</span></td><td>0</td><td style="color:#ff5555">Fail</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+
+    <footer class="glass footer stagger" style="animation-delay:0.5s">
+        <div style="font-weight:600;font-size:18px">KL Material</div>
+        <p style="color:var(--text-secondary);margin-top:8px">always free, always accessible</p>
+        <div class="footer-links">
+            <a href="materials.html">Materials</a>
+            <a href="cgpa.html">CGPA Calc</a>
+            <a href="attendance.html">Attendance</a>
+            <a href="about.html">About</a>
+            <a href="privacy.html">Privacy</a>
+        </div>
+        <div style="color:var(--text-muted);font-size:13px">&copy; 2026 Praveen Reddy &middot; Made with ❤️ for KL University students</div>
+    </footer>
+    <button class="glass scroll-top" id="sTop" onclick="window.scrollTo(0,0)">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"></polyline></svg>
+    </button>
+</div>
+
+<script>
+// ── Marks Calculator Logic ─────────────────────────────────
+
+function getVal(id) { return parseFloat(document.getElementById(id).value) || 0; }
+
+function midScore(a1, a2) {
+    if (isNaN(parseFloat(document.getElementById(a1).value)) &&
+        isNaN(parseFloat(document.getElementById(a2).value))) return null;
+    const v1 = getVal(a1), v2 = getVal(a2);
+    return Math.max(v1, v2) / 2; // best of 2, scaled to 15
+}
+
+function calculate() {
+    const m1 = midScore('mid1a1','mid1a2');
+    const m2 = midScore('mid2a1','mid2a2');
+    const act = getVal('actMarks');
+    const att = getVal('attBonus');
+
+    // Auto-fill mid scores
+    document.getElementById('mid1Score').value = m1 !== null ? m1.toFixed(1) : '';
+    document.getElementById('mid2Score').value = m2 !== null ? m2.toFixed(1) : '';
+
+    const hasData = m1 !== null || m2 !== null;
+    const internal = (m1 || 0) + (m2 || 0) + Math.min(act, 5);
+    const internalCapped = Math.min(internal, 30);
+
+    const disp = document.getElementById('internalDisplay');
+    const bkdn = document.getElementById('breakdownDisplay');
+    const hint = document.getElementById('gradeHintDisplay');
+
+    if (!hasData) {
+        disp.textContent = '—';
+        bkdn.innerHTML = '';
+        hint.textContent = '';
+        return;
+    }
+
+    disp.textContent = internalCapped.toFixed(1);
+
+    const parts = [];
+    if (m1 !== null) parts.push(`Mid-1: <span>${m1.toFixed(1)}/15</span>`);
+    if (m2 !== null) parts.push(`Mid-2: <span>${m2.toFixed(1)}/15</span>`);
+    if (act > 0) parts.push(`Activity: <span>${Math.min(act,5).toFixed(1)}/5</span>`);
+    bkdn.innerHTML = parts.join(' &nbsp;·&nbsp; ');
+
+    // Grade hint
+    const colorMap = { 'O': '#30d158','A+':'#00e5a0','A':'#80aaff','B+':'#c080ff','B':'#ffcc55','C':'#ff8855','F':'#ff5555' };
+    const total = internalCapped + att; // with attendance bonus added to simulate final
+    const g = gradeFromPct(total / 30 * 100);
+    hint.innerHTML = `Internal grade estimate: <strong style="color:${colorMap[g]}">${g}</strong>`;
+
+    predictEndSem();
+}
+
+function gradeFromPct(p) {
+    if (p >= 90) return 'O';
+    if (p >= 80) return 'A+';
+    if (p >= 70) return 'A';
+    if (p >= 60) return 'B+';
+    if (p >= 50) return 'B';
+    if (p >= 40) return 'C';
+    return 'F';
+}
+
+function predictEndSem() {
+    const target = parseInt(document.getElementById('targetGrade').value);
+    const res    = document.getElementById('predictResult');
+    if (!target) { res.textContent = 'Select a target grade above'; res.style.color='var(--text-muted)'; return; }
+
+    const m1  = midScore('mid1a1','mid1a2');
+    const m2  = midScore('mid2a1','mid2a2');
+    const act = getVal('actMarks');
+    const att = getVal('attBonus');
+
+    if (m1 === null && m2 === null) { res.textContent = 'Enter your mid marks first'; res.style.color='var(--text-muted)'; return; }
+
+    const internal = Math.min((m1||0) + (m2||0) + Math.min(act,5), 30);
+    // total = internal + (endSem * 70/100) + attBonus >= target
+    // endSemRaw = (target - internal - attBonus) * 100/70
+    const needed70Marks = ((target - internal - att) / 70) * 100;
+    // needed70Marks is out of 100 — convert to out of 70
+    const neededOut70 = Math.ceil((target - internal - att));
+
+    const colorMap = c => c <= 0 ? '#30d158' : c <= 35 ? '#30d158' : c <= 50 ? '#ff9f0a' : '#ff3b30';
+
+    if (neededOut70 <= 0) {
+        res.innerHTML = `✅ <strong style="color:#30d158">Already secured!</strong> You've got enough internal marks.`;
+        res.style.color = '#30d158';
+    } else if (neededOut70 > 70) {
+        res.innerHTML = `❌ <strong style="color:#ff3b30">Not achievable</strong> — need ${neededOut70}/70 in end-sem.`;
+        res.style.color = '#ff3b30';
+    } else {
+        const pct = ((neededOut70 / 70) * 100).toFixed(0);
+        const c = colorMap(neededOut70);
+        res.innerHTML = `Need <strong style="color:${c}">${neededOut70}/70</strong> in End Sem <span style="color:var(--text-muted);font-weight:400">(${pct}%)</span>`;
+        res.style.color = 'var(--text-primary)';
+    }
+}
+
+function copyMarks() {
+    const internal = document.getElementById('internalDisplay').textContent;
+    const m1 = document.getElementById('mid1Score').value || '—';
+    const m2 = document.getElementById('mid2Score').value || '—';
+    const text = `KL University Marks\nInternal Total: ${internal}/30\nMid-1: ${m1}/15 | Mid-2: ${m2}/15`;
+    navigator.clipboard.writeText(text).then(() => showToast('Copied! 📋'));
+}
+
+function showToast(msg) {
+    let t = document.getElementById('klToast');
+    if (!t) { t = document.createElement('div'); t.id='klToast'; t.className='glass toast-msg'; document.body.appendChild(t); }
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+
+<script src="ui.js"></script>
+<script src="advanced-features.js"></script>
+<script src="chatbot.js"></script>
+<script src="quick-notes.js"></script>
+<script src="exam-countdown.js"></script>
+<script src="todo-widget.js"></script>
+<script src="shortcuts.js"></script>
+<script src="nav-dropdown.js"></script>
+<script src="streak-widget.js"></script>
+<script src="theme-toggle.js"></script>
+</body>
+</html>

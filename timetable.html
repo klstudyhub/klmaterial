@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="KL University Weekly Timetable Builder — create and save your class schedule with a beautiful drag-friendly interface.">
+<title>Timetable Builder — KL Material</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── Timetable Page ──────────────────────────────────── */
+.tt-toolbar {
+  padding: 20px 28px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.tt-toolbar-label { font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); }
+
+/* Add slot form */
+.tt-form-card { padding: 28px 32px; }
+.tt-form-card h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 18px; }
+.tt-form-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr auto;
+  gap: 14px;
+  align-items: center;
+}
+.tt-add-btn {
+  padding: 12px 20px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #2060ff, #8020ff);
+  color: #fff; border: none;
+  font-family: inherit; font-weight: 600; font-size: 0.9rem;
+  cursor: pointer; transition: all 0.25s;
+  box-shadow: 0 4px 16px rgba(32,96,255,0.3);
+  white-space: nowrap;
+}
+.tt-add-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(32,96,255,0.5); }
+
+/* Color picker row */
+.color-row {
+  display: flex; align-items: center; gap: 10px; margin-top: 14px;
+}
+.color-row label { font-size: 0.85rem; color: var(--text-secondary); }
+.color-swatch {
+  width: 28px; height: 28px; border-radius: 8px; border: 2px solid transparent;
+  cursor: pointer; transition: transform 0.2s, border-color 0.2s;
+}
+.color-swatch:hover { transform: scale(1.2); }
+.color-swatch.selected { border-color: #fff; transform: scale(1.2); }
+
+/* Timetable grid */
+.tt-grid-card { padding: 24px; overflow-x: auto; }
+.tt-grid-card h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 20px; }
+.tt-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 700px;
+}
+.tt-table th {
+  padding: 10px 8px; font-size: 0.82rem; font-weight: 600;
+  color: var(--text-secondary); text-align: center;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.tt-table th:first-child { width: 72px; text-align: left; padding-left: 12px; }
+.tt-hour-label {
+  font-size: 0.75rem; color: var(--text-muted);
+  padding: 6px 12px; white-space: nowrap;
+  border-right: 1px solid rgba(255,255,255,0.06);
+  vertical-align: top;
+}
+.tt-cell {
+  min-height: 56px; height: 56px;
+  padding: 4px;
+  border: 1px solid rgba(255,255,255,0.04);
+  vertical-align: top;
+  position: relative;
+}
+.tt-cell.droptarget { background: rgba(32,96,255,0.08); }
+
+/* Class chip inside a cell */
+.tt-chip {
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 0.78rem; font-weight: 600;
+  width: 100%; box-sizing: border-box;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 6px; cursor: default;
+  border: 1px solid rgba(255,255,255,0.08);
+  animation: chipIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+  overflow: hidden;
+}
+@keyframes chipIn { from { opacity:0; transform:scale(0.85); } to { opacity:1; transform:scale(1); } }
+.tt-chip-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex:1; }
+.tt-chip-del {
+  background: none; border: none; color: rgba(255,255,255,0.4);
+  cursor: pointer; font-size: 0.9rem; padding: 0 2px;
+  transition: color 0.2s; flex-shrink: 0;
+  line-height: 1;
+}
+.tt-chip-del:hover { color: #ff5555; }
+
+/* Empty timetable state */
+.tt-empty-row td {
+  text-align: center; padding: 40px;
+  color: var(--text-muted); font-size: 0.9rem;
+}
+
+/* Action buttons */
+.tt-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.tt-action-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 20px; border-radius: 99px;
+  font-family: inherit; font-size: 0.88rem; font-weight: 600;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.07);
+  cursor: pointer; transition: all 0.25s; color: var(--text-primary);
+}
+.tt-action-btn:hover { background: rgba(255,255,255,0.14); transform: translateY(-1px); }
+.tt-action-btn.danger { border-color: rgba(255,59,48,0.35); color: #ff5555; }
+.tt-action-btn.danger:hover { background: rgba(255,59,48,0.12); }
+
+/* Legend */
+.tt-legend { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; font-size: 0.82rem; color: var(--text-muted); }
+.tt-legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+@media (max-width: 700px) {
+  .tt-form-row { grid-template-columns: 1fr 1fr; }
+  .tt-form-row .tt-add-btn { grid-column: span 2; }
+}
+</style>
+    <link rel="stylesheet" href="shared.css">
+    <link rel="stylesheet" href="kl-liquid-glass.css">
+    <link rel="stylesheet" href="glass-components.css">
+</head>
+<body>
+<div class="bg-layer">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
+</div>
+<div class="main-wrapper">
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">KL Material</a>
+            <div class="nav-links" id="nLinks">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="materials.html" class="nav-link">Materials</a>
+                <a href="roadmap.html" class="nav-link">Roadmap</a>
+                <a href="cgpa.html" class="nav-link">CGPA Calc</a>
+                <a href="attendance.html" class="nav-link">Attendance</a>
+                <a href="timetable.html" class="nav-link">Timetable</a>
+                <a href="flashcards.html" class="nav-link">Flashcards</a>
+                <a href="marks.html" class="nav-link">Marks</a>
+                <a href="formulas.html" class="nav-link">Formulas</a>
+                <a href="about.html" class="nav-link">About</a>
+            </div>
+            <button class="mobile-btn" id="mobBtn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nLinks">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
+    </nav>
+
+    <header class="page-header stagger" style="animation-delay:0.1s">
+        <h1 class="page-title">Timetable Builder</h1>
+        <p class="page-subtitle">Build and save your weekly class schedule.</p>
+    </header>
+
+    <main class="container">
+
+        <!-- Add Class Form -->
+        <div class="glass glass-card tt-form-card stagger" style="animation-delay:0.15s">
+            <h2>➕ Add a Class</h2>
+            <div class="tt-form-row">
+                <input type="text" id="ttSubject" class="glass-input" placeholder="Subject (e.g. Data Structures)">
+                <select id="ttDay" class="glass-input">
+                    <option value="">Select Day</option>
+                    <option value="Monday">Monday</option>
+                    <option value="Tuesday">Tuesday</option>
+                    <option value="Wednesday">Wednesday</option>
+                    <option value="Thursday">Thursday</option>
+                    <option value="Friday">Friday</option>
+                    <option value="Saturday">Saturday</option>
+                </select>
+                <select id="ttTime" class="glass-input">
+                    <option value="">Start Time</option>
+                    <option value="8:00">8:00 AM</option>
+                    <option value="9:00">9:00 AM</option>
+                    <option value="10:00">10:00 AM</option>
+                    <option value="11:00">11:00 AM</option>
+                    <option value="12:00">12:00 PM</option>
+                    <option value="13:00">1:00 PM</option>
+                    <option value="14:00">2:00 PM</option>
+                    <option value="15:00">3:00 PM</option>
+                    <option value="16:00">4:00 PM</option>
+                    <option value="17:00">5:00 PM</option>
+                </select>
+                <input type="text" id="ttRoom" class="glass-input" placeholder="Room (optional)">
+                <button class="tt-add-btn" onclick="addSlot()">+ Add</button>
+            </div>
+            <div class="color-row">
+                <label>Color:</label>
+                <div id="colorPicker"></div>
+            </div>
+        </div>
+
+        <!-- Grid Card -->
+        <div class="glass glass-card tt-grid-card stagger" style="animation-delay:0.25s">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+                <h2 style="margin:0">📅 Weekly Schedule</h2>
+                <div class="tt-actions">
+                    <button class="tt-action-btn" onclick="exportPNG()" title="Save as PNG">🖼️ Save Image</button>
+                    <button class="tt-action-btn danger" onclick="clearAll()" title="Clear timetable">🗑 Clear All</button>
+                </div>
+            </div>
+            <table class="tt-table" id="ttTable">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Monday</th>
+                        <th>Tuesday</th>
+                        <th>Wednesday</th>
+                        <th>Thursday</th>
+                        <th>Friday</th>
+                        <th>Saturday</th>
+                    </tr>
+                </thead>
+                <tbody id="ttBody"></tbody>
+            </table>
+        </div>
+
+    </main>
+
+    <footer class="glass footer stagger" style="animation-delay:0.4s">
+        <div style="font-weight:600;font-size:18px">KL Material</div>
+        <p style="color:var(--text-secondary);margin-top:8px">always free, always accessible</p>
+        <div class="footer-links">
+            <a href="materials.html">Materials</a>
+            <a href="roadmap.html">Roadmap</a>
+            <a href="cgpa.html">CGPA Calc</a>
+            <a href="attendance.html">Attendance</a>
+                <a href="timetable.html" class="nav-link">Timetable</a>
+                <a href="flashcards.html" class="nav-link">Flashcards</a>
+                <a href="marks.html" class="nav-link">Marks</a>
+                <a href="formulas.html" class="nav-link">Formulas</a>
+            <a href="about.html">About</a>
+            <a href="privacy.html">Privacy</a>
+        </div>
+        <div style="color:var(--text-muted);font-size:13px">&copy; 2026 Praveen Reddy &middot; Made with ❤️ for KL University students</div>
+    </footer>
+    <button class="glass scroll-top" id="sTop" onclick="window.scrollTo(0,0)">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"></polyline></svg>
+    </button>
+</div>
+
+<script>
+// ── Timetable Builder Logic ───────────────────────────────
+const STORAGE_KEY = 'klm-timetable-v1';
+const DAYS  = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const HOURS = ['8:00','9:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00'];
+const HOUR_LABELS = ['8 AM','9 AM','10 AM','11 AM','12 PM','1 PM','2 PM','3 PM','4 PM','5 PM'];
+
+const COLORS = [
+    { hex: '#2060ff', bg: 'rgba(32,96,255,0.18)',  text: '#80aaff' },
+    { hex: '#8020ff', bg: 'rgba(128,32,255,0.18)', text: '#c080ff' },
+    { hex: '#00e5a0', bg: 'rgba(0,229,160,0.15)',  text: '#00e5a0' },
+    { hex: '#ff9f0a', bg: 'rgba(255,159,10,0.18)', text: '#ffcc55' },
+    { hex: '#ff3b30', bg: 'rgba(255,59,48,0.18)',  text: '#ff7066' },
+    { hex: '#30d158', bg: 'rgba(48,209,88,0.15)',  text: '#30d158' },
+    { hex: '#ff5520', bg: 'rgba(255,85,32,0.15)',  text: '#ff8855' },
+    { hex: '#00aeff', bg: 'rgba(0,174,255,0.15)',  text: '#55ccff' },
+];
+
+let slots = []; // { subject, day, time, room, colorIdx }
+let selectedColor = 0;
+
+// ── Load / Save ───────────────────────────────────────────
+function load() {
+    try {
+        const s = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        if (Array.isArray(s)) slots = s;
+    } catch(e) {}
+}
+function save() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(slots)); } catch(e) {}
+}
+
+// ── Build Color Picker ────────────────────────────────────
+function buildColorPicker() {
+    const cp = document.getElementById('colorPicker');
+    cp.style.display = 'flex'; cp.style.gap = '8px';
+    cp.innerHTML = COLORS.map((c, i) =>
+        `<div class="color-swatch${i === 0 ? ' selected' : ''}" 
+              style="background:${c.hex}" 
+              data-idx="${i}" 
+              title="Color ${i+1}"
+              onclick="selectColor(${i})"></div>`
+    ).join('');
+}
+function selectColor(idx) {
+    selectedColor = idx;
+    document.querySelectorAll('.color-swatch').forEach((s, i) => {
+        s.classList.toggle('selected', i === idx);
+    });
+}
+
+// ── Render Grid ───────────────────────────────────────────
+function render() {
+    const tbody = document.getElementById('ttBody');
+    tbody.innerHTML = HOURS.map((hour, hi) => {
+        const cells = DAYS.map(day => {
+            const slot = slots.find(s => s.day === day && s.time === hour);
+            if (slot) {
+                const c = COLORS[slot.colorIdx] || COLORS[0];
+                const room = slot.room ? `<span style="opacity:0.65;font-weight:400;font-size:0.7rem"> · ${escHtml(slot.room)}</span>` : '';
+                return `<td class="tt-cell">
+                    <div class="tt-chip" style="background:${c.bg};color:${c.text};border-color:${c.hex}44">
+                        <span class="tt-chip-name">${escHtml(slot.subject)}${room}</span>
+                        <button class="tt-chip-del" onclick="removeSlot('${escAttr(day)}','${hour}')" title="Remove">&times;</button>
+                    </div>
+                </td>`;
+            }
+            return `<td class="tt-cell" data-day="${day}" data-time="${hour}"></td>`;
+        }).join('');
+        return `<tr>
+            <td class="tt-hour-label">${HOUR_LABELS[hi]}</td>
+            ${cells}
+        </tr>`;
+    }).join('');
+}
+
+// ── Add slot ──────────────────────────────────────────────
+function addSlot() {
+    const subject = document.getElementById('ttSubject').value.trim();
+    const day     = document.getElementById('ttDay').value;
+    const time    = document.getElementById('ttTime').value;
+    const room    = document.getElementById('ttRoom').value.trim();
+
+    if (!subject) { document.getElementById('ttSubject').focus(); showToast('Enter a subject name'); return; }
+    if (!day)     { showToast('Select a day'); return; }
+    if (!time)    { showToast('Select a time slot'); return; }
+
+    // Check for conflict
+    if (slots.find(s => s.day === day && s.time === time)) {
+        if (!confirm(`${day} at ${fmtTime(time)} already has a class. Replace it?`)) return;
+        slots = slots.filter(s => !(s.day === day && s.time === time));
+    }
+
+    slots.push({ subject, day, time, room, colorIdx: selectedColor });
+    save(); render();
+
+    // Clear inputs
+    document.getElementById('ttSubject').value = '';
+    document.getElementById('ttRoom').value = '';
+    showToast(`${subject} added to ${day} ${fmtTime(time)} ✅`);
+}
+
+function removeSlot(day, time) {
+    slots = slots.filter(s => !(s.day === day && s.time === time));
+    save(); render();
+}
+
+function clearAll() {
+    if (slots.length === 0) return;
+    if (!confirm('Clear entire timetable?')) return;
+    slots = [];
+    save(); render();
+}
+
+function fmtTime(t) {
+    const [h] = t.split(':').map(Number);
+    return h < 12 ? `${h}:00 AM` : h === 12 ? '12:00 PM' : `${h-12}:00 PM`;
+}
+
+// ── Export PNG ────────────────────────────────────────────
+function exportPNG() {
+    const table = document.getElementById('ttTable');
+    const W = table.scrollWidth + 40, H = table.scrollHeight + 80;
+    const canvas = document.createElement('canvas');
+    canvas.width  = W * 2; canvas.height = H * 2;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(2, 2);
+
+    // Background
+    const bg = ctx.createLinearGradient(0, 0, W, H);
+    bg.addColorStop(0, '#0a0e27');
+    bg.addColorStop(1, '#12163a');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    // Title
+    ctx.fillStyle = '#fff';
+    ctx.font = '600 18px Outfit, sans-serif';
+    ctx.fillText('KL Material — Weekly Timetable', 20, 30);
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.font = '400 11px Outfit, sans-serif';
+    ctx.fillText('klmaterial.netlify.app', 20, 48);
+
+    showToast('Use Ctrl+P → Print to PDF / Save as image for best results!');
+    window.print();
+}
+
+// ── Helpers ───────────────────────────────────────────────
+function escHtml(s) {
+    return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escAttr(s) {
+    return (s||'').replace(/'/g,'&apos;');
+}
+
+function showToast(msg) {
+    let toast = document.getElementById('klToast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'klToast';
+        toast.className = 'glass toast-msg';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// ── Enter key shortcut ────────────────────────────────────
+['ttSubject','ttRoom'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => {
+        if (e.key === 'Enter') addSlot();
+    });
+});
+
+// ── Init ──────────────────────────────────────────────────
+buildColorPicker();
+load();
+render();
+</script>
+
+<script src="ui.js"></script>
+<script src="advanced-features.js"></script>
+<script src="chatbot.js"></script>
+<script src="quick-notes.js"></script>
+<script src="exam-countdown.js"></script>
+<script src="todo-widget.js"></script>
+<script src="shortcuts.js"></script>
+<script src="nav-dropdown.js"></script>
+<script src="streak-widget.js"></script>
+<script src="theme-toggle.js"></script>
+</body>
+</html>

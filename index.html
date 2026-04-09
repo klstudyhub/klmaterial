@@ -12,6 +12,19 @@
     <style>
 /* Index Page Specific Styles */
 .hero { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 20px; padding-top: 40px; }
+/* Announcements Ticker */
+.announcements-section { overflow: hidden; border-radius: 16px; }
+.announcements-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; color: #ff9f0a; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.ticker-track-wrap { overflow: hidden; position: relative; }
+.ticker-track-wrap::before, .ticker-track-wrap::after { content: ''; position: absolute; top: 0; bottom: 0; width: 48px; z-index: 2; pointer-events: none; }
+.ticker-track-wrap::before { left: 0; background: linear-gradient(to right, rgba(10,14,39,0.95), transparent); }
+.ticker-track-wrap::after { right: 0; background: linear-gradient(to left, rgba(10,14,39,0.95), transparent); }
+.ticker-track { display: flex; gap: 16px; width: max-content; animation: ticker-scroll 28s linear infinite; padding: 4px 0; }
+.ticker-track:hover { animation-play-state: paused; }
+.ticker-item { display: inline-flex; align-items: center; gap: 8px; padding: 7px 18px; border-radius: 99px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); font-size: 0.85rem; font-weight: 500; white-space: nowrap; cursor: default; transition: background 0.2s, border-color 0.2s; }
+.ticker-item:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.22); }
+.ticker-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+@keyframes ticker-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 .eyebrow-pill { padding: 6px 16px; border-radius: 999px; font-size: 13px; font-weight: 500; color: var(--text-primary); display: inline-flex; align-items: center; gap: 6px; }
 .hero h1 { font-size: 3.5rem; font-weight: 300; letter-spacing: -1.5px; line-height: 1.1; }
 .hero h1 strong { font-weight: 700; }
@@ -71,8 +84,12 @@ footer { margin-top: 40px; padding: 40px 24px; text-align: center; display: flex
                 <a href="materials.html" class="nav-link">Materials</a>
                 <a href="roadmap.html" class="nav-link">Roadmap</a>
                 <a href="cgpa.html" class="nav-link">CGPA Calc</a>
+                <a href="attendance.html" class="nav-link">Attendance</a>
+                <a href="timetable.html" class="nav-link">Timetable</a>
+                <a href="flashcards.html" class="nav-link">Flashcards</a>
+                <a href="marks.html" class="nav-link">Marks</a>
+                <a href="formulas.html" class="nav-link">Formulas</a>
                 <a href="about.html" class="nav-link">About</a>
-                <a href="contact.html" class="nav-link">Contact</a>
             </div>
             <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">
                 <span class="bar"></span>
@@ -123,6 +140,29 @@ footer { margin-top: 40px; padding: 40px 24px; text-align: center; display: flex
             <div class="glass-element glass-card stat-card">
                 <div class="stat-value">1000+</div>
                 <div class="stat-label">Students</div>
+            </div>
+        </section>
+
+        <!-- 4.5 Announcements Ticker -->
+        <section class="glass glass-card announcements-section stagger" style="padding:20px 24px;animation-delay:0.25s">
+            <div class="announcements-label">📢 <span>Latest Updates</span></div>
+            <div class="ticker-track-wrap">
+                <div class="ticker-track" id="announcementsTicker">
+                    <div class="ticker-item"><span class="ticker-dot" style="background:#30d158"></span>COA materials updated for Unit 4</div>
+                    <div class="ticker-item"><span class="ticker-dot" style="background:#2060ff"></span>DM Question Bank — Mid-2 added</div>
+                    <div class="ticker-item"><span class="ticker-dot" style="background:#ff9f0a"></span>DS Practicals batch updated</div>
+                    <div class="ticker-item"><span class="ticker-dot" style="background:#8020ff"></span>Python Unit 5 notes live</div>
+                    <div class="ticker-item"><span class="ticker-dot" style="background:#00e5a0"></span>Attendance Tracker feature added!</div>
+                    <div class="ticker-item"><span class="ticker-dot" style="background:#ff5520"></span>BEEC formula sheet uploaded</div>
+                    <div class="ticker-item"><span class="ticker-dot" style="background:#30d158"></span>PSC mid papers 2025 available</div>
+                    <div class="ticker-item"><span class="ticker-dot" style="background:#2060ff"></span>COA materials updated for Unit 4</div>
+                    <div class="ticker-item"><span class="ticker-dot" style="background:#ff9f0a"></span>DM Question Bank — Mid-2 added</div>
+                    <div class="ticker-item"><span class="ticker-dot" style="background:#8020ff"></span>DS Practicals batch updated</div>
+                    <div class="ticker-item"><span class="ticker-dot" style="background:#00e5a0"></span>Python Unit 5 notes live</div>
+                    <div class="ticker-item"><span class="ticker-dot" style="background:#ff5520"></span>Attendance Tracker feature added!</div>
+                    <div class="ticker-item"><span class="ticker-dot" style="background:#30d158"></span>BEEC formula sheet uploaded</div>
+                    <div class="ticker-item"><span class="ticker-dot" style="background:#2060ff"></span>PSC mid papers 2025 available</div>
+                </div>
             </div>
         </section>
 
@@ -190,8 +230,8 @@ footer { margin-top: 40px; padding: 40px 24px; text-align: center; display: flex
             <a href="materials.html">Materials</a>
             <a href="roadmap.html">Roadmap</a>
             <a href="cgpa.html">CGPA Calc</a>
+            <a href="attendance.html">Attendance</a>
             <a href="about.html">About</a>
-            <a href="contact.html">Contact</a>
             <a href="privacy.html">Privacy</a>
         </div>
         
@@ -234,5 +274,12 @@ footer { margin-top: 40px; padding: 40px 24px; text-align: center; display: flex
 <script src="ui.js"></script>
 <script src="advanced-features.js"></script>
 <script src="chatbot.js"></script>
+<script src="quick-notes.js"></script>
+<script src="exam-countdown.js"></script>
+<script src="todo-widget.js"></script>
+<script src="shortcuts.js"></script>
+<script src="nav-dropdown.js"></script>
+<script src="streak-widget.js"></script>
+<script src="theme-toggle.js"></script>
 </body>
 </html>

@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="KL University Attendance Tracker — track per-subject attendance, calculate bunk allowance, and stay above 75%.">
+<title>Attendance Tracker — KL Material</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── Attendance Page Specific Styles ─────────────────────── */
+.att-header-section { text-align: center; }
+
+.threshold-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 20px; border-radius: 99px;
+  background: rgba(255,159,10,0.1);
+  border: 1px solid rgba(255,159,10,0.35);
+  font-size: 0.9rem; font-weight: 600; color: #ff9f0a;
+  margin-bottom: 12px;
+}
+
+/* Summary cards at top */
+.summary-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.summary-card {
+  padding: 28px 20px; text-align: center;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.summary-value {
+  font-size: 2.4rem; font-weight: 700; letter-spacing: -1px;
+}
+.summary-label { font-size: 0.9rem; color: var(--text-secondary); font-weight: 500; }
+
+/* Add subject panel */
+.add-panel {
+  padding: 28px 32px;
+}
+.add-panel h2 { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; }
+.add-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 14px;
+  align-items: center;
+}
+.add-btn {
+  padding: 12px 20px; border-radius: 12px;
+  font-family: inherit; font-weight: 600; font-size: 0.9rem;
+  cursor: pointer; border: none; transition: all 0.25s;
+}
+.add-btn-primary {
+  background: linear-gradient(135deg, #2060ff, #8020ff);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(32,96,255,0.35);
+}
+.add-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(32,96,255,0.5); }
+
+/* Subject list */
+.subjects-list { display: flex; flex-direction: column; gap: 16px; }
+.subject-item {
+  padding: 24px 28px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 20px;
+  align-items: center;
+}
+.subject-left { display: flex; flex-direction: column; gap: 10px; }
+.subject-name { font-size: 1.1rem; font-weight: 600; }
+.subject-stats { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.att-stat { font-size: 0.85rem; color: var(--text-secondary); }
+.att-stat span { font-weight: 600; color: var(--text-primary); }
+
+/* Progress bar */
+.att-bar-wrap {
+  height: 8px; background: rgba(255,255,255,0.08);
+  border-radius: 99px; overflow: hidden; margin-top: 4px;
+}
+.att-bar-fill {
+  height: 100%; border-radius: 99px;
+  transition: width 0.6s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+/* Status badge */
+.status-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 14px; border-radius: 99px;
+  font-size: 0.8rem; font-weight: 600;
+}
+.status-safe { background: rgba(48,209,88,0.15); color: #30d158; border: 1px solid rgba(48,209,88,0.3); }
+.status-risk { background: rgba(255,159,10,0.15); color: #ff9f0a; border: 1px solid rgba(255,159,10,0.3); }
+.status-critical { background: rgba(255,59,48,0.15); color: #ff3b30; border: 1px solid rgba(255,59,48,0.3); }
+
+/* Right side per-subject: bunk info + controls */
+.subject-right { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
+.bunk-info {
+  text-align: right; font-size: 0.82rem;
+  color: var(--text-secondary); line-height: 1.5;
+}
+.bunk-info strong { color: var(--text-primary); }
+.subject-actions { display: flex; gap: 8px; }
+.att-ctrl-btn {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px; color: var(--text-primary);
+  cursor: pointer; font-size: 0.8rem; font-family: inherit;
+  padding: 6px 12px; transition: all 0.2s;
+  white-space: nowrap;
+}
+.att-ctrl-btn:hover { background: rgba(255,255,255,0.14); }
+.att-ctrl-btn.del-btn { color: #ff5555; border-color: rgba(255,85,85,0.2); }
+.att-ctrl-btn.del-btn:hover { background: rgba(255,85,85,0.15); }
+.att-ctrl-btn.mark-btn { color: #30d158; border-color: rgba(48,209,88,0.25); }
+.att-ctrl-btn.mark-btn:hover { background: rgba(48,209,88,0.12); }
+.att-ctrl-btn.absent-btn { color: #ff9f0a; border-color: rgba(255,159,10,0.25); }
+.att-ctrl-btn.absent-btn:hover { background: rgba(255,159,10,0.1); }
+
+/* Empty state */
+.empty-state {
+  text-align: center; padding: 60px 20px;
+  color: var(--text-muted); display: flex;
+  flex-direction: column; align-items: center; gap: 12px;
+}
+.empty-icon { font-size: 48px; opacity: 0.5; }
+
+/* Info box with global threshold slider */
+.threshold-card { padding: 24px 28px; }
+.threshold-row {
+  display: flex; align-items: center; gap: 20px;
+  flex-wrap: wrap;
+}
+.threshold-label { font-size: 0.95rem; font-weight: 500; flex: 1; min-width: 160px; }
+.threshold-slider {
+  flex: 2; min-width: 160px;
+  -webkit-appearance: none; appearance: none;
+  height: 6px; border-radius: 99px;
+  background: linear-gradient(to right, #2060ff, #8020ff);
+  outline: none; cursor: pointer;
+}
+.threshold-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 20px; height: 20px;
+  border-radius: 50%; background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4); cursor: pointer;
+}
+.threshold-val {
+  font-size: 1.3rem; font-weight: 700;
+  color: #ff9f0a; min-width: 48px; text-align: right;
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+  .add-row { grid-template-columns: 1fr 1fr; }
+  .add-row .add-btn { grid-column: span 2; }
+  .subject-item { grid-template-columns: 1fr; gap: 14px; }
+  .subject-right { align-items: flex-start; }
+  .bunk-info { text-align: left; }
+  .summary-row { grid-template-columns: 1fr; gap: 12px; }
+}
+@media (max-width: 900px) {
+  .summary-row { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+    <link rel="stylesheet" href="shared.css">
+    <link rel="stylesheet" href="kl-liquid-glass.css">
+    <link rel="stylesheet" href="glass-components.css">
+</head>
+<body>
+<div class="bg-layer">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
+</div>
+<div class="main-wrapper">
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">KL Material</a>
+            <div class="nav-links" id="nLinks">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="materials.html" class="nav-link">Materials</a>
+                <a href="roadmap.html" class="nav-link">Roadmap</a>
+                <a href="cgpa.html" class="nav-link">CGPA Calc</a>
+                <a href="attendance.html" class="nav-link active">Attendance</a>
+                <a href="timetable.html" class="nav-link">Timetable</a>
+                <a href="flashcards.html" class="nav-link">Flashcards</a>
+                <a href="marks.html" class="nav-link">Marks</a>
+                <a href="formulas.html" class="nav-link">Formulas</a>
+                <a href="about.html" class="nav-link">About</a>
+            </div>
+            <button class="mobile-btn" id="mobBtn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nLinks">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
+    </nav>
+
+    <header class="page-header stagger" style="animation-delay:0.1s">
+        <h1 class="page-title">Attendance Tracker</h1>
+        <p class="page-subtitle">Stay on top of your attendance. Stay above 75%.</p>
+    </header>
+
+    <main class="container">
+
+        <!-- Threshold Slider -->
+        <div class="glass glass-card threshold-card stagger" style="animation-delay:0.15s">
+            <div class="threshold-row">
+                <div class="threshold-label">🎯 Required Attendance Threshold</div>
+                <input type="range" class="threshold-slider" id="thresholdSlider" min="50" max="90" value="75" step="5">
+                <div class="threshold-val" id="thresholdVal">75%</div>
+            </div>
+        </div>
+
+        <!-- Summary Row -->
+        <div class="summary-row stagger" style="animation-delay:0.2s">
+            <div class="glass glass-card summary-card">
+                <div class="summary-value" id="summAvg" style="color: #00e5a0;">—</div>
+                <div class="summary-label">Overall Avg %</div>
+            </div>
+            <div class="glass glass-card summary-card">
+                <div class="summary-value" id="summSubjects" style="color: #2060ff;">0</div>
+                <div class="summary-label">Subjects Tracked</div>
+            </div>
+            <div class="glass glass-card summary-card">
+                <div class="summary-value" id="summBunk" style="color: #ff9f0a;">—</div>
+                <div class="summary-label">Total Safe Bunks</div>
+            </div>
+        </div>
+
+        <!-- Add Subject Panel -->
+        <div class="glass glass-card add-panel stagger" style="animation-delay:0.25s">
+            <h2>➕ Add Subject</h2>
+            <div class="add-row">
+                <input type="text" id="attSubName" class="glass-input" placeholder="Subject name (e.g. Data Structures)">
+                <input type="number" id="attHeld" class="glass-input" placeholder="Classes held" min="0">
+                <input type="number" id="attAttended" class="glass-input" placeholder="Attended" min="0">
+                <button class="add-btn add-btn-primary" id="addSubjectBtn" onclick="addSubject()">+ Add</button>
+            </div>
+        </div>
+
+        <!-- Subjects List -->
+        <div id="subjectsList" class="subjects-list stagger" style="animation-delay:0.3s">
+            <!-- Dynamically populated -->
+        </div>
+
+    </main>
+
+    <footer class="glass footer stagger" style="animation-delay:0.4s">
+        <div style="font-weight:600;font-size:18px">KL Material</div>
+        <p style="color:var(--text-secondary);margin-top:8px">always free, always accessible</p>
+        <div class="footer-links">
+            <a href="materials.html">Materials</a>
+            <a href="roadmap.html">Roadmap</a>
+            <a href="cgpa.html">CGPA Calc</a>
+            <a href="attendance.html">Attendance</a>
+            <a href="about.html">About</a>
+            <a href="privacy.html">Privacy</a>
+        </div>
+        <div style="color:var(--text-muted);font-size:13px">&copy; 2026 Praveen Reddy &middot; Made with ❤️ for KL University students</div>
+    </footer>
+    <button class="glass scroll-top" id="sTop" onclick="window.scrollTo(0,0)">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"></polyline></svg>
+    </button>
+</div>
+
+<script>
+// ── Attendance Tracker Logic ──────────────────────────────
+const STORAGE_KEY = 'klm-attendance-v1';
+const THRESH_KEY  = 'klm-att-threshold';
+
+let subjects = [];
+let threshold = 75;
+
+// Load from localStorage
+function load() {
+    try {
+        const s = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        if (Array.isArray(s)) subjects = s;
+        const t = parseInt(localStorage.getItem(THRESH_KEY) || '75');
+        threshold = isNaN(t) ? 75 : t;
+    } catch(e) {}
+}
+
+function save() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(subjects));
+        localStorage.setItem(THRESH_KEY, String(threshold));
+    } catch(e) {}
+}
+
+// ── Calculations ──────────────────────────────────────────
+function pct(attended, held) {
+    if (!held) return 0;
+    return Math.round((attended / held) * 1000) / 10;
+}
+
+function bunkable(attended, held, thresh) {
+    // max bunks possible: floor((attended - thresh/100 * (held+x)) / 1) ... solve for x
+    // attended / (held + x) >= thresh/100
+    // x <= attended * 100/thresh - held
+    const maxTotal = Math.floor((attended * 100) / thresh);
+    return Math.max(0, maxTotal - held);
+}
+
+function needToAttend(attended, held, thresh) {
+    // (attended + x) / (held + x) >= thresh/100
+    // x >= (thresh * held - 100 * attended) / (100 - thresh)
+    const t = thresh / 100;
+    if (pct(attended, held) >= thresh) return 0;
+    const needed = Math.ceil((t * held - attended) / (1 - t));
+    return Math.max(0, needed);
+}
+
+function statusClass(p) {
+    if (p >= threshold)     return 'status-safe';
+    if (p >= threshold - 10) return 'status-risk';
+    return 'status-critical';
+}
+function statusIcon(p) {
+    if (p >= threshold)      return '✅ Safe';
+    if (p >= threshold - 10) return '⚠️ At Risk';
+    return '🔴 Critical';
+}
+function barColor(p) {
+    if (p >= threshold)      return '#30d158';
+    if (p >= threshold - 10) return '#ff9f0a';
+    return '#ff3b30';
+}
+
+// ── Render ────────────────────────────────────────────────
+function render() {
+    const list = document.getElementById('subjectsList');
+
+    if (subjects.length === 0) {
+        list.innerHTML = `
+            <div class="glass glass-card empty-state">
+                <div class="empty-icon">📋</div>
+                <div style="font-size:1.1rem;font-weight:600;color:var(--text-primary)">No subjects yet</div>
+                <div>Add your first subject above to start tracking attendance.</div>
+            </div>`;
+        updateSummary();
+        return;
+    }
+
+    list.innerHTML = subjects.map((s, i) => {
+        const p = pct(s.attended, s.held);
+        const b = bunkable(s.attended, s.held, threshold);
+        const n = needToAttend(s.attended, s.held, threshold);
+        const barW = Math.min(100, p);
+        return `
+        <div class="glass glass-card subject-item stagger" style="animation-delay:${0.05 * i}s">
+            <div class="subject-left">
+                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                    <div class="subject-name">${escHtml(s.name)}</div>
+                    <span class="status-badge ${statusClass(p)}">${statusIcon(p)}</span>
+                </div>
+                <div class="subject-stats">
+                    <div class="att-stat">Attended: <span>${s.attended}</span></div>
+                    <div class="att-stat">Total: <span>${s.held}</span></div>
+                    <div class="att-stat">Percentage: <span style="color:${barColor(p)}">${p.toFixed(1)}%</span></div>
+                </div>
+                <div class="att-bar-wrap">
+                    <div class="att-bar-fill" style="width:${barW}%;background:${barColor(p)}"></div>
+                </div>
+            </div>
+            <div class="subject-right">
+                <div class="bunk-info">
+                    ${p >= threshold
+                        ? `Can bunk: <strong style="color:#30d158">${b} more class${b !== 1 ? 'es' : ''}</strong>`
+                        : `Need to attend: <strong style="color:#ff3b30">${n} more class${n !== 1 ? 'es' : ''}</strong>`
+                    }
+                </div>
+                <div class="subject-actions">
+                    <button class="att-ctrl-btn mark-btn" onclick="markClass(${i}, 1)" title="Mark Present">✓ Present</button>
+                    <button class="att-ctrl-btn absent-btn" onclick="markClass(${i}, 0)" title="Mark Absent">✗ Absent</button>
+                    <button class="att-ctrl-btn del-btn" onclick="removeSubject(${i})" title="Remove Subject">🗑</button>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+
+    updateSummary();
+}
+
+function updateSummary() {
+    const n = subjects.length;
+    document.getElementById('summSubjects').textContent = n;
+
+    if (n === 0) {
+        document.getElementById('summAvg').textContent = '—';
+        document.getElementById('summBunk').textContent = '—';
+        return;
+    }
+
+    const avgPct = subjects.reduce((acc, s) => acc + pct(s.attended, s.held), 0) / n;
+    document.getElementById('summAvg').textContent = avgPct.toFixed(1) + '%';
+
+    const totalBunk = subjects.reduce((acc, s) => acc + bunkable(s.attended, s.held, threshold), 0);
+    document.getElementById('summBunk').textContent = totalBunk;
+}
+
+// ── Actions ───────────────────────────────────────────────
+function addSubject() {
+    const nameEl     = document.getElementById('attSubName');
+    const heldEl     = document.getElementById('attHeld');
+    const attendedEl = document.getElementById('attAttended');
+
+    const name     = nameEl.value.trim();
+    const held     = parseInt(heldEl.value);
+    const attended = parseInt(attendedEl.value);
+
+    if (!name) { shakeInput(nameEl); return; }
+    if (isNaN(held) || held < 0) { shakeInput(heldEl); return; }
+    if (isNaN(attended) || attended < 0 || attended > held) { shakeInput(attendedEl); return; }
+
+    subjects.push({ name, held, attended });
+    save();
+    render();
+    nameEl.value = ''; heldEl.value = ''; attendedEl.value = '';
+    nameEl.focus();
+    showToast(`"${name}" added! 📋`);
+}
+
+function markClass(idx, present) {
+    if (idx < 0 || idx >= subjects.length) return;
+    subjects[idx].held += 1;
+    if (present) subjects[idx].attended += 1;
+    save();
+    render();
+}
+
+function removeSubject(idx) {
+    if (!confirm(`Remove "${subjects[idx].name}"?`)) return;
+    subjects.splice(idx, 1);
+    save();
+    render();
+}
+
+function shakeInput(el) {
+    el.style.animation = 'none';
+    el.offsetHeight; // reflow
+    el.style.animation = 'shake 0.4s ease';
+    el.style.borderColor = 'rgba(255,59,48,0.6)';
+    setTimeout(() => { el.style.borderColor = ''; el.style.animation = ''; }, 800);
+}
+
+function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showToast(msg) {
+    let toast = document.getElementById('klToast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'klToast';
+        toast.className = 'glass toast-msg';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// ── Threshold slider ──────────────────────────────────────
+const slider = document.getElementById('thresholdSlider');
+const thValEl = document.getElementById('thresholdVal');
+slider.value = threshold;
+thValEl.textContent = threshold + '%';
+
+slider.addEventListener('input', () => {
+    threshold = parseInt(slider.value);
+    thValEl.textContent = threshold + '%';
+    save();
+    render();
+});
+
+// ── Enter key on inputs ───────────────────────────────────
+['attSubName','attHeld','attAttended'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => {
+        if (e.key === 'Enter') addSubject();
+    });
+});
+
+// ── Shake animation ───────────────────────────────────────
+const shakeStyle = document.createElement('style');
+shakeStyle.textContent = `
+    @keyframes shake {
+        0%,100%{transform:translateX(0)}
+        20%{transform:translateX(-6px)}
+        40%{transform:translateX(6px)}
+        60%{transform:translateX(-4px)}
+        80%{transform:translateX(4px)}
+    }
+`;
+document.head.appendChild(shakeStyle);
+
+// ── Init ──────────────────────────────────────────────────
+load();
+render();
+</script>
+
+<script src="ui.js"></script>
+<script src="advanced-features.js"></script>
+<script src="chatbot.js"></script>
+<script src="quick-notes.js"></script>
+<script src="exam-countdown.js"></script>
+<script src="todo-widget.js"></script>
+<script src="shortcuts.js"></script>
+<script src="nav-dropdown.js"></script>
+<script src="streak-widget.js"></script>
+<script src="theme-toggle.js"></script>
+</body>
+</html>

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="KL Material Formula Sheet — quick reference for DSA complexities, Discrete Math, Digital Logic, COA, and Python built-ins for CSE students.">
+<title>Formula Sheet — KL Material</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ── Formula Sheet ───────────────────────────────────── */
+
+/* Category tabs */
+.formula-tabs {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px;
+}
+.ftab {
+  padding: 8px 20px; border-radius: 99px; font-size: 0.88rem;
+  font-weight: 600; cursor: pointer; border: none;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--text-secondary); font-family: inherit;
+  transition: all 0.25s;
+}
+.ftab:hover { background: rgba(255,255,255,0.14); color: var(--text-primary); }
+.ftab.active {
+  background: linear-gradient(135deg, rgba(32,96,255,0.25), rgba(128,32,255,0.25));
+  border-color: rgba(128,32,255,0.5); color: #fff;
+}
+
+/* Formula section */
+.formula-section { display: none; }
+.formula-section.active { display: block; }
+
+/* Formula card */
+.formula-card { padding: 24px 28px; margin-bottom: 20px; }
+.formula-card h3 {
+  font-size: 1rem; font-weight: 700; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.formula-card h3 .tag {
+  font-size: 0.68rem; padding: 2px 10px; border-radius: 99px;
+  font-weight: 600; background: rgba(255,255,255,0.08);
+  color: var(--text-muted); letter-spacing: 0.5px; text-transform: uppercase;
+}
+
+/* Formula table */
+.ftable { width: 100%; border-collapse: separate; border-spacing: 0; }
+.ftable th {
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.5px; color: var(--text-muted);
+  padding: 6px 12px; text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.ftable td {
+  padding: 9px 12px; font-size: 0.88rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  vertical-align: middle;
+}
+.ftable tr:last-child td { border-bottom: none; }
+.ftable tr:hover td { background: rgba(255,255,255,0.03); }
+
+/* Code span */
+.code {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 0.82rem; padding: 2px 8px; border-radius: 6px;
+  background: rgba(255,255,255,0.08); color: #a0cfff;
+}
+
+/* Complexity badges */
+.cx { display: inline-block; padding: 2px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; font-family:'JetBrains Mono',monospace; }
+.cx-1    { background:rgba(48,209,88,0.15);  color:#30d158; }
+.cx-log  { background:rgba(0,229,160,0.13);  color:#00e5a0; }
+.cx-n    { background:rgba(32,96,255,0.13);  color:#80aaff; }
+.cx-nlog { background:rgba(128,32,255,0.13); color:#c080ff; }
+.cx-n2   { background:rgba(255,159,10,0.13); color:#ffcc55; }
+.cx-n3   { background:rgba(255,85,32,0.12);  color:#ff8855; }
+.cx-exp  { background:rgba(255,59,48,0.13);  color:#ff6060; }
+
+/* Copy button */
+.copy-btn {
+  background: none; border: none; color: rgba(255,255,255,0.3);
+  cursor: pointer; font-size: 0.75rem; padding: 2px 6px;
+  transition: color 0.2s; font-family: inherit;
+  white-space: nowrap;
+}
+.copy-btn:hover { color: #00e5a0; }
+
+/* Gate diagrams - simple text art */
+.gate-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.gate-box {
+  padding: 10px 16px; border-radius: 12px; text-align: center;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  min-width: 90px;
+}
+.gate-name { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; }
+.gate-expr { font-size: 0.88rem; font-family: 'JetBrains Mono', monospace; color: #c080ff; }
+
+/* Search bar */
+.formula-search-wrap { margin-bottom: 24px; }
+</style>
+    <link rel="stylesheet" href="shared.css">
+    <link rel="stylesheet" href="kl-liquid-glass.css">
+    <link rel="stylesheet" href="glass-components.css">
+</head>
+<body>
+<div class="bg-layer">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
+</div>
+<div class="main-wrapper">
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">KL Material</a>
+            <div class="nav-links" id="nLinks">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="materials.html" class="nav-link">Materials</a>
+                <a href="roadmap.html" class="nav-link">Roadmap</a>
+                <a href="cgpa.html" class="nav-link">CGPA Calc</a>
+                <a href="attendance.html" class="nav-link">Attendance</a>
+                <a href="timetable.html" class="nav-link">Timetable</a>
+                <a href="flashcards.html" class="nav-link">Flashcards</a>
+                <a href="marks.html" class="nav-link">Marks</a>
+                <a href="formulas.html" class="nav-link">Formulas</a>
+                <a href="about.html" class="nav-link">About</a>
+            </div>
+            <button class="mobile-btn" id="mobBtn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nLinks">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
+    </nav>
+
+    <header class="page-header stagger" style="animation-delay:0.1s">
+        <h1 class="page-title">Formula Quick Reference</h1>
+        <p class="page-subtitle">DSA complexities, Discrete Math, Digital Logic, COA & Python — all in one place.</p>
+    </header>
+
+    <main class="container">
+
+        <!-- Search -->
+        <div class="formula-search-wrap stagger" style="animation-delay:0.15s">
+            <input type="text" id="formulaSearch" class="glass-input" placeholder="🔍  Search formulas (e.g. BFS, DeMorgan, Fibonacci…)" oninput="searchFormulas()">
+        </div>
+
+        <!-- Tabs -->
+        <div class="formula-tabs stagger" style="animation-delay:0.18s" id="formulaTabs">
+            <button class="ftab active" onclick="showSection('dsa',this)">🧮 DSA</button>
+            <button class="ftab" onclick="showSection('dm',this)">📐 Discrete Math</button>
+            <button class="ftab" onclick="showSection('dl',this)">⚡ Digital Logic</button>
+            <button class="ftab" onclick="showSection('coa',this)">🖥️ COA</button>
+            <button class="ftab" onclick="showSection('python',this)">🐍 Python</button>
+        </div>
+
+        <!-- ── DSA ─────────────────────────────────────────── -->
+        <div class="formula-section active" id="sec-dsa">
+            <div class="glass glass-card formula-card">
+                <h3>Sorting Algorithms <span class="tag">Time Complexity</span></h3>
+                <table class="ftable">
+                    <thead><tr><th>Algorithm</th><th>Best</th><th>Average</th><th>Worst</th><th>Space</th></tr></thead>
+                    <tbody>
+                        <tr><td>Bubble Sort</td><td><span class="cx cx-n">Ω(n)</span></td><td><span class="cx cx-n2">Θ(n²)</span></td><td><span class="cx cx-n2">O(n²)</span></td><td><span class="cx cx-1">O(1)</span></td></tr>
+                        <tr><td>Selection Sort</td><td><span class="cx cx-n2">Ω(n²)</span></td><td><span class="cx cx-n2">Θ(n²)</span></td><td><span class="cx cx-n2">O(n²)</span></td><td><span class="cx cx-1">O(1)</span></td></tr>
+                        <tr><td>Insertion Sort</td><td><span class="cx cx-n">Ω(n)</span></td><td><span class="cx cx-n2">Θ(n²)</span></td><td><span class="cx cx-n2">O(n²)</span></td><td><span class="cx cx-1">O(1)</span></td></tr>
+                        <tr><td>Merge Sort</td><td><span class="cx cx-nlog">Ω(n log n)</span></td><td><span class="cx cx-nlog">Θ(n log n)</span></td><td><span class="cx cx-nlog">O(n log n)</span></td><td><span class="cx cx-n">O(n)</span></td></tr>
+                        <tr><td>Quick Sort</td><td><span class="cx cx-nlog">Ω(n log n)</span></td><td><span class="cx cx-nlog">Θ(n log n)</span></td><td><span class="cx cx-n2">O(n²)</span></td><td><span class="cx cx-log">O(log n)</span></td></tr>
+                        <tr><td>Heap Sort</td><td><span class="cx cx-nlog">Ω(n log n)</span></td><td><span class="cx cx-nlog">Θ(n log n)</span></td><td><span class="cx cx-nlog">O(n log n)</span></td><td><span class="cx cx-1">O(1)</span></td></tr>
+                        <tr><td>Counting Sort</td><td><span class="cx cx-n">Ω(n+k)</span></td><td><span class="cx cx-n">Θ(n+k)</span></td><td><span class="cx cx-n">O(n+k)</span></td><td><span class="cx cx-n">O(k)</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="glass glass-card formula-card">
+                <h3>Searching &amp; Graph Algorithms <span class="tag">Complexity</span></h3>
+                <table class="ftable">
+                    <thead><tr><th>Algorithm</th><th>Time</th><th>Space</th><th>Notes</th></tr></thead>
+                    <tbody>
+                        <tr><td>Linear Search</td><td><span class="cx cx-n">O(n)</span></td><td><span class="cx cx-1">O(1)</span></td><td>Unsorted array</td></tr>
+                        <tr><td>Binary Search</td><td><span class="cx cx-log">O(log n)</span></td><td><span class="cx cx-1">O(1)</span></td><td>Sorted array required</td></tr>
+                        <tr><td>BFS</td><td><span class="cx cx-n">O(V + E)</span></td><td><span class="cx cx-n">O(V)</span></td><td>Level-order, shortest path</td></tr>
+                        <tr><td>DFS</td><td><span class="cx cx-n">O(V + E)</span></td><td><span class="cx cx-n">O(V)</span></td><td>Stack / recursion</td></tr>
+                        <tr><td>Dijkstra</td><td><span class="cx cx-nlog">O((V+E) log V)</span></td><td><span class="cx cx-n">O(V)</span></td><td>Non-negative weights</td></tr>
+                        <tr><td>Floyd-Warshall</td><td><span class="cx cx-n3">O(V³)</span></td><td><span class="cx cx-n2">O(V²)</span></td><td>All-pairs shortest path</td></tr>
+                        <tr><td>Kruskal's MST</td><td><span class="cx cx-nlog">O(E log E)</span></td><td><span class="cx cx-n">O(E)</span></td><td>Sort edges, Union-Find</td></tr>
+                        <tr><td>Prim's MST</td><td><span class="cx cx-nlog">O(E log V)</span></td><td><span class="cx cx-n">O(V)</span></td><td>Min-heap version</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="glass glass-card formula-card">
+                <h3>Data Structure Operations <span class="tag">Avg/Worst</span></h3>
+                <table class="ftable">
+                    <thead><tr><th>Structure</th><th>Access</th><th>Search</th><th>Insert</th><th>Delete</th></tr></thead>
+                    <tbody>
+                        <tr><td>Array</td><td><span class="cx cx-1">O(1)</span></td><td><span class="cx cx-n">O(n)</span></td><td><span class="cx cx-n">O(n)</span></td><td><span class="cx cx-n">O(n)</span></td></tr>
+                        <tr><td>Linked List</td><td><span class="cx cx-n">O(n)</span></td><td><span class="cx cx-n">O(n)</span></td><td><span class="cx cx-1">O(1)</span></td><td><span class="cx cx-1">O(1)</span></td></tr>
+                        <tr><td>Stack / Queue</td><td><span class="cx cx-n">O(n)</span></td><td><span class="cx cx-n">O(n)</span></td><td><span class="cx cx-1">O(1)</span></td><td><span class="cx cx-1">O(1)</span></td></tr>
+                        <tr><td>Hash Table</td><td>—</td><td><span class="cx cx-1">O(1)*</span></td><td><span class="cx cx-1">O(1)*</span></td><td><span class="cx cx-1">O(1)*</span></td></tr>
+                        <tr><td>BST (balanced)</td><td><span class="cx cx-log">O(log n)</span></td><td><span class="cx cx-log">O(log n)</span></td><td><span class="cx cx-log">O(log n)</span></td><td><span class="cx cx-log">O(log n)</span></td></tr>
+                        <tr><td>Heap</td><td><span class="cx cx-1">O(1) top</span></td><td><span class="cx cx-n">O(n)</span></td><td><span class="cx cx-log">O(log n)</span></td><td><span class="cx cx-log">O(log n)</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="glass glass-card formula-card">
+                <h3>Recurrences &amp; Master Theorem <span class="tag">Key Formulas</span></h3>
+                <table class="ftable">
+                    <thead><tr><th>Recurrence</th><th>Result</th><th>Example</th></tr></thead>
+                    <tbody>
+                        <tr><td><span class="code">T(n) = T(n/2) + O(1)</span></td><td><span class="cx cx-log">O(log n)</span></td><td>Binary Search</td></tr>
+                        <tr><td><span class="code">T(n) = T(n-1) + O(1)</span></td><td><span class="cx cx-n">O(n)</span></td><td>Linear scan</td></tr>
+                        <tr><td><span class="code">T(n) = 2T(n/2) + O(n)</span></td><td><span class="cx cx-nlog">O(n log n)</span></td><td>Merge Sort</td></tr>
+                        <tr><td><span class="code">T(n) = 2T(n-1) + O(1)</span></td><td><span class="cx cx-exp">O(2ⁿ)</span></td><td>Fibonacci naive</td></tr>
+                        <tr><td><span class="code">T(n) = T(n-1) + O(n)</span></td><td><span class="cx cx-n2">O(n²)</span></td><td>Insertion Sort</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ── Discrete Math ───────────────────────────────── -->
+        <div class="formula-section" id="sec-dm">
+            <div class="glass glass-card formula-card">
+                <h3>Set Theory <span class="tag">Core Laws</span></h3>
+                <table class="ftable">
+                    <thead><tr><th>Law</th><th>Formula</th></tr></thead>
+                    <tbody>
+                        <tr><td>Commutative</td><td><span class="code">A∪B = B∪A &nbsp;&nbsp; A∩B = B∩A</span></td></tr>
+                        <tr><td>Associative</td><td><span class="code">(A∪B)∪C = A∪(B∪C)</span></td></tr>
+                        <tr><td>Distributive</td><td><span class="code">A∩(B∪C) = (A∩B)∪(A∩C)</span></td></tr>
+                        <tr><td>De Morgan's</td><td><span class="code">(A∪B)' = A'∩B' &nbsp; (A∩B)' = A'∪B'</span></td></tr>
+                        <tr><td>Complement</td><td><span class="code">A∪A' = U &nbsp;&nbsp; A∩A' = ∅</span></td></tr>
+                        <tr><td>Power Set Size</td><td><span class="code">|P(A)| = 2^|A|</span></td></tr>
+                        <tr><td>Inclusion-Exclusion</td><td><span class="code">|A∪B| = |A|+|B|-|A∩B|</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="glass glass-card formula-card">
+                <h3>Combinatorics <span class="tag">Counting</span></h3>
+                <table class="ftable">
+                    <thead><tr><th>Concept</th><th>Formula</th><th>Note</th></tr></thead>
+                    <tbody>
+                        <tr><td>Permutation (ordered)</td><td><span class="code">P(n,r) = n! / (n-r)!</span></td><td>Arrangement of r from n</td></tr>
+                        <tr><td>Combination (unordered)</td><td><span class="code">C(n,r) = n! / (r!(n-r)!)</span></td><td>Selection of r from n</td></tr>
+                        <tr><td>Binomial Theorem</td><td><span class="code">(x+y)ⁿ = Σ C(n,k) xᵏyⁿ⁻ᵏ</span></td><td>k from 0 to n</td></tr>
+                        <tr><td>Stars &amp; Bars</td><td><span class="code">C(n+r-1, r)</span></td><td>r items into n buckets</td></tr>
+                        <tr><td>Pigeonhole</td><td>—</td><td>n+1 items, n boxes → 1 box has ≥2</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="glass glass-card formula-card">
+                <h3>Graph Theory <span class="tag">Key Properties</span></h3>
+                <table class="ftable">
+                    <thead><tr><th>Property</th><th>Formula / Rule</th></tr></thead>
+                    <tbody>
+                        <tr><td>Handshaking Lemma</td><td><span class="code">Σ deg(v) = 2|E|</span></td></tr>
+                        <tr><td>Complete Graph Kₙ</td><td><span class="code">Edges = n(n-1)/2</span></td></tr>
+                        <tr><td>Tree: edges vs vertices</td><td><span class="code">|E| = |V| - 1</span></td></tr>
+                        <tr><td>Euler Path exists if</td><td>Exactly 0 or 2 vertices with odd degree</td></tr>
+                        <tr><td>Hamiltonian Cycle</td><td>Visits every vertex exactly once</td></tr>
+                        <tr><td>Chromatic Number χ(G)</td><td>Min colors to color G with no adjacent same-color</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="glass glass-card formula-card">
+                <h3>Propositional Logic <span class="tag">Equivalences</span></h3>
+                <table class="ftable">
+                    <thead><tr><th>Law</th><th>Formula</th></tr></thead>
+                    <tbody>
+                        <tr><td>Implication</td><td><span class="code">p→q ≡ ¬p∨q</span></td></tr>
+                        <tr><td>Contrapositive</td><td><span class="code">p→q ≡ ¬q→¬p</span></td></tr>
+                        <tr><td>De Morgan's</td><td><span class="code">¬(p∧q) ≡ ¬p∨¬q</span></td></tr>
+                        <tr><td>Double Negation</td><td><span class="code">¬¬p ≡ p</span></td></tr>
+                        <tr><td>Absorption</td><td><span class="code">p∨(p∧q) ≡ p</span></td></tr>
+                        <tr><td>Biconditional</td><td><span class="code">p↔q ≡ (p→q)∧(q→p)</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ── Digital Logic ───────────────────────────────── -->
+        <div class="formula-section" id="sec-dl">
+            <div class="glass glass-card formula-card">
+                <h3>Boolean Laws <span class="tag">Identities</span></h3>
+                <table class="ftable">
+                    <thead><tr><th>Law</th><th>AND form</th><th>OR form</th></tr></thead>
+                    <tbody>
+                        <tr><td>Identity</td><td><span class="code">A·1 = A</span></td><td><span class="code">A+0 = A</span></td></tr>
+                        <tr><td>Null</td><td><span class="code">A·0 = 0</span></td><td><span class="code">A+1 = 1</span></td></tr>
+                        <tr><td>Idempotent</td><td><span class="code">A·A = A</span></td><td><span class="code">A+A = A</span></td></tr>
+                        <tr><td>Complement</td><td><span class="code">A·A' = 0</span></td><td><span class="code">A+A' = 1</span></td></tr>
+                        <tr><td>De Morgan's</td><td><span class="code">(AB)' = A'+B'</span></td><td><span class="code">(A+B)' = A'·B'</span></td></tr>
+                        <tr><td>Absorption</td><td><span class="code">A(A+B) = A</span></td><td><span class="code">A+AB = A</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="glass glass-card formula-card">
+                <h3>Logic Gates Truth Table <span class="tag">Summary</span></h3>
+                <table class="ftable">
+                    <thead><tr><th>Gate</th><th>Expression</th><th>0,0</th><th>0,1</th><th>1,0</th><th>1,1</th></tr></thead>
+                    <tbody>
+                        <tr><td>AND</td><td><span class="code">A·B</span></td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+                        <tr><td>OR</td><td><span class="code">A+B</span></td><td>0</td><td>1</td><td>1</td><td>1</td></tr>
+                        <tr><td>NAND</td><td><span class="code">(A·B)'</span></td><td>1</td><td>1</td><td>1</td><td>0</td></tr>
+                        <tr><td>NOR</td><td><span class="code">(A+B)'</span></td><td>1</td><td>0</td><td>0</td><td>0</td></tr>
+                        <tr><td>XOR</td><td><span class="code">A⊕B</span></td><td>0</td><td>1</td><td>1</td><td>0</td></tr>
+                        <tr><td>XNOR</td><td><span class="code">(A⊕B)'</span></td><td>1</td><td>0</td><td>0</td><td>1</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="glass glass-card formula-card">
+                <h3>Number Systems <span class="tag">Conversions</span></h3>
+                <table class="ftable">
+                    <thead><tr><th>Concept</th><th>Formula / Rule</th></tr></thead>
+                    <tbody>
+                        <tr><td>Binary → Decimal</td><td><span class="code">Σ bᵢ × 2ⁱ</span> (i = bit position from right, 0-indexed)</td></tr>
+                        <tr><td>Decimal → Binary</td><td>Divide by 2 repeatedly, read remainders bottom-up</td></tr>
+                        <tr><td>2's Complement</td><td>Invert all bits + 1 (represents negative numbers)</td></tr>
+                        <tr><td>Hex → Binary</td><td>Each hex digit = 4 bits (0-F → 0000-1111)</td></tr>
+                        <tr><td>Octal → Binary</td><td>Each octal digit = 3 bits (0-7 → 000-111)</td></tr>
+                        <tr><td>BCD</td><td>4-bit binary for each decimal digit (0-9 only)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ── COA ─────────────────────────────────────────── -->
+        <div class="formula-section" id="sec-coa">
+            <div class="glass glass-card formula-card">
+                <h3>Memory &amp; Cache <span class="tag">Key Formulas</span></h3>
+                <table class="ftable">
+                    <thead><tr><th>Concept</th><th>Formula</th></tr></thead>
+                    <tbody>
+                        <tr><td>AMAT (Average Memory Access Time)</td><td><span class="code">AMAT = Hit time + Miss rate × Miss penalty</span></td></tr>
+                        <tr><td>Cache Hit Rate</td><td><span class="code">Hit Rate = Hits / (Hits + Misses)</span></td></tr>
+                        <tr><td>Effective Access Time</td><td><span class="code">EAT = h × Tc + (1-h) × Tm</span></td></tr>
+                        <tr><td>Number of Cache Lines</td><td><span class="code">Cache Lines = Cache Size / Block Size</span></td></tr>
+                        <tr><td>Direct Mapped: Tag bits</td><td><span class="code">TAG = Address bits − Index bits − Offset bits</span></td></tr>
+                        <tr><td>Cache Index bits</td><td><span class="code">Index = log₂(Number of cache lines)</span></td></tr>
+                        <tr><td>Block Offset bits</td><td><span class="code">Offset = log₂(Block size in bytes)</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="glass glass-card formula-card">
+                <h3>CPU Performance <span class="tag">Formulas</span></h3>
+                <table class="ftable">
+                    <thead><tr><th>Concept</th><th>Formula</th></tr></thead>
+                    <tbody>
+                        <tr><td>CPU Time</td><td><span class="code">CPU Time = CPI × IC × Clock Cycle Time</span></td></tr>
+                        <tr><td>MIPS</td><td><span class="code">MIPS = Clock Rate / (CPI × 10⁶)</span></td></tr>
+                        <tr><td>Speedup (Amdahl's Law)</td><td><span class="code">Speedup = 1 / ((1-f) + f/S)</span></td></tr>
+                        <tr><td>Throughput</td><td><span class="code">Throughput = 1 / Execution Time</span></td></tr>
+                        <tr><td>Pipeline Speedup</td><td><span class="code">Speedup = n×k / (k + n - 1)</span></td></tr>
+                        <tr><td>Efficiency</td><td><span class="code">Efficiency = Speedup / k</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="glass glass-card formula-card">
+                <h3>I/O &amp; Storage <span class="tag">Key Terms</span></h3>
+                <table class="ftable">
+                    <thead><tr><th>Term</th><th>Definition</th></tr></thead>
+                    <tbody>
+                        <tr><td>Seek Time</td><td>Time for disk head to reach correct track</td></tr>
+                        <tr><td>Rotational Latency</td><td>Time for sector to rotate under head (avg = ½ rotation)</td></tr>
+                        <tr><td>Transfer Time</td><td><span class="code">Data Size / Transfer Rate</span></td></tr>
+                        <tr><td>Total Disk Access</td><td><span class="code">Seek + Rotational Latency + Transfer</span></td></tr>
+                        <tr><td>DMA</td><td>Direct Memory Access — CPU-free I/O transfer</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ── Python ─────────────────────────────────────── -->
+        <div class="formula-section" id="sec-python">
+            <div class="glass glass-card formula-card">
+                <h3>Built-in Functions <span class="tag">Cheat Sheet</span></h3>
+                <table class="ftable">
+                    <thead><tr><th>Function</th><th>Usage</th><th>Returns</th></tr></thead>
+                    <tbody>
+                        <tr><td><span class="code">len(x)</span></td><td>Length of string/list/dict</td><td>int</td></tr>
+                        <tr><td><span class="code">range(s,e,step)</span></td><td>Range from s to e (exclusive)</td><td>range obj</td></tr>
+                        <tr><td><span class="code">enumerate(lst)</span></td><td>Index-value pairs</td><td>enumerate obj</td></tr>
+                        <tr><td><span class="code">zip(a, b)</span></td><td>Pairs from two iterables</td><td>zip obj</td></tr>
+                        <tr><td><span class="code">map(fn, lst)</span></td><td>Apply fn to each element</td><td>map obj</td></tr>
+                        <tr><td><span class="code">filter(fn, lst)</span></td><td>Filter elements by fn</td><td>filter obj</td></tr>
+                        <tr><td><span class="code">sorted(lst, key=, reverse=)</span></td><td>Sorted copy</td><td>list</td></tr>
+                        <tr><td><span class="code">max(lst) / min(lst)</span></td><td>Max / Min value</td><td>element</td></tr>
+                        <tr><td><span class="code">sum(lst)</span></td><td>Sum of all elements</td><td>number</td></tr>
+                        <tr><td><span class="code">any(lst) / all(lst)</span></td><td>Boolean checks</td><td>bool</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="glass glass-card formula-card">
+                <h3>List &amp; String Methods <span class="tag">Common Operations</span></h3>
+                <table class="ftable">
+                    <thead><tr><th>Method</th><th>Description</th></tr></thead>
+                    <tbody>
+                        <tr><td><span class="code">lst.append(x)</span></td><td>Add x to end — O(1)</td></tr>
+                        <tr><td><span class="code">lst.insert(i, x)</span></td><td>Insert x at index i — O(n)</td></tr>
+                        <tr><td><span class="code">lst.pop(i)</span></td><td>Remove &amp; return item at i (default last)</td></tr>
+                        <tr><td><span class="code">lst.sort()</span></td><td>In-place Timsort — O(n log n)</td></tr>
+                        <tr><td><span class="code">lst[::-1]</span></td><td>Reversed copy — O(n)</td></tr>
+                        <tr><td><span class="code">s.split(sep)</span></td><td>Split string by separator</td></tr>
+                        <tr><td><span class="code">sep.join(lst)</span></td><td>Join list into string</td></tr>
+                        <tr><td><span class="code">s.strip()</span></td><td>Remove leading/trailing whitespace</td></tr>
+                        <tr><td><span class="code">s.replace(a, b)</span></td><td>Replace all occurrences of a with b</td></tr>
+                        <tr><td><span class="code">s.upper() / s.lower()</span></td><td>Case conversion</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="glass glass-card formula-card">
+                <h3>Data Structures in Python <span class="tag">stdlib</span></h3>
+                <table class="ftable">
+                    <thead><tr><th>Structure</th><th>Usage</th></tr></thead>
+                    <tbody>
+                        <tr><td><span class="code">list</span></td><td>Dynamic array — use for stack (<code>append/pop</code>)</td></tr>
+                        <tr><td><span class="code">collections.deque</span></td><td>Efficient O(1) append/popleft — use for queue</td></tr>
+                        <tr><td><span class="code">dict</span></td><td>Hash map — O(1) avg lookup</td></tr>
+                        <tr><td><span class="code">set</span></td><td>Hash set — O(1) avg add/remove/check</td></tr>
+                        <tr><td><span class="code">heapq</span></td><td>Min-heap: <code>heappush, heappop</code></td></tr>
+                        <tr><td><span class="code">collections.Counter</span></td><td>Frequency counter from iterable</td></tr>
+                        <tr><td><span class="code">collections.defaultdict</span></td><td>Dict with default value factory</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="glass footer stagger" style="animation-delay:0.5s">
+        <div style="font-weight:600;font-size:18px">KL Material</div>
+        <p style="color:var(--text-secondary);margin-top:8px">always free, always accessible</p>
+        <div class="footer-links">
+            <a href="materials.html">Materials</a>
+            <a href="cgpa.html">CGPA Calc</a>
+            <a href="attendance.html">Attendance</a>
+            <a href="about.html">About</a>
+            <a href="privacy.html">Privacy</a>
+        </div>
+        <div style="color:var(--text-muted);font-size:13px">&copy; 2026 Praveen Reddy &middot; Made with ❤️ for KL University students</div>
+    </footer>
+    <button class="glass scroll-top" id="sTop" onclick="window.scrollTo(0,0)">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"></polyline></svg>
+    </button>
+</div>
+
+<script>
+function showSection(id, btn) {
+    document.querySelectorAll('.formula-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.ftab').forEach(b => b.classList.remove('active'));
+    document.getElementById('sec-' + id).classList.add('active');
+    btn.classList.add('active');
+    document.getElementById('formulaSearch').value = '';
+}
+
+function searchFormulas() {
+    const q = document.getElementById('formulaSearch').value.toLowerCase().trim();
+    if (!q) {
+        document.querySelectorAll('.formula-section').forEach(s => s.style.display = '');
+        return;
+    }
+    // Show all sections and highlight matching rows
+    document.querySelectorAll('.formula-section').forEach(s => s.style.display = 'block');
+    document.querySelectorAll('.ftable tr').forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(q) || row.tagName === 'THEAD' ? '' : 'none';
+    });
+}
+</script>
+
+<script src="ui.js"></script>
+<script src="advanced-features.js"></script>
+<script src="chatbot.js"></script>
+<script src="quick-notes.js"></script>
+<script src="exam-countdown.js"></script>
+<script src="todo-widget.js"></script>
+<script src="shortcuts.js"></script>
+<script src="nav-dropdown.js"></script>
+<script src="streak-widget.js"></script>
+<script src="theme-toggle.js"></script>
+</body>
+</html>
